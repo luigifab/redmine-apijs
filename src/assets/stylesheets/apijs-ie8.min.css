@@ -1,0 +1,6 @@
+/*!
+ * Copyright 2008-2012 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/apijs - 3.0.0
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL).
+ */#dialog,#dialog.actif{background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUCNdjYGBgWAYAAKsAp/91VKUAAAAASUVORK5CYII=")}#dialog.slideshow.cblack{background:#000}#box.photo,#box.video{border:none}#box div.novisible{visibility:hidden}#box dl dd{margin-bottom:.3em}#box div.close{background:url("data:image/gif;base64,AAAA")}#box div.close.txt button.close{padding-bottom:.1em}#box div.navigation.txt button{top:38%}#box div.navigation.txt button#prev{left:-24px}#box div.navigation.txt button#next{right:-73px}
