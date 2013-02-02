@@ -1,8 +1,8 @@
 # Created L/21/05/2012
-# Updated J/11/10/2012
+# Updated D/03/02/2013
 # Version 3
 #
-# Copyright 2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2012-2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -22,7 +22,7 @@ Redmine::Plugin.register :redmine_apijs do
   name 'Redmine Apijs plugin'
   author 'Fabrice Creuzot'
   description 'Integrate the apijs javascript library into Redmine.'
-  version '3.0.1'
+  version '4.0.0'
   url 'https://redmine.luigifab.info/projects/redmine/wiki/apijs'
   author_url 'http://www.luigifab.info/'
 end
