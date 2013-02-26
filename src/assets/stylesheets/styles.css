@@ -10,30 +10,18 @@
 #box .nodisplay { display:none; }
 #box .novisible { visibility:hidden; }
 
-#box p.saving { background-image:url("../images/dialog/saving.png"); }
+#box p.saving { background-image:url("../images/dialog/saving.svg.rb?w=20&h=20"); }
 #box div.navigation.txt button { font-size:10px; }
 
 #box div.control button { padding:2px 0.7em 2px 25px; font-size:11px; font-weight:normal; }
-#box div.control button.cancel  { background-image:url("../images/icons/16/silk-cancel.png"); }
-#box div.control button.confirm { background-image:url("../images/icons/16/silk-accept.png"); }
 
 #box.photo dl dt a span { background-image:url("../images/icons/24/gnome-zoom-in.png"); }
-#box.photo dl dt img.loading  { background-image:url("../images/dialog/loading.png"); }
-#box.photo dl dt img.error_en { background-image:url("../images/dialog/404en.png"); }
-#box.photo dl dt img.error_fr { background-image:url("../images/dialog/404fr.png"); }
-
-#box.information  h1 { background-image:url("../images/icons/32/gnome-dialog-information.png"); }
-#box.confirmation h1 { background-image:url("../images/icons/32/gnome-dialog-question.png"); }
-#box.options  h1 { background-image:url("../images/icons/32/gnome-preferences-other.png"); }
-#box.waiting  h1 { background-image:url("../images/icons/32/gnome-appointment-soon.png"); }
-#box.upload   h1 { background-image:url("../images/icons/32/gnome-mail-new.png"); }
-#box.eeupload h1 { background-image:url("../images/icons/32/gnome-dialog-error.png"); }
-#box.progress h1 { background-image:url("../images/icons/32/gnome-appointment-soon.png"); }
-#box.delete   h1 { background-image:url("../images/icons/32/gnome-delete.png"); }
-#box.download h1 { background-image:url("../images/icons/32/gnome-save.png"); }
-#box.error    h1 { background-image:url("../images/icons/32/gnome-dialog-error.png"); }
-#box.print    h1 { background-image:url("../images/icons/32/gnome-document-print.png"); }
-#box.warning  h1 { background-image:url("../images/icons/32/gnome-dialog-warning.png"); }
+#box.photo dl dt img.loading { background-image:url("../images/dialog/loading.png"); }
+#box.photo dl dt img.error { background-image:url("../images/dialog/error-en.png"); }
+#box.photo dl dt img.error.fr { background-image:url("../images/dialog/error-fr.png"); }
+#box.photo dl dt img.svg.loading { background-image:url("../images/dialog/loading.svg.rb?w=60&h=20"); }
+#box.photo dl dt img.svg.error { background-image:url("../images/dialog/error.svg.rb?w=200&h=200&lang=en"); }
+#box.photo dl dt img.svg.error.fr { background-image:url("../images/dialog/error.svg.rb?w=200&h=200&lang=fr"); }
 
 #box dl dd { margin:0; }
 #box dl dd a.download, #box div.close.txt button.close, #box div.close button.close img { font-size:9px; }
