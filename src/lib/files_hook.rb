@@ -1,8 +1,10 @@
-# Created L/21/05/2012
-# Updated D/03/02/2013
-# Version 3
+# encoding: utf-8
 #
-# Copyright 2012-2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Created L/21/05/2012
+# Updated V/28/02/2014
+# Version 10
+#
+# Copyright 2012-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -17,7 +19,13 @@
 
 class FilesHook < Redmine::Hook::ViewListener
   def view_layouts_base_html_head(context = { })
-    stylesheet_link_tag('apijs-screen.min.css', 'apijs-redmine.min.css', :plugin => 'redmine_apijs', :media => 'screen') +
-      javascript_include_tag('apijs.min.js', :plugin => 'redmine_apijs')
+    if Setting.plugin_redmine_apijs['enabled'] == '1'
+      stylesheet_link_tag('apijs-screen.min.css', 'apijs-redmine.min.css', :plugin => 'redmine_apijs', :media => 'screen') +
+        stylesheet_link_tag('apijs-print.min.css', :plugin => 'redmine_apijs', :media => 'print') +
+        javascript_include_tag('apijs.min.js', :plugin => 'redmine_apijs') +
+        javascript_include_tag('apijs-album.min.js', :plugin => 'redmine_apijs')
+    else
+      stylesheet_link_tag('apijs-redmine.min.css', :plugin => 'redmine_apijs', :media => 'screen')
+    end
   end
 end

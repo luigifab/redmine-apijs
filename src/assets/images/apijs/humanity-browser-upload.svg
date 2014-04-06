@@ -1,0 +1,35 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!--
+ * Humanity icon theme
+ * License: GNU GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
+ * File cleaned with: python scour -enable-id-stripping -indent=tab -strip-xml-prolog
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1.1">
+	<defs>
+		<linearGradient id="linearGradient4547" y2="2.9062" gradientUnits="userSpaceOnUse" x2="-51.786" gradientTransform="matrix(.30004 0 0 .31205 21.157 -.37413)" y1="50.786" x1="-51.786">
+			<stop stop-color="#8d8f8a" offset="0"/>
+			<stop stop-color="#c1c1c1" offset="1"/>
+		</linearGradient>
+		<linearGradient id="linearGradient4545" y2="47.013" gradientUnits="userSpaceOnUse" x2="25.132" gradientTransform="matrix(.37156 0 0 .33344 -.91752 -.0025171)" y1="6.7287" x1="25.132">
+			<stop stop-color="#f4f4f4" offset="0"/>
+			<stop stop-color="#dbdbdb" offset="1"/>
+		</linearGradient>
+		<linearGradient id="linearGradient4565" y2="5.8215" gradientUnits="userSpaceOnUse" x2="15.18" gradientTransform="matrix(.68443 0 0 .68201 -.21315 .15692)" y1="2.1849" x1="17.289">
+			<stop stop-color="silver" offset="0"/>
+			<stop stop-color="#949492" offset="1"/>
+		</linearGradient>
+		<linearGradient id="linearGradient4543" y2="5.4565" gradientUnits="userSpaceOnUse" x2="36.358" gradientTransform="matrix(.37071 0 0 .35485 -.85666 -.048951)" y1="8.059" x1="32.892">
+			<stop stop-color="#fefefe" offset="0"/>
+			<stop stop-color="#cbcbcb" offset="1"/>
+		</linearGradient>
+		<linearGradient id="linearGradient3140" y2="32.485" gradientUnits="userSpaceOnUse" x2="24.104" gradientTransform="matrix(.32803 0 0 .32571 4.445 4.532)" y1="15.169" x1="24.104">
+			<stop stop-color="#ecf5b6" offset="0"/>
+			<stop stop-color="#9fba48" offset="1"/>
+		</linearGradient>
+	</defs>
+	<g stroke-linejoin="round">
+		<path d="m1.4976 0.49763h7.9177c0.52277 0.16184 4.3537 2.6136 5.0871 3.8903v11.114h-13.005v-15.005z" stroke="url(#linearGradient4547)" stroke-width=".99525" fill="url(#linearGradient4545)"/>
+		<path d="m9.5 0.49792v4.0021h5.0021c0-1.9018-3.0057-4.0021-5.0021-4.0021z" fill-rule="evenodd" stroke="url(#linearGradient4565)" stroke-width=".99525" fill="url(#linearGradient4543)"/>
+		<path d="m10.5 10.5v-1.9925h3v1.9925h1.9925v3h-1.9925v1.9925h-3v-1.9925h-1.9925v-3h1.9925z" fill-rule="evenodd" stroke="#699536" stroke-width="1.0151" fill="url(#linearGradient3140)"/>
+	</g>
+</svg>

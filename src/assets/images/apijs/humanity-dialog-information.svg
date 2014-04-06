@@ -1,0 +1,33 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!--
+ * Humanity icon theme
+ * License: GNU GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
+ * File cleaned with: python scour -enable-id-stripping -indent=tab -strip-xml-prolog
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" version="1.1">
+	<defs>
+		<radialGradient id="radialGradient2461" gradientUnits="userSpaceOnUse" cy="4.625" cx="62.625" gradientTransform="matrix(1.1294 0 0 .28235 -58.729 19.694)" r="10.625">
+			<stop offset="0"/>
+			<stop stop-opacity="0" offset="1"/>
+		</radialGradient>
+		<linearGradient id="linearGradient2458" y2="3.0816" gradientUnits="userSpaceOnUse" x2="18.379" gradientTransform="matrix(.51604 0 0 .51604 -.38499 -.38499)" y1="44.98" x1="18.379">
+			<stop stop-color="#1f4b6a" offset="0"/>
+			<stop stop-color="#4083c2" offset="1"/>
+		</linearGradient>
+		<radialGradient id="radialGradient2456" gradientUnits="userSpaceOnUse" cy="3.99" cx="23.896" gradientTransform="matrix(0 1.2316 -1.6257 0 18.487 -28.721)" r="20.397">
+			<stop stop-color="#8badea" offset="0"/>
+			<stop stop-color="#6396cd" offset=".26238"/>
+			<stop stop-color="#3b7caf" offset=".66094"/>
+			<stop stop-color="#194c70" offset="1"/>
+		</radialGradient>
+		<linearGradient id="linearGradient2453" y2="5.4676" gradientUnits="userSpaceOnUse" x2="63.397" gradientTransform="matrix(1.0863 0 0 1.0862 -55.567 15.814)" y1="-12.489" x1="63.397">
+			<stop stop-color="#fff" offset="0"/>
+			<stop stop-color="#fff" stop-opacity="0" offset="1"/>
+		</linearGradient>
+	</defs>
+	<path opacity=".3" d="m24 21c0 1.6569-5.3726 3-12 3s-12-1.343-12-3c-2.5e-7 -1.657 5.3726-3 12-3s12 1.3431 12 3z" fill-rule="evenodd" fill="url(#radialGradient2461)"/>
+	<path stroke-linejoin="round" d="m12 1.5018c-5.7926 0-10.498 4.7057-10.498 10.498 0 5.7926 4.7057 10.498 10.498 10.498 5.7926 0 10.498-4.7057 10.498-10.498 0-5.7926-4.7057-10.498-10.498-10.498z" stroke="url(#linearGradient2458)" stroke-linecap="round" stroke-width="1.0037" fill="url(#radialGradient2456)"/>
+	<path opacity=".4" d="m21.5 12c0 5.2469-4.2536 9.5003-9.4999 9.5003-5.2468 0-9.5001-4.2535-9.5001-9.5003 0-5.2466 4.2534-9.4997 9.5001-9.4997 5.2463 0 9.4999 4.253 9.4999 9.4997z" stroke="url(#linearGradient2453)" fill="none"/>
+	<path opacity=".2" d="m9 10.851c0.13386 0.36388 0.28452 0.65884 0.60545 0.25553 0.39788-0.23673 1.731-1.2744 1.5976-0.25798-0.42688 1.8808-0.94648 3.7418-1.3438 5.6285-0.41543 1.033 0.52793 1.9674 1.5129 1.2956 1.0469-0.43158 1.9478-1.1346 2.8681-1.7794-0.12558-0.30796-0.20927-0.75035-0.55625-0.34761-0.4556 0.20679-1.4507 1.1817-1.6355 0.37762 0.3827-2.0366 1.0918-3.9978 1.545-6.0181 0.417-0.9285-0.265-2.1023-1.284-1.3339-1.222 0.5321-2.243 1.4009-3.31 2.1799zm4.534-6.8494c-1.247-0.0661-1.898 1.9431-0.714 2.4929 0.961 0.3941 2.007-0.5915 1.773-1.5763-0.073-0.5128-0.534-0.9339-1.059-0.9166h-0.000001z"/>
+	<path fill="#fff" d="m9 11.851c0.13386 0.36388 0.28452 0.65884 0.60545 0.25553 0.39788-0.23673 1.731-1.2744 1.5976-0.25798-0.42688 1.8808-0.94648 3.7418-1.3438 5.6285-0.41543 1.033 0.52793 1.9674 1.5129 1.2956 1.0469-0.43158 1.9478-1.1346 2.8681-1.7794-0.12558-0.30796-0.20927-0.75035-0.55625-0.34761-0.4556 0.20679-1.4507 1.1817-1.6355 0.37762 0.3827-2.0366 1.0918-3.9978 1.545-6.0181 0.417-0.929-0.265-2.1023-1.284-1.3339-1.222 0.5319-2.243 1.4009-3.31 2.1799zm4.5338-6.8497c-1.2464-0.066145-1.8981 1.9431-0.71361 2.4929 0.96093 0.39409 2.0072-0.59147 1.7725-1.5763-0.073-0.5125-0.534-0.9336-1.059-0.9163h-0.000001z"/>
+</svg>

@@ -1,0 +1,36 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!--
+ * Humanity icon theme
+ * License: GNU GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
+ * File cleaned with: python scour -enable-id-stripping -indent=tab -strip-xml-prolog
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" version="1.1">
+	<defs>
+		<radialGradient id="radialGradient5323" gradientUnits="userSpaceOnUse" cy="4.625" cx="62.625" gradientTransform="matrix(1 0 0 .34118 0 3.0471)" r="10.625">
+			<stop offset="0"/>
+			<stop stop-opacity="0" offset="1"/>
+		</radialGradient>
+		<linearGradient id="linearGradient5130" y2="45.359" gradientUnits="userSpaceOnUse" x2="19.177" gradientTransform="matrix(.49168 0 0 .49168 .69867 -.30183)" y1="13.48" x1="19.177">
+			<stop stop-color="#3f3f3f" offset="0"/>
+			<stop offset="1"/>
+		</linearGradient>
+		<linearGradient id="linearGradient5128" y2="45.348" gradientUnits="userSpaceOnUse" x2="28.771" gradientTransform="matrix(.49168 0 0 .49168 .69867 -.30183)" y1="12.918" x1="28.771">
+			<stop stop-color="#929292" offset="0"/>
+			<stop stop-color="#4a4a4a" offset="1"/>
+		</linearGradient>
+		<radialGradient id="radialGradient5350" gradientUnits="userSpaceOnUse" cy="10.045" cx="11.902" r="29.293">
+			<stop stop-color="#fffffd" offset="0"/>
+			<stop stop-color="#cbcbc9" offset="1"/>
+		</radialGradient>
+	</defs>
+	<path opacity=".56044" d="m73.25 4.625a10.625 3.625 0 1 1 -21.25 0 10.625 3.625 0 1 1 21.25 0z" fill-rule="evenodd" transform="matrix(1.1294 0 0 1.2907 -58.729 13.352)" fill="url(#radialGradient5323)"/>
+	<path stroke-linejoin="round" d="m12.492 1.5c-5.5191 0-9.9922 4.4731-9.9922 9.9922s4.4731 10.008 9.9922 10.008 10.008-4.4888 10.008-10.008c0-5.5191-4.4888-9.9922-10.008-9.9922z" stroke="url(#linearGradient5130)" stroke-linecap="round" stroke-width=".99995" fill="url(#linearGradient5128)"/>
+	<path d="m31.161 16.911a14.911 14.911 0 1 1 -29.821 0 14.911 14.911 0 1 1 29.821 0z" fill-rule="evenodd" transform="matrix(.57006 0 0 .57006 3.2365 1.8599)" fill="url(#radialGradient5350)"/>
+	<path d="m12.5 6.5v-1.569" fill-rule="evenodd" stroke="#727272" stroke-linecap="round" fill="#1f1f1f"/>
+	<path d="m12.195 11.714 5.401-5.4017" stroke="#000" stroke-linecap="round" stroke-width=".5" fill="none"/>
+	<path d="m13.072 11.754-3.6082-3.608" stroke="#000" stroke-linecap="round" stroke-width=".5" fill="none"/>
+	<path d="m12.314 11.435 6.151-1.6484" fill-rule="evenodd" stroke="red" stroke-linecap="round" stroke-width=".5" fill="red"/>
+	<path d="m12.5 18.285v-1.569" fill-rule="evenodd" stroke="#121212" stroke-linecap="round" fill="#121212"/>
+	<path d="m17.5 11.5h1.569" fill-rule="evenodd" stroke="#1f1f1f" stroke-linecap="round" fill="#1f1f1f"/>
+	<path d="m5.7331 11.5h1.5337" fill-rule="evenodd" stroke="#5f5f5f" stroke-linecap="round" fill="#1f1f1f"/>
+</svg>

@@ -1,0 +1,20 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!--
+ * Humanity icon theme
+ * License: GNU GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
+ * File cleaned with: python scour -enable-id-stripping -indent=tab -strip-xml-prolog
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1.1">
+	<defs>
+		<radialGradient id="radialGradient3194" gradientUnits="userSpaceOnUse" cy="9.8295" cx="5.03" gradientTransform="matrix(.58933 0 0 .59919 8.2244 8.7299)" r="18.657">
+			<stop stop-color="#fce94f" offset="0"/>
+			<stop stop-color="#edd400" offset="1"/>
+		</radialGradient>
+	</defs>
+	<g transform="matrix(.75086 0 0 .73262 -.40124 -.32140)">
+		<path d="m19.871 19.759l-6.637-2.363-5.4157 4.174-1.2638-5.463-5.2516 1.369 3.8991-5.432-3.5958-5.4516 5.011 0.0427 1.9532-5.5268 4.4486 3.054 6.678-2.8053-2.641 6.724 4.132 3.44-4.113 1.997 2.796 6.241z" stroke="#c4a000" stroke-linecap="round" stroke-width="1.3276" fill="url(#radialGradient3194)"/>
+		<path d="m9.857 5.8986h2.664l-0.746 5.4594h-1.29l-0.628-5.4594z"/>
+		<path d="m12.969 13.547a1.4219 1.4219 0 1 1 -2.844 0 1.4219 1.4219 0 1 1 2.844 0z" transform="matrix(.93665 0 0 .95998 .37338 1.0837)"/>
+	</g>
+	<path d="m9.2188 3.0938l-1.375 3.9687c-0.1879 0.51-0.6753 0.8475-1.2188 0.8437l-2.625-0.0312 2.25 3.437c0.3061 0.442 0.3061 1.028 0 1.469l-1.8125 2.531 1.8125-0.468c0.3359-0.082 0.6905-0.025 0.9842 0.157 0.2938 0.182 0.5022 0.474 0.5783 0.811l0.8125 3.5 3.813-2.937c0.348-0.265 0.807-0.336 1.218-0.187l3.782 1.343-1.563-3.469c-0.284-0.638-0.006-1.387 0.625-1.687l2.344-1.125-2.594-2.1562c-0.43-0.3567-0.581-0.9497-0.375-1.4688l1.531-3.9062-3.875 1.625c-0.401 0.1663-0.859 0.1193-1.219-0.125l-3.0932-2.125z" transform="matrix(.75086 0 0 .73262 -.40124 -.32140)" stroke="#fff" stroke-linecap="round" stroke-width="1.3276" fill="none"/>
+</svg>
