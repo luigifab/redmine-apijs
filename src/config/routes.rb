@@ -1,10 +1,10 @@
 # encoding: utf-8
 #
 # Created J/12/12/2013
-# Updated V/10/01/2014
-# Version 13
+# Updated D/05/10/2014
+# Version 15
 #
-# Copyright 2013-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -35,8 +35,14 @@ if Rails::VERSION::MAJOR >= 3
     match 'attachments/download/:id', :to => 'apijs#download',
       :id => /\d+/, :via => :get
 
-    match 'apijs/edit', :to => 'apijs#edit', :via => :post
-    match 'apijs/delete', :to => 'apijs#delete', :via => :post
+    match 'apijs/edit', :to => 'apijs#edit',
+      :via => :post
+
+    match 'apijs/delete', :to => 'apijs#delete',
+      :via => :get
+
+    match 'apijs/uploadzip', :to => 'apijs#uploadzip',
+      :via => :post
   end
 else
   ActionController::Routing::Routes.draw do |map|
@@ -72,6 +78,10 @@ else
 
     map.connect 'apijs/delete',
       :controller => 'apijs', :action => 'delete',
+      :conditions => { :method => :get }
+
+    map.connect 'apijs/uploadzip',
+      :controller => 'apijs', :action => 'uploadzip',
       :conditions => { :method => :post }
   end
 end

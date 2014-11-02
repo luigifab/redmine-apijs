@@ -1,10 +1,10 @@
 # encoding: utf-8
 #
 # Created J/12/12/2013
-# Updated V/10/01/2014
-# Version 23
+# Updated W/28/10/2014
+# Version 29
 #
-# Copyright 2013-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -19,130 +19,216 @@
 
 class ApijsController < AttachmentsController
 
-  #before_filter :find_project, :except => :upload
-  #before_filter :file_readable, :read_authorize, :only => [:show, :download]
-  #before_filter :delete_authorize, :only => :destroy
-  #before_filter :authorize_global, :only => :upload
-  #accept_api_auth :show, :download, :upload
+  before_filter :find_project, :except => [:upload, :uploadzip]
+  before_filter :authorize_global, :only => [:upload, :uploadzip]
   before_filter :read_authorize, :file_readable, :only => [:thumb, :show, :download]
   before_filter :read_authorize, :only => [:edit, :delete]
 
-  ROOT = ENV['RAILS_TMP'] ? (ENV['RAILS_TMP'] + '/apijs') : (ENV['RAILS_CACHE'] ? (ENV['RAILS_CACHE'] + '/apijs') : (Rails.root + '/tmp/apijs'))
+
+  # #### Gestion des fichiers ZIP ##################################################### public ### #
+  # = révision : 8
+  # » Vérifie si l'utilisateur a accès au projet
+  # » Permet d'ajouter plusieurs fichiers en utilisant un fichier ZIP
+  # » Disponible uniquement dans le wiki, les annonces et les demandes
+  # » Ouvre et importe chaque fichier du fichier ZIP (avec ruby-zip)
+  # » Une erreur dans le traitement ne veux pas forcément dire aucun fichier traité
+  def uploadzip
+
+    msg = []
+    success = []
+    error = []
+
+    # recherche du conteneur (avec vérification d'accès)
+    # uniquement pour une demande, le wiki ou une annonce (qui existe déjà)
+    case params[:type]
+      when 'Issue'
+        obj = Issue.find_by_id(params[:id].to_i)
+        if Redmine::VERSION.to_s.gsub('.','').to_i >= 230
+          obj = (obj && obj.visible?(User.current) && obj.editable?(User.current)) ? obj : nil
+        else
+          obj = (obj && obj.visible?(User.current) && (User.current.allowed_to?(:edit_issues, obj.project) ||
+                 User.current.allowed_to?(:add_issue_notes, obj.project))) ? obj : nil
+        end
+      when 'Wiki'
+        obj = WikiPage.find_by_id(params[:id].to_i)
+        obj = (obj && obj.visible?(User.current) && obj.editable_by?(User.current)) ? obj : nil
+      when 'News'
+        obj = News.find_by_id(params[:id].to_i)
+        obj = (obj && obj.visible?(User.current)) ? obj : nil
+    end
+
+    # lecture du fichier zip
+    # import de chaque fichier
+    if (obj)
+      Zip::File.open(params[:mybigzip].path) do |zip_file|
+        zip_file.each do |file|
+          attachment = Attachment.new(:file => file.get_input_stream.read)
+          attachment.author = User.current
+          attachment.filename = file.name
+          attachment.container = obj
+          ok = attachment.save
+          success.push(file.name) if ok
+          error.push(file.name) if !ok
+        end
+      end
+
+      if (error.length > 0)
+        msg.push('[p]' + l(:apijs_notsaved) + '[/p][ul][li]' +   error.join('[/li][li]') + '[/li][/ul]')
+        msg.push('[p]' + l(:apijs_saved)    + '[/p][ul][li]' + success.join('[/li][li]') + '[/li][/ul][p]' + l(:apijs_final) + '[/p]') if (success.length > 0)
+      else
+        msg.push('success-' + success.length.to_s)
+      end
+
+      if params[:isAjax] && !params[:noAjax]
+        render(:text => msg.join(''))
+      else
+        redirect_to :back
+      end
+    else
+      deny_access
+    end
+  end
 
 
   # #### Gestion de l'image miniature (photo ou vidéo) ################################ public ### #
-  # = révision : 21
+  # = révision : 32
+  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de la miniature
   # » Utilise un script python pour générer l'image miniature (taille 200x150, qualité 85)
   # » Utilise un script python pour générer l'image aperçu (taille 1200x900, qualité 85)
-  # » Vérifie si l'utilisateur a accès au projet avant d'envoyer la miniature
-  # » Utilise le système de cache de Ruby (stale?) et enregistre les commandes et leurs résultats dans les logs
   # » Utilise la commande python (avec python-imaging et ffmpegthumbnailer)
+  # » Enregistre les commandes et leurs résultats dans les logs
+  # » Téléchargement d'une image avec mise en cache (inline/stale?)
   def thumb
 
     # préparation de l'image
     source = @attachment.diskfile
-    target = ROOT + '/thumb/' + @attachment.created_on.strftime('%Y-%m') + '/' + @attachment.id.to_s + ((@attachment.isVideo?) ? '.jpg' : File.extname(@attachment.filename))
+    target = APIJS_ROOT + '/thumb/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s +
+      ((@attachment.isVideo?) ? '.jpg' : File.extname(@attachment.filename).to_s)
     script = File.dirname(__FILE__).gsub('app/controllers', 'tools/image.py')
 
-    # photo ou vidéo
+    # génération des images
     if @attachment.isVideo?
       # génération de l'image miniature
       if File.file?(source) && !File.file?(target)
-        command = 'python ' + script + ' ' + source + ' ' + target + ' 200 150 video 2>&1'
+        command = 'python ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' 200 150 2>&1'
         result  = `#{command}`.gsub(/^\s+|\s+$/, '')
         logger.info 'APIJS::ApijsController#thumb: ' + command + ' (' + result + ')'
       end
     else
       # génération de l'image miniature
       if File.file?(source) && !File.file?(target)
-        command = 'python ' + script + ' ' + source + ' ' + target + ' 200 150 2>&1'
+        command = 'python ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' 200 150 2>&1'
         result  = `#{command}`.gsub(/^\s+|\s+$/, '')
         logger.info 'APIJS::ApijsController#thumb: ' + command + ' (' + result + ')'
       end
-
       # génération de l'image aparçu
       if File.file?(source) && Setting.plugin_redmine_apijs['create_all'] == '1'
-        target2 = ROOT + '/show/' + @attachment.created_on.strftime('%Y-%m') + '/' + @attachment.id.to_s + File.extname(@attachment.filename)
+        target2 = APIJS_ROOT + '/show/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s + File.extname(@attachment.filename).to_s
         if !File.file?(target2)
-          command = 'python ' + script + ' ' + source + ' ' + target2 + ' 1200 900 2>&1'
+          command = 'python ' + script.to_s + ' ' + source.to_s + ' ' + target2.to_s + ' 1200 900 2>&1'
           result  = `#{command}`.gsub(/^\s+|\s+$/, '')
           logger.info 'APIJS::ApijsController#thumb: ' + command + ' (' + result + ')'
         end
       end
     end
 
-    # vérification si l'utilisateur a accès au projet
+    # vérification d'accès
     if !User.current.allowed_to?({:controller => 'projects', :action => 'show'}, @project)
-      if @project && @project.archived?
-        render_403 :message => :notice_not_authorized_archived_project
-      else
-        deny_access
-      end
+      deny_access
     # envoie de l'image avec mise en cache
     elsif File.file?(target) && stale?(:etag => target)
-      send_file(target, :filename => filename_for_content_disposition(@attachment.filename),
-        :type => @attachment.getMimeType, :disposition => 'inline')
+      if @attachment.isVideo?
+        send_file(target, :filename => filename_for_content_disposition(@attachment.filename.gsub(/\.(ogv|webm|mp4|m4v)$/i, '.jpg')), :type => 'image/jpeg', :disposition => 'inline')
+      else
+        send_file(target, :filename => filename_for_content_disposition(@attachment.filename), :type => @attachment.getMimeType, :disposition => 'inline')
+      end
     end
   end
 
 
   # #### Gestion de l'image aperçu (photo) ############################################ public ### #
-  # = révision : 22
+  # = révision : 30
+  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
   # » Utilise un script python pour générer l'image aperçu (taille 1200x900, qualité 85)
-  # » Vérifie si l'utilisateur a accès au projet avant d'envoyer l'aperçu
-  # » Utilise le système de cache de Ruby (stale?) et enregistre les commandes et leurs résultats dans les logs
-  # » Utilise la commande python (avec python-imaging)
+  # » Utilise la commande python (avec python-imaging uniquement)
+  # » Enregistre les commandes et leurs résultats dans les logs
+  # » Téléchargement d'une image avec mise en cache (inline/stale?)
   def show
 
     # préparation de l'image
     source = @attachment.diskfile
-    target = ROOT + '/show/' + @attachment.created_on.strftime('%Y-%m') + '/' + @attachment.id.to_s + File.extname(@attachment.filename)
+    target = APIJS_ROOT + '/show/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s + File.extname(@attachment.filename).to_s
     script = File.dirname(__FILE__).gsub('app/controllers', 'tools/image.py')
 
     # génération de l'image
     if File.file?(source) && !File.file?(target)
-      command = 'python ' + script + ' ' + source + ' ' + target + ' 1200 900 2>&1'
+      command = 'python ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' 1200 900 2>&1'
       result  = `#{command}`.gsub(/^\s+|\s+$/, '')
       logger.info 'APIJS::ApijsController#show: ' + command + ' (' + result + ')'
     end
 
-    # vérification si l'utilisateur a accès au projet
+    # vérification d'accès
     if !User.current.allowed_to?({:controller => 'projects', :action => 'show'}, @project)
-      if @project && @project.archived?
-        render_403 :message => :notice_not_authorized_archived_project
-      else
-        deny_access
-      end
+      deny_access
     # envoie de l'image avec mise en cache
     elsif File.file?(target) && stale?(:etag => target)
-      send_file(target, :filename => filename_for_content_disposition(@attachment.filename),
-        :type => @attachment.getMimeType, :disposition => 'inline')
+      send_file(target, :filename => filename_for_content_disposition(@attachment.filename), :type => @attachment.getMimeType, :disposition => 'inline')
     end
   end
 
 
   # #### Gestion du téléchargement des fichiers ####################################### public ### #
-  # = révision : 16
+  # = révision : 21
+  # » Vérifie si l'utilisateur a accès au projet avant tout
+  # » Téléchargement d'une vidéo en 206 Partial Content (inline)
   # » Téléchargement d'une image avec mise en cache (inline/stale?) ou téléchargement d'un fichier (attachment)
-  # » Vérifie si l'utilisateur a accès au projet avant d'envoyer le fichier
   def download
 
-    # vérification si l'utilisateur a accès au projet
+    # vérification d'accès
     if !User.current.allowed_to?({:controller => 'projects', :action => 'show'}, @project)
-      if @project && @project.archived?
-        render_403 :message => :notice_not_authorized_archived_project
-      else
-        deny_access
-      end
-    # téléchargement d'une image avec mise en cache ou téléchargement d'un fichier
-    # => lorsque le paramètre filename n'est pas présent OU pour les images en dehors de l'album
-    elsif !params[:filename] || params[:inline]
+      deny_access
+    # ou télachargement d'une vidéo en 206 Partial Content (http://stackoverflow.com/a/7604330 + http://stackoverflow.com/a/16593030)
+    # téléchargement d'une image avec mise en cache
+    # ou téléchargement d'un fichier
+    elsif !params[:filename] || params[:inline] || params[:stream]
       @attachment.increment_download if @attachment.container.is_a?(Version) || @attachment.container.is_a?(Project)
-      if @attachment.isImage?
+      # vidéo
+      if @attachment.isVideo?
+        file_begin = 0
+        file_size = @attachment.filesize
+        file_end = file_size - 1
+
+        if request.headers['Range']
+          match = request.headers['Range'].match(/bytes=(\d+)-(\d*)/)
+          if match
+            file_begin = match[1].to_i
+            file_end = match[2].to_i if match[2] && !match[2].empty?
+          end
+        end
+
+        response.header['Accept-Ranges']  = 'bytes'
+        response.header['Content-Range']  = 'bytes ' + file_begin.to_s + '-' + file_end.to_s + '/' + file_size.to_s
+        response.header['Content-Length'] = (file_end - file_begin + 1).to_s
+        response.header['Last-Modified']  = @attachment.created_on.strftime('%a, %d %b %Y %H:%M:%S %z').to_s
+
+        if !request.headers['Range']
+          send_file(@attachment.diskfile,
+            :filename => filename_for_content_disposition(@attachment.filename),
+            :type => @attachment.getMimeType, :disposition => 'inline')
+        else
+          send_data(File.binread(@attachment.diskfile, file_end - file_begin + 1, file_begin),
+            :filename => filename_for_content_disposition(@attachment.filename),
+            :type => @attachment.getMimeType, :disposition => 'inline', :status => '206 Partial Content')
+        end
+
+        response.close
+      # image/photo
+      elsif @attachment.isImage?
         if stale?(:etag => @attachment.diskfile)
           send_file(@attachment.diskfile, :filename => filename_for_content_disposition(@attachment.filename),
             :type => @attachment.getMimeType, :disposition => 'inline')
         end
+      # fichier
       else
         send_file(@attachment.diskfile, :filename => filename_for_content_disposition(@attachment.filename),
           :type => @attachment.getMimeType, :disposition => 'attachment')
@@ -157,22 +243,18 @@ class ApijsController < AttachmentsController
 
 
   # #### Modification d'une description ############################################### public ### #
-  # = révision : 10
-  # » Renvoie l'id du fichier suivi de la description en cas de succès
-  # » Supprime certains caractères de la description avant son enregistrement
+  # = révision : 12
   # » Vérifie si l'utilisateur a accès au projet et à la modification
+  # » Renvoie l'id du fichier suivi de la description en cas de modification réussie
+  # » Supprime certains caractères de la description avant son enregistrement
   def edit
 
     @attachment.description = params[:description].gsub(/["\\\x0]/, '')
     @attachment.description.strip!
 
-    # vérification si l'utilisateur a accès au projet et à la modification
+    # vérification d'accès
     if !User.current.allowed_to?({:controller => 'projects', :action => 'show'}, @project) || !User.current.allowed_to?(:edit_attachments, @project)
-      if @project && @project.archived?
-        render_403 :message => :notice_not_authorized_archived_project
-      else
-        deny_access
-      end
+      deny_access
     # modification
     elsif @attachment.save
       render(:text => 'attachmentId' + @attachment.id.to_s + ':' + @attachment.description)
@@ -184,19 +266,15 @@ class ApijsController < AttachmentsController
 
 
   # #### Suppression d'un fichier ##################################################### public ### #
-  # = révision : 11
-  # » Renvoie l'id du fichier suivi en cas de succès de suppression
-  # » Supprime le fichier et les fichiers générés lorsque nécessaire
+  # = révision : 16
   # » Vérifie si l'utilisateur a accès au projet et à la suppresion
+  # » Renvoie l'id du fichier suivi en cas de suppression réussie
+  # » Supprime définitivement le fichier et les fichiers générés (miniature et aperçu)
   def delete
 
-    # vérification si l'utilisateur a accès au projet et à la suppression
+    # vérification d'accès
     if !User.current.allowed_to?({:controller => 'projects', :action => 'show'}, @project) || !User.current.allowed_to?(:delete_attachments, @project)
-      if @project && @project.archived?
-        render_403 :message => :notice_not_authorized_archived_project
-      else
-        deny_access
-      end
+      deny_access
     # suppression
     elsif @attachment.delete
 
@@ -204,12 +282,12 @@ class ApijsController < AttachmentsController
       @attachment.container.attachments.delete(@attachment)
 
       if @attachment.isPhoto?
-        target = ROOT + '/thumb/' + @attachment.created_on.strftime('%Y-%m') + '/' + @attachment.id.to_s + File.extname(@attachment.filename)
+        target = APIJS_ROOT + '/thumb/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s + File.extname(@attachment.filename).to_s
         File.delete(target) if File.file?(target)
-        target = ROOT + '/show/' + @attachment.created_on.strftime('%Y-%m') + '/' + @attachment.id.to_s + File.extname(@attachment.filename)
+        target = APIJS_ROOT + '/show/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s + File.extname(@attachment.filename).to_s
         File.delete(target) if File.file?(target)
       elsif @attachment.isVideo?
-        target = ROOT + '/thumb/' + @attachment.created_on.strftime('%Y-%m') + '/' + @attachment.id.to_s + '.jpg'
+        target = APIJS_ROOT + '/thumb/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s + '.jpg'
         File.delete(target) if File.file?(target)
       end
 

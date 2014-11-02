@@ -7,6 +7,7 @@ en:
   apijs_status: "State:"
   apijs_status_enabled: "Enabled"
   apijs_status_disabled: "Disabled"
+
   apijs_config_apijs: "General"
   apijs_config_enable: "Enable apijs"
   apijs_config_sort_order: "Sort files alphabetically"
@@ -23,9 +24,16 @@ en:
   apijs_config_directories: "Temporary directories"
   apijs_config_directories_info: "Used to store thumbnails for albums."
   apijs_config_programs: "Programs version"
+
   apijs_title_album: "Photo gallery"
   apijs_title_files: "Files list"
   apijs_title_download: "Download (%{value})"
+
+  apijs_zip_button: "Send multiple files (ZIP)"
+  apijs_notsaved: "[strong]Warning[/strong], the following files were not saved:"
+  apijs_saved: "[strong]However[/strong], the following files were successfully saved:"
+  apijs_final: "Finish your changes before save the form or simply [a href='javascript:location.reload();']reload[/a] the page."
+
   apijs_samples: "Examples:"
   apijs_sample1_title: "PHP manual"
   apijs_sample1_text1: "It is important to note that just because the mail was accepted for delivery, it doesn't mean the mail will actually reach the intended destination."

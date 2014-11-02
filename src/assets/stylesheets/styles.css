@@ -1,12 +1,78 @@
 /**
- * Copyright 2012-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * File created in 2012, Updated L/27/10/2014, version 20
  * https://redmine.luigifab.info/projects/redmine/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL).
  */
 
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& divers &&& */
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogues &&& */
+#apijsDialog { margin:0; }
+#apijsBox { font-size:0.8rem; border:none; }
+#apijsBox button::-moz-focus-inner { margin:-1px; padding:0; }
+#apijsBox a { color:blue; }
+
+#apijsBox.options.editattachment input[type="text"] {
+	display:block; padding:0.3em; width:calc(100% - 4px - 0.6em); width:-moz-calc(100% - 4px - 0.6em); width:-webkit-calc(100% - 4px - 0.6em);
+	border:1px solid #888; background-color:#EEE;
+}
+
+#apijsBox.information.upload.error p { margin:0; }
+#apijsBox.information.upload.error ul { margin:0.3em 0 0.7em 1em; column-count:3; -moz-column-count:3; -webkit-column-count:3; }
+#apijsBox.information.upload.error ul li { font-size:0.85em; color:#444; }
+
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& albums et listes &&& */
+body div.attachments.album { margin:1em 0; text-align:left; }
+
+body div.attachments.album dd { position:relative; margin:0.5em 0 0 0.5em; padding-right:60px; height:17px; }
+body div.attachments.album dd div { display:inline; position:absolute; right:0; }
+body div.attachments.album dd span { line-height:19px; vertical-align:middle; }
+
+body ul.attachments { margin:1em 0; padding:0; list-style:none; }
+body ul.attachments li { padding:0.25em 0.5em; }
+body ul.attachments li:hover { background-color:#DEDEDE; }
+
+body ul.attachments li a { vertical-align:middle; }
+body ul.attachments li strong { padding:0 0.3em; }
+body ul.attachments li span { padding:0 0.1em; }
+body ul.attachments li span.size { color:gray; }
+body ul.attachments li span.date { color:gray; }
+
+body.controller-issues div.issue.details div.wiki.files h2 {
+	margin-bottom:-0.5em; padding-top:12px; font-size:12px;
+	border-top:1px solid #CCC; border-bottom:none;
+}
+body.controller-documents div.wiki.files h2, body.controller-messages div.wiki.files h2 {
+	margin-bottom:-0.5em; font-size:12px;
+}
+
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& boutons &&& */
+body span.attachment.show, body button.attachment {
+	display:inline-block; padding:0; width:16px; height:16px; vertical-align:middle;
+	border:none; color:transparent; cursor:pointer; opacity:0.5;
+	background-color:transparent; background-position:center; background-size:16px;
+	transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;
+}
+
+body span.attachment.show, body button.attachment.show { margin:0 -0.2em 0 0.2em; background-image:url("../images/humanity-sprites.svg#zoom"); }
+body button.attachment.download { background-image:url("../images/humanity-sprites.svg#browser-download"); }
+body button.attachment.delete { background-image:url("../images/humanity-sprites.svg#delete"); }
+body button.attachment.edit { background-image:url("../images/humanity-sprites.svg#edit"); }
+
+body span.attachment.show:hover, body span.attachment.show:active, body span.attachment.show:focus,
+body button.attachment:hover, body button.attachment:active, body button.attachment:focus { opacity:1; }
+
+body span.attachment.show a { display:inline-block; padding:0; width:16px; height:16px; vertical-align:middle; }
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	body button.attachment.download { background-image:url("../images/humanity-browser-download.svg"); }
+	body button.attachment.delete { background-image:url("../images/humanity-delete.svg"); }
+	body button.attachment.edit { background-image:url("../images/humanity-edit.svg"); }
+	body button.attachment.show, a.attachment.show { background-image:url("../images/humanity-zoom.svg"); }
+}
+
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& configuration &&& */
 fieldset.apijs.tabular.settings { margin:1em; padding:0.5em; border:1px solid #CCC; }
 fieldset.apijs.tabular.settings p span.cmd { white-space:pre-wrap; }
 fieldset.apijs.tabular.settings p em.info { margin:0.2em 0; line-height:140%; }
@@ -15,67 +81,3 @@ fieldset.apijs.tabular.settings p a + em.info { margin:0; }
 fieldset.apijs.tabular.settings.info { margin:0 0.6em 1.3em; border:none; }
 fieldset.apijs.tabular.settings.info ul { margin:0; padding:0; list-style:none; }
 fieldset.apijs.tabular.settings.info ul li { margin:0; }
-
-body.controller-issues div.issue.details div.wiki.files h2 {
-	margin-bottom:-0.5em; padding-top:12px; font-size:12px;
-	border-top:1px solid #CCC; border-bottom:none;
-}
-
-body.controller-documents div.wiki.files h2, body.controller-messages div.wiki.files h2 { margin-bottom:-0.5em; font-size:12px; }
-
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogues &&& */
-#apijsDialog { margin:0; }
-
-#apijsBox { font-size:0.8rem; border:none; }
-#apijsBox button::-moz-focus-inner { margin:-1px; padding:0; }
-#apijsBox .nodisplay { display:none; }
-#apijsBox .novisible { visibility:hidden; }
-
-#apijsBox.options.editattachment input[type="text"] {
-	display:block; padding:0.3em; width:calc(100% - 4px - 0.6em); width:-moz-calc(100% - 4px - 0.6em); width:-webkit-calc(100% - 4px - 0.6em);
-	border:1px solid #888; background-color:#EEE;
-}
-
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& albums &&& */
-body div.attachments.album { margin:1em 0; text-align:left; }
-body div.attachments.album dd { position:relative; margin:0.5em 0 0 0.5em; padding-right:60px; height:17px; }
-body div.attachments.album dd div { display:inline; position:absolute; right:0; }
-body div.attachments.album dd span { line-height:19px; vertical-align:middle; }
-
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& listes &&& */
-body ul.attachments { margin:1em 0; padding:0; list-style:none; }
-body ul.attachments li { padding:0.25em 0.5em; }
-body ul.attachments li:hover { background-color:#DEDEDE; }
-
-body ul.attachments li strong { padding:0 0.3em; }
-body ul.attachments li a { vertical-align:middle; }
-body ul.attachments li a.icon { padding-left:18px; }
-
-body ul.attachments li span { padding:0 0.1em; }
-body ul.attachments li span.description { }
-body ul.attachments li span.author { }
-body ul.attachments li span.size { color:gray; }
-body ul.attachments li span.date { color:gray; }
-
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& boutons &&& */
-body button.attachment, body a.attachment.show {
-	display:inline-block; padding:0; width:16px; height:16px; vertical-align:middle;
-	border:none; color:transparent; background-color:transparent; background-position:center; background-size:16px; cursor:pointer; opacity:0.5;
-	transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;
-}
-
-body button.attachment.download { background-image:url("../images/humanity-sprites.svg#browser-download"); }
-body button.attachment.delete { background-image:url("../images/humanity-sprites.svg#delete"); }
-body button.attachment.edit { background-image:url("../images/humanity-sprites.svg#edit"); }
-body button.attachment.show, a.attachment.show { margin:0 -0.2em 0 0.2em; background-image:url("../images/humanity-sprites.svg#zoom"); }
-
-body button.attachment:hover, body button.attachment:active, body button.attachment:focus,
-body a.attachment.show:hover, body a.attachment.show:active, body a.attachment.show:focus { opacity:1; }
-
-/* stupid webkit, it doesn't support SVG fragment identifier for SVG sprites (Chrome 31..32, Chromium 28..32, Opera 15..18, Safari 6) */
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-	body button.attachment.download { background-image:url("../images/humanity-browser-download.svg"); }
-	body button.attachment.delete { background-image:url("../images/humanity-delete.svg"); }
-	body button.attachment.edit { background-image:url("../images/humanity-edit.svg"); }
-	body button.attachment.show, a.attachment.show { background-image:url("../images/humanity-zoom.svg"); }
-}

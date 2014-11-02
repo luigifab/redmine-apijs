@@ -1,9 +1,9 @@
 <%
 # Created J/12/12/2013
-# Updated V/21/03/2014
-# Version 20
+# Updated D/08/06/2014
+# Version 22
 #
-# Copyright 2013-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -17,7 +17,6 @@
 # GNU General Public License (GPL) for more details.
 
 html_title "Redmine Apijs plugin - " + l(:label_administration)
-root = ENV['RAILS_TMP'] ? (ENV['RAILS_TMP'] + '/apijs') : (ENV['RAILS_CACHE'] ? (ENV['RAILS_CACHE'] + '/apijs') : (Rails.root + '/tmp/apijs'))
 %>
 
 <fieldset class="apijs tabular settings info">
@@ -102,9 +101,9 @@ root = ENV['RAILS_TMP'] ? (ENV['RAILS_TMP'] + '/apijs') : (ENV['RAILS_CACHE'] ? 
 	</p>
 	<p>
 		<label><%= raw l(:apijs_config_directories) %></label>
-		<%= root %>/ <span class="cmd"><%= `du -hs #{root}/ | cut -f1`.strip! %></span>
-		<br /><%= root %>/thumb/ <span class="cmd"><%= `du -hs #{root}/thumb/ | cut -f1`.strip! %></span>
-		<br /><%= root %>/show/ <span class="cmd"><%= `du -hs #{root}/show/ | cut -f1`.strip! %></span>
+		<%= APIJS_ROOT %>/ <span class="cmd"><%= `du -hs #{APIJS_ROOT}/ | cut -f1`.strip! %></span>
+		<br /><%= APIJS_ROOT %>/thumb/ <span class="cmd"><%= `du -hs #{APIJS_ROOT}/thumb/ | cut -f1`.strip! %></span>
+		<br /><%= APIJS_ROOT %>/show/ <span class="cmd"><%= `du -hs #{APIJS_ROOT}/show/ | cut -f1`.strip! %></span>
 		<em class="info"><%= raw l(:apijs_config_directories_info) %></em>
 	</p>
 </fieldset>

@@ -1,10 +1,10 @@
 # encoding: utf-8
 #
 # Created V/27/12/2013
-# Updated S/04/01/2014
-# Version 25
+# Updated D/07/09/2014
+# Version 27
 #
-# Copyright 2012-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -37,18 +37,12 @@ module AttachmentPath
     # construction des urls
     def getUrl(action, all=false)
 
-      h = Setting.host_name
-      h = h.to_s.gsub(%r{\/.*$}, '') unless Redmine::Utils.relative_url_root.blank?
-
       if (action == 'redmineshow')
-        return url_for({ :host => h, :protocol => Setting.protocol,
-          :controller => 'attachments', :action => 'show', :id => self.id, :filename => self.filename })
+        return url_for({ :only_path => true, :controller => 'attachments', :action => 'show', :id => self.id, :filename => self.filename })
       elsif all
-        return url_for({ :host => h, :protocol => Setting.protocol,
-          :controller => 'apijs', :action => action, :id => self.id, :filename => self.filename })
+        return url_for({ :only_path => true, :controller => 'apijs', :action => action, :id => self.id, :filename => self.filename })
       else
-        return url_for({ :host => h, :protocol => Setting.protocol,
-          :controller => 'apijs', :action => action })
+        return url_for({ :only_path => true, :controller => 'apijs', :action => action })
       end
     end
 
@@ -66,10 +60,10 @@ module AttachmentPath
       return "location.href = '" + getUrl('download', true) + "';"
     end
     def getEditButton(token)
-      return "editAttachment(" + self.id.to_s + ", '" + getUrl('edit') + "', '" + token + "');"
+      return "apijsEditAttachment(" + self.id.to_s + ", '" + getUrl('edit') + "', '" + token + "');"
     end
     def getDeleteButton(token)
-      return "deleteAttachment(" + self.id.to_s + ", '" + getUrl('delete') + "', '" + token + "');"
+      return "apijsDeleteAttachment(" + self.id.to_s + ", '" + getUrl('delete') + "', '" + token + "');"
     end
     def getShowButton(settingShowFilename, settingShowExifdate, description)
       if self.isImage?
@@ -127,7 +121,14 @@ module AttachmentPath
         result  = `#{command}`.gsub(/^\s+|\s+$/, '')
         logger.info 'APIJS::AttachmentPath#update_date: ' + command + ' (' + result + ')'
 
-        self.created_on = result[0..9].gsub(':', '/') + ' ' + result[11..18] if result.length >= 19
+        # 2014:06:14 16:43:53
+        # utilise le fuseau horaire de l'utilisateur
+        if result.length >= 19
+          date = result[0..9].gsub(':', '-') + ' ' + result[11..18]
+          zone = User.current.time_zone
+          date = zone ? zone.parse(date) : date
+          self.created_on = date
+        end
       end
     end
 

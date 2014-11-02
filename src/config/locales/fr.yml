@@ -7,6 +7,7 @@ fr:
   apijs_status: "État :"
   apijs_status_enabled: "Activé"
   apijs_status_disabled: "Désactivé"
+
   apijs_config_apijs: "Général"
   apijs_config_enable: "Activer l'apijs"
   apijs_config_sort_order: "Trier les fichiers par ordre alphabétique"
@@ -23,14 +24,21 @@ fr:
   apijs_config_directories: "Répertoires temporaires"
   apijs_config_directories_info: "Utilisés pour stocker les miniatures pour les albums."
   apijs_config_programs: "Version des programmes"
+
   apijs_title_album: "Galerie photos"
   apijs_title_files: "Liste des fichiers"
   apijs_title_download: "Télécharger (%{value})"
+
+  apijs_zip_button: "Envoyer plusieurs fichiers (ZIP)"
+  apijs_notsaved: "[strong]Attention[/strong], les fichiers suivants n'ont pas été enregistrés :"
+  apijs_saved: "[strong]Cependant[/strong], les fichiers suivants ont bien été enregistrés :"
+  apijs_final: "Terminez vos modifications avant d'enregistrer le formulaire ou [a href='javascript:location.reload();']rechargez[/a] simplement la page."
+
   apijs_samples: "Exemples :"
   apijs_sample1_title: "Manuel PHP"
   apijs_sample1_text1: "Il est important de noter que ce n'est pas parce que le mail a été accepté pour livraison, qu'il arrivera à destination."
   apijs_sample2_title: "Surprise !"
-  apijs_sample2_text1: "Vous regardez cette vidéo sans extension propriétaire grâce à la nouvelle balise [em]video[/em] intégrée dans le format [strong]HTML 5[/strong]."
+  apijs_sample2_text1: "Vous regardez cette vidéo sans extension propriétaire grâce à la nouvelle balise [em]video[/em] intégrée dans le standard [strong]HTML 5[/strong]."
   apijs_sample2_text2: "Site internet : %{value}"
   apijs_sample3_title: "Surprise !"
   apijs_sample3_text1: "Regardez le titre des émoticônes pour obtenir de l'aide..."

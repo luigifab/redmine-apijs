@@ -1,10 +1,10 @@
 <?php
 /**
  * Created J/26/12/2013
- * Updated J/26/12/2013
- * Version 1
+ * Updated S/27/09/2014
+ * Version 3
  *
- * Copyright 2013-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/redmine/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -20,43 +20,40 @@
 
 error_reporting(E_ALL);
 date_default_timezone_set('UTC');
-ini_set('max_execution_time', 1000);
 ini_set('display_errors', 1);
 
-header('Content-Type: text/plain');
+header('Content-Type: text/plain; charset=utf-8');
+header('Cache-Control: no-cache, must-revalidate');
+header('Pragma: no-cache');
 
 $db = mysqli_connect('SERVER', 'USER', 'PASSWORD', 'DATABASE');
-$dir = 'THE_REDMINE_FILES_DIRECTORY';
+exec('find /THE_REDMINE_FILES_DIRECTORY/ -type f', $files);
 
-if ($handle = opendir($dir)) {
+foreach ($files as $file) {
 
-	while (($file = readdir($handle)) !== false) {
+	if (is_file($file)) {
 
-		if (($file !== '.') && ($file !== '..')) {
+		$jpg = (strpos($file, '.jpg') !== false) ? true : false;
+		$date = null;
 
-			$date = null;
+		if ($jpg) {
+			exec('exiftool "-filemodifydate<CreateDate" '.$dir.$file);
 			exec('exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal '.$dir.$file.' | cut -c35-', $date);
-
-			if (isset($date[0])) {
-
-				//exec('exiftool -xmp:creator="FirstName LastName <email@you.me>" -xmp:description="https://redmine.luigifab.info/projects/example/wiki" -xmp:copyright="Creative Commons BY-NC-SA 3" -thumbnailimage= -overwrite_original -preserve');
-				//exec('exiftool "-filemodifydate<CreateDate" '.$dir.$file);
-
-				$sql = 'UPDATE attachments SET created_on = "'.date('Y-m-d H:i:s', strtotime($date[0])).'",
-				                               filesize = "'.filesize($dir.$file).'", digest = "'.md5_file($dir.$file).'"
-				        WHERE disk_filename = "'.$file.'"';
-			}
-			else {
-				$sql = 'UPDATE attachments SET filesize = "'.filesize($dir.$file).'", digest = "'.md5_file($dir.$file).'"
-				        WHERE disk_filename = "'.$file.'"';
-			}
-
-			mysqli_query($db, $sql);
-			echo $file,"\n";
 		}
-	}
 
-	closedir($handle);
+		if ($jpg && isset($date[0])) {
+			$sql = 'UPDATE attachments SET created_on = "'.date('Y-m-d H:i:s', strtotime($date[0])).'",
+									 filesize = "'.filesize($dir.$file).'", digest = "'.md5_file($dir.$file).'"
+				   WHERE disk_filename = "'.$file.'"';
+		}
+		else {
+			$sql = 'UPDATE attachments SET filesize = "'.filesize($dir.$file).'", digest = "'.md5_file($dir.$file).'"
+				   WHERE disk_filename = "'.$file.'"';
+		}
+
+		mysqli_query($db, $sql);
+		echo $file,"\n";
+	}
 }
 
 mysqli_close($db);
