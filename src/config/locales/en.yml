@@ -1,3 +1,5 @@
+# by Brian Legrand, Fabrice Creuzot (luigifab) <code~luigifab~info>
+# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
 en:
   apijs_documentation: "Documentation:"
   apijs_pluginlink: "https://redmine.luigifab.info/projects/redmine/wiki/Apijs"
@@ -13,10 +15,12 @@ en:
   apijs_config_sort_order: "Sort files alphabetically"
   permission_edit_attachments: "Edit files description"
   permission_delete_attachments: "Delete files"
-  apijs_config_album: "Photos albums"
-  apijs_config_show_album: "Display photos albums"
-  apijs_config_show_filename: "Display photos name"
-  apijs_config_show_exifdate: "Display photos date"
+  apijs_config_album: "Photos/videos albums"
+  apijs_config_show_album: "Display albums"
+  apijs_config_show_album_infos: "Display all informations in albums"
+  apijs_config_show_filename: "Display name in slideshow"
+  apijs_config_show_exifdate: "Display date in slideshow"
+  apijs_config_mimetypes: "Use following files"
   apijs_config_create_all: "Generate the two images"
   apijs_config_create_all_info: "Generates thumbnails and preview image at the same time, it slowed the first page display, but accelerates the first slideshow display."
   apijs_config_album_exclude_name: "Exclude photos from album<br />whose name begins with"
@@ -28,11 +32,10 @@ en:
   apijs_title_album: "Photo gallery"
   apijs_title_files: "Files list"
   apijs_title_download: "Download (%{value})"
-
   apijs_zip_button: "Send multiple files (ZIP)"
   apijs_notsaved: "[strong]Warning[/strong], the following files were not saved:"
   apijs_saved: "[strong]However[/strong], the following files were successfully saved:"
-  apijs_final: "Finish your changes before save the form or simply [a href='javascript:location.reload();']reload[/a] the page."
+  apijs_final: "Finish your changes before save the form or simply [a %{value}]reload[/a] the page."
 
   apijs_samples: "Examples:"
   apijs_sample1_title: "PHP manual"

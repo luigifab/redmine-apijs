@@ -4,7 +4,7 @@
  * Updated S/27/09/2014
  * Version 3
  *
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/redmine/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify

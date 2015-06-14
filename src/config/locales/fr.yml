@@ -1,3 +1,5 @@
+# by Fabrice Creuzot (luigifab) <code~luigifab~info>
+# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
 fr:
   apijs_documentation: "Documentation :"
   apijs_pluginlink: "https://redmine.luigifab.info/projects/redmine/wiki/Apijs-FR"
@@ -13,10 +15,12 @@ fr:
   apijs_config_sort_order: "Trier les fichiers par ordre alphabétique"
   permission_edit_attachments: "Modifier la description des fichiers"
   permission_delete_attachments: "Supprimer les fichiers"
-  apijs_config_album: "Albums photos"
-  apijs_config_show_album: "Afficher les albums photos"
-  apijs_config_show_filename: "Afficher le nom des photos"
-  apijs_config_show_exifdate: "Afficher la date des photos"
+  apijs_config_album: "Albums photos/vidéos"
+  apijs_config_show_album: "Afficher les albums"
+  apijs_config_show_album_infos: "Afficher toutes les informations"
+  apijs_config_show_filename: "Afficher le nom dans le diaporama"
+  apijs_config_show_exifdate: "Afficher la date dans le diaporama"
+  apijs_config_mimetypes: "Utiliser les fichiers suivants"
   apijs_config_create_all: "Générer les deux images"
   apijs_config_create_all_info: "Génère la miniature et l'image d'aperçu en même temps, cela ralenti le premier affichage de la page, mais accélère le premier affichage du diaporama."
   apijs_config_album_exclude_name: "Exclure les photos de l'album<br />dont le nom commence par"
@@ -28,11 +32,10 @@ fr:
   apijs_title_album: "Galerie photos"
   apijs_title_files: "Liste des fichiers"
   apijs_title_download: "Télécharger (%{value})"
-
   apijs_zip_button: "Envoyer plusieurs fichiers (ZIP)"
   apijs_notsaved: "[strong]Attention[/strong], les fichiers suivants n'ont pas été enregistrés :"
   apijs_saved: "[strong]Cependant[/strong], les fichiers suivants ont bien été enregistrés :"
-  apijs_final: "Terminez vos modifications avant d'enregistrer le formulaire ou [a href='javascript:location.reload();']rechargez[/a] simplement la page."
+  apijs_final: "Terminez vos modifications avant d'enregistrer le formulaire ou [a %{value}]rechargez[/a] simplement la page."
 
   apijs_samples: "Exemples :"
   apijs_sample1_title: "Manuel PHP"

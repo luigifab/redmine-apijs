@@ -1,10 +1,9 @@
 # encoding: utf-8
-#
 # Created L/21/05/2012
-# Updated D/07/09/2014
-# Version 17
+# Updated D/26/04/2015
+# Version 20
 #
-# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -27,12 +26,12 @@ Redmine::Plugin.register :redmine_apijs do
   name 'Redmine Apijs plugin'
   author 'Fabrice Creuzot'
   description 'Integrate the apijs javascript library into Redmine.'
-  version '5.1.0'
+  version '5.2.0'
   url 'https://redmine.luigifab.info/projects/redmine/wiki/apijs'
   author_url 'http://www.luigifab.info/'
 
   permission :edit_attachments, { :apijs => :edit }, { :require => :loggedin }
-  permission :delete_attachments, { :apijs => :delete }, { :require => :loggedin, :require => :member }
+  permission :delete_attachments, { :apijs => :delete }, { :require => [:loggedin, :member] }
 
   settings({
     :partial => 'settings/apijs',
@@ -40,8 +39,16 @@ Redmine::Plugin.register :redmine_apijs do
       :enabled => '0',
       :sort_attachments => '0',
       :show_album => '0',
+      :show_album_infos => '0',
       :show_filename => '0',
       :show_exifdate => '0',
+      :album_mimetype_jpg  => '1',
+      :album_mimetype_jpeg => '1',
+      :album_mimetype_png  => '0',
+      :album_mimetype_ogv  => '1',
+      :album_mimetype_webm => '1',
+      :album_mimetype_mp4  => '0',
+      :album_mimetype_m4v  => '0',
       :album_exclude_name => '',
       :album_exclude_desc => '',
       :create_all => '0'

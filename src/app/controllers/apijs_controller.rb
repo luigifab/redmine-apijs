@@ -1,10 +1,9 @@
 # encoding: utf-8
-#
 # Created J/12/12/2013
-# Updated W/28/10/2014
-# Version 29
+# Updated J/14/05/2015
+# Version 32
 #
-# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -21,12 +20,23 @@ class ApijsController < AttachmentsController
 
   before_filter :find_project, :except => [:upload, :uploadzip]
   before_filter :authorize_global, :only => [:upload, :uploadzip]
-  before_filter :read_authorize, :file_readable, :only => [:thumb, :show, :download]
-  before_filter :read_authorize, :only => [:edit, :delete]
+  before_filter :read_authorize, :file_readable, :only => [:thumb, :show, :download, :thumbnail]
+  before_filter :read_authorize, :only => [:editdesc, :delete]
+
+  # n'existe plus avec Redmine 3 (Rails 4)
+  if Rails::VERSION::MAJOR >= 4
+    def find_project
+      @attachment = Attachment.find(params[:id])
+      raise ActiveRecord::RecordNotFound if params[:filename] && params[:filename] != @attachment.filename
+      @project = @attachment.project
+    rescue ActiveRecord::RecordNotFound
+      render_404
+    end
+  end
 
 
   # #### Gestion des fichiers ZIP ##################################################### public ### #
-  # = révision : 8
+  # = révision : 9
   # » Vérifie si l'utilisateur a accès au projet
   # » Permet d'ajouter plusieurs fichiers en utilisant un fichier ZIP
   # » Disponible uniquement dans le wiki, les annonces et les demandes
@@ -74,7 +84,7 @@ class ApijsController < AttachmentsController
 
       if (error.length > 0)
         msg.push('[p]' + l(:apijs_notsaved) + '[/p][ul][li]' +   error.join('[/li][li]') + '[/li][/ul]')
-        msg.push('[p]' + l(:apijs_saved)    + '[/p][ul][li]' + success.join('[/li][li]') + '[/li][/ul][p]' + l(:apijs_final) + '[/p]') if (success.length > 0)
+        msg.push('[p]' + l(:apijs_saved)    + '[/p][ul][li]' + success.join('[/li][li]') + '[/li][/ul][p]' + l(:apijs_final, "href='javascript:location.reload();'") + '[/p]') if (success.length > 0)
       else
         msg.push('success-' + success.length.to_s)
       end
@@ -147,9 +157,9 @@ class ApijsController < AttachmentsController
 
 
   # #### Gestion de l'image aperçu (photo) ############################################ public ### #
-  # = révision : 30
+  # = révision : 32
   # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
-  # » Utilise un script python pour générer l'image aperçu (taille 1200x900, qualité 85)
+  # » Utilise un script python pour générer l'image aperçu sauf pour les images PNG (taille 1200x900, qualité 85)
   # » Utilise la commande python (avec python-imaging uniquement)
   # » Enregistre les commandes et leurs résultats dans les logs
   # » Téléchargement d'une image avec mise en cache (inline/stale?)
@@ -161,7 +171,7 @@ class ApijsController < AttachmentsController
     script = File.dirname(__FILE__).gsub('app/controllers', 'tools/image.py')
 
     # génération de l'image
-    if File.file?(source) && !File.file?(target)
+    if File.file?(source) && !File.file?(target) && !@attachment.filename =~ /\.png$/i
       command = 'python ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' 1200 900 2>&1'
       result  = `#{command}`.gsub(/^\s+|\s+$/, '')
       logger.info 'APIJS::ApijsController#show: ' + command + ' (' + result + ')'
@@ -170,9 +180,12 @@ class ApijsController < AttachmentsController
     # vérification d'accès
     if !User.current.allowed_to?({:controller => 'projects', :action => 'show'}, @project)
       deny_access
-    # envoie de l'image avec mise en cache
+    # envoie de l'image avec mise en cache (!=PNG)
     elsif File.file?(target) && stale?(:etag => target)
       send_file(target, :filename => filename_for_content_disposition(@attachment.filename), :type => @attachment.getMimeType, :disposition => 'inline')
+    # envoie de l'image avec mise en cache (=PNG)
+    elsif File.file?(source) && stale?(:etag => source)
+      send_file(source, :filename => filename_for_content_disposition(@attachment.filename), :type => @attachment.getMimeType, :disposition => 'inline')
     end
   end
 
@@ -243,11 +256,11 @@ class ApijsController < AttachmentsController
 
 
   # #### Modification d'une description ############################################### public ### #
-  # = révision : 12
+  # = révision : 13
   # » Vérifie si l'utilisateur a accès au projet et à la modification
   # » Renvoie l'id du fichier suivi de la description en cas de modification réussie
   # » Supprime certains caractères de la description avant son enregistrement
-  def edit
+  def editdesc
 
     @attachment.description = params[:description].gsub(/["\\\x0]/, '')
     @attachment.description.strip!

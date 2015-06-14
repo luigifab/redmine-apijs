@@ -1,10 +1,9 @@
 # encoding: utf-8
-#
 # Created J/12/12/2013
-# Updated D/05/10/2014
-# Version 15
+# Updated D/26/04/2015
+# Version 16
 #
-# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -35,7 +34,7 @@ if Rails::VERSION::MAJOR >= 3
     match 'attachments/download/:id', :to => 'apijs#download',
       :id => /\d+/, :via => :get
 
-    match 'apijs/edit', :to => 'apijs#edit',
+    match 'apijs/editdesc', :to => 'apijs#editdesc',
       :via => :post
 
     match 'apijs/delete', :to => 'apijs#delete',
@@ -72,8 +71,8 @@ else
       :id => /\d+/,
       :conditions => { :method => :get }
 
-    map.connect 'apijs/edit',
-      :controller => 'apijs', :action => 'edit',
+    map.connect 'apijs/editdesc',
+      :controller => 'apijs', :action => 'editdesc',
       :conditions => { :method => :post }
 
     map.connect 'apijs/delete',

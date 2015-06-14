@@ -1,9 +1,9 @@
-<%
+<% #<?
 # Created L/21/05/2012
-# Updated S/04/10/2014
-# Version 30
+# Updated S/23/05/2015
+# Version 33
 #
-# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -16,23 +16,17 @@
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
 
-# trie des pièces jointes
 attachments.sort! { |a,b| a.filename.downcase <=> b.filename.downcase } if Setting.plugin_redmine_apijs['sort_attachments'] == '1'
 
-# configuration
-settingShowAlbum    = (Setting.plugin_redmine_apijs['show_album'] == '1') ? true : false
-settingShowFilename = (Setting.plugin_redmine_apijs['show_filename'] == '1') ? true : false
-settingShowExifdate = (Setting.plugin_redmine_apijs['show_exifdate'] == '1') ? true : false
-
-# permissions
-permissionEdit   = (User.current.allowed_to?(:edit_attachments, @project)) ? true : false
+settingShowAlbum      = (Setting.plugin_redmine_apijs['show_album'] == '1') ? true : false
+settingShowAlbumInfos = (Setting.plugin_redmine_apijs['show_album_infos'] == '1') ? true : false
+settingShowFilename   = (Setting.plugin_redmine_apijs['show_filename'] == '1') ? true : false
+settingShowExifdate   = (Setting.plugin_redmine_apijs['show_exifdate'] == '1') ? true : false
 permissionDelete = (User.current.allowed_to?(:delete_attachments, @project)) ? true : false
+permissionEdit   = (User.current.allowed_to?(:edit_attachments, @project)) ? true : false
 
-# id des conteneurs des albums
 @slideshowI = 0 unless defined? @slideshowI
 
-# vérification de la présence de photo ou vidéo (au moins une)
-# affichage ou non de l'album, affichage ou non de la liste des fichiers
 showAlbum = showList = false
 
 if settingShowAlbum
@@ -75,8 +69,7 @@ end
 								</a>
 							<% end %>
 						</dt>
-						<dd>
-							<span class="description"><%= h(description) %></span>
+						<dd class="<%= (settingShowAlbumInfos) ? 'big' : 'one' %>">
 							<div class="action">
 								<% if attachment.readable? %>
 									<button type="button" class="attachment download" title="<%= l(:apijs_title_download, number_to_human_size(attachment.filesize)) %>" onclick="<%= raw attachment.getDownloadButton %>"></button>
@@ -88,6 +81,13 @@ end
 									<button type="button" class="attachment delete" title="<%= l(:button_delete) %>" onclick="<%= raw attachment.getDeleteButton(form_authenticity_token) %>"></button>
 								<% end %>
 							</div>
+							<% if settingShowAlbumInfos %>
+								<span class="filename"><%= h(attachment.filename) %></span>
+								<span class="author date"><%= h(attachment.author) %> (<%= format_time(attachment.created_on) %>)</span>
+								<span class="description"><%= h(description) %></span>
+							<% else %>
+								<span class="description"><%= h(description) %></span>
+							<% end %>
 						</dd>
 					</dl>
 					<% slideshowJ += 1 %>

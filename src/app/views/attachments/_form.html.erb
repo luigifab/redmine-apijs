@@ -1,9 +1,9 @@
-<%
+<% #<?
 # Created S/06/09/2014
-# Updated S/25/10/2014
-# Version 3
+# Updated S/23/05/2015
+# Version 5
 #
-# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -28,16 +28,11 @@ elsif (@news)
 end
 
 if (Setting.plugin_redmine_apijs['enabled'] == '1' && id)
-
   url = url_for({ :only_path => true, :controller => 'apijs', :action => 'uploadzip' })
   url += '?type=' + type + '&amp;id=' + id.to_s
-
-  # utilise une taille au pif...
-  # parce que 'Setting.attachment_max_size.to_i / 1024' correspond à la taille d'un seul fichier
-  # semble une mauvaise idée de faire une multiplication (100 Mo * 10 = 1 Go, 5 Mo * 10 = 50 Mo)
-  maxsize = 500
+  maxsize = 500 # Setting.attachment_max_size.to_i / 1024
 %>
-	<button type="button" onclick="apijsSendZip('<%= url %>', '<%= form_authenticity_token %>', <%= maxsize %>);" style="float:right;"><%= l(:apijs_zip_button) %></button>
+	<button type="button" onclick="apijsSendZip('<%= raw url %>', '<%= form_authenticity_token %>', <%= maxsize %>);" style="float:right;"><%= l(:apijs_zip_button) %></button>
 <% end %>
 
 <% if Redmine::VERSION.to_s.gsub('.','').to_i < 230 %>

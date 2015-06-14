@@ -1,6 +1,6 @@
 /**
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * File created D/15/12/2013, Updated L/27/10/2014, version 25
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Created D/15/12/2013, updated V/01/05/2015, version 27
  * https://redmine.luigifab.info/projects/redmine/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -13,32 +13,40 @@ function apijsInitTranslations() {
 	apijs.i18n.data.en.deleteTitle = "Delete a file";
 	apijs.i18n.data.es.deleteTitle = "Borrar un archivo";
 	apijs.i18n.data.fr.deleteTitle = "Supprimer un fichier";
+	apijs.i18n.data.ru.deleteTitle = "Удалить файл";
 	apijs.i18n.data.en.deleteText = "Are you sure you want to delete this file?[br]Be careful, you can't cancel this operation.";
 	apijs.i18n.data.es.deleteText = "Está usted seguro-a de que desea eliminar este archivo?[br]Tenga cuidado, pues no podrá cancelar esta operación.";
 	apijs.i18n.data.fr.deleteText = "Êtes-vous certain de vouloir supprimer ce fichier ?[br]Attention, cette opération n'est pas annulable.";
+	apijs.i18n.data.ru.deleteText = "Вы уверены, что хотите удалить этот файл?[br]Осторожно, вы не сможете отменить эту операцию.";
 
 	apijs.i18n.data.en.errorTitle = "Error";
 	apijs.i18n.data.fr.errorTitle = "Erreur";
+	apijs.i18n.data.ru.errorTitle = "Ошибка";
 	apijs.i18n.data.en.error403 = "You are not authorized to perform this operation, please [a §]refresh the page[/a].";
 	apijs.i18n.data.es.error403 = "No está autorizado-a para llevar a cabo esta operación, por favor [a §]actualice la página[/a].";
-	apijs.i18n.data.fr.error403 = "Vous n'êtes pas autorisé(e) à effectuer cette opération, veuillez [a §]actualiser la page[/a].";
+	apijs.i18n.data.fr.error403 = "Vous n'êtes pas autorisé(e) à effectuer cette opération, veuillez [a §]actualiser la page[/a].";;
+	apijs.i18n.data.ru.error403 = "Вы не авторизованы для выполнения этой операции, пожалуйста [a §]обновите страницу[/a].";
 	apijs.i18n.data.en.error404 = "Sorry, the file no longer exists, please [a §]refresh the page[/a].";
 	apijs.i18n.data.es.error404 = "Lo sentimos, pero el archivo ya no existe, por favor [a §]actualice la página[/a].";
 	apijs.i18n.data.fr.error404 = "Désolé, le fichier n'existe plus, veuillez [a §]actualiser la page[/a].";
+	apijs.i18n.data.ru.error404 = "Извините, но файл не существует, пожалуйста [a §]обновите страницу[/a].";
 
 	apijs.i18n.data.en.sendTitle = "Send multiple files";
 	apijs.i18n.data.es.sendTitle = "Enviar varios archivos";
 	apijs.i18n.data.fr.sendTitle = "Envoyer plusieurs fichiers";
+	apijs.i18n.data.ru.sendTitle = "Отправить несколько файлов";
 	apijs.i18n.data.en.sendText = "§ files saved. Finish your changes before save the form or simply [a §]reload[/a] the page.";
-	//ijs.i18n.data.es.sendText = "!!";
 	apijs.i18n.data.fr.sendText = "§ fichiers enregistrés. Terminez vos modifications avant d'enregistrer le formulaire ou [a §]rechargez[/a] simplement la page.";
+	apijs.i18n.data.ru.sendText = "§ файлы сохранены. Завершите изменения перед тем как сохранить форму или просто [a §]перезагрузите[/a] страницу.";
 
 	apijs.i18n.data.en.editTitle = "Edit a description";
 	apijs.i18n.data.es.editTitle = "Editar una descripción";
 	apijs.i18n.data.fr.editTitle = "Modifier une description";
+	apijs.i18n.data.ru.editTitle = "Редактировать описание";
 	apijs.i18n.data.en.editText = "Enter below the new description for the file. To remove the description, leave the field empty.";
 	apijs.i18n.data.es.editText = "Introducir a continuación la nueva descripción para el archivo. Para eliminar la descripción, deje el campo en blanco.";
 	apijs.i18n.data.fr.editText = "Saisissez ci-dessous la nouvelle description pour ce fichier. Pour supprimer la description, laissez le champ vide.";
+	apijs.i18n.data.ru.editText = "Ниже введите новое описание файла. Оставьте поле пустым, чтобы удалить описание.";
 }
 
 // en cas d'erreur
@@ -48,23 +56,21 @@ function apijsShowError(data) {
 		apijs.dialog.dialogInformation(apijs.i18n.translate('errorTitle'), (typeof data === 'number') ? apijs.i18n.translate('error' + data, "href='javascript:location.reload();'") : data, 'error');
 	}
 	else {
-		apijs.dialog.styles.remove('lock');
+		apijs.dialog.styles.remove('lock'); // obligatoire sinon demande de confirmation de quitter la page
 		location.reload();
 	}
 }
 
 
-// #### Envoie d'un fichier ZIP ################################## public ### //
-// = révision : 12
+// #### Envoi d'un fichier ZIP ############################################## //
+// = révision : 13
 // » Affiche un formulaire d'upload avec le dialogue d'upload
-// » Envoie un fichier en Ajax (apijs/uploadzip[get=type,id;post=token,mybigzip])
-// » Une erreur dans le traitement ne veux pas forcément dire aucun fichier enregistré
+// » Envoi un fichier en Ajax (../apijs/uploadzip[get=type,id;post=token,mybigzip])
 function apijsSendZip(url, token, maxsize) {
 
 	if (typeof apijs.i18n.data.en.sendTitle !== 'string')
 		apijsInitTranslations();
 
-	// sendFile(title, action, inputname, maxsize, extensions, callback, args, icon)
 	apijs.config.upload.tokenValue = token;
 	apijs.upload.sendFile(apijs.i18n.translate('sendTitle'), url, 'mybigzip', maxsize, 'zip', apijsFinalZip);
 }
@@ -74,11 +80,11 @@ function apijsFinalZip(total) {
 }
 
 
-// #### Modification d'une description ########################### public ### //
-// = révision : 26
-// » Attention il est admis qu'un code différent de 200/403/404 ne peut pas arriver
+// #### Modification d'une description ###################################### //
+// = révision : 30
+// » Attention il est admis qu'un code différent de 200/403/404 n'est pas possible
 // » Affiche un formulaire à remplir avec un simple champ texte avec le dialogue d'options
-// » Demande la modification en Ajax (apijs/edit[get=id;post=token,description])
+// » Demande la modification en Ajax (../apijs/edit[get=id;post=token,description])
 function apijsEditAttachment(id, action, token) {
 
 	// gestion des traductions
@@ -86,14 +92,25 @@ function apijsEditAttachment(id, action, token) {
 		apijsInitTranslations();
 
 	// création du formulaire et affichage de celui-ci dans un dialogue
-	var text, desc = document.getElementById('attachmentId' + id).querySelector('span.description').firstChild.nodeValue.trim();
+	var text, desc;
+
+	if (document.getElementById('attachmentId' + id).querySelector('span.description')) {
+		desc = document.getElementById('attachmentId' + id).querySelector('span.description').firstChild.nodeValue.trim();
+	}
+	else {
+		desc = document.createElement('span');
+		desc.setAttribute('class', 'description');
+		desc.appendChild(document.createTextNode(''));
+		document.getElementById('attachmentId' + id).querySelector('dd').appendChild(desc);
+		desc = '';
+	}
+
 	text  = '[p][label for="apijsRedText"]' + apijs.i18n.translate('editText') + '[/label][/p]';
 	text += '[input type="text" name="description" value="' + desc + '" spellcheck="true" id="apijsRedText"]';
 
 	// affichage du dialogue
-	// dialogFormOptions(title, text, action, callback, args, icon)
 	apijs.dialog.dialogFormOptions(apijs.i18n.translate('editTitle'), text, action, apijsActionEditAttachment, [action, id, token], 'editattachment');
-	apijs.dialog.tagDialog.querySelector('input').select();
+	apijs.dialog.tDialog.querySelector('input').select();
 }
 
 function apijsActionEditAttachment(action, args) {
@@ -159,17 +176,16 @@ function apijsActionEditAttachment(action, args) {
 }
 
 
-// #### Suppression d'un fichier ################################# public ### //
-// = révision : 27
-// » Attention il est admis qu'un code différent de 200/403/404 ne peut pas arriver
+// #### Suppression d'un fichier ############################################ //
+// = révision : 29
+// » Attention il est admis qu'un code différent de 200/403/404 n'est pas possible
 // » Affiche une demande de confirmation de suppression avec le dialogue de confirmation
-// » Demande la suppression en Ajax (apijs/delete[get=id;post=token])
+// » Demande la suppression en Ajax (../apijs/delete[get=id;post=token])
 function apijsDeleteAttachment(id, action, token) {
 
 	if (typeof apijs.i18n.data.en.deleteTitle !== 'string')
 		apijsInitTranslations();
 
-	// dialogConfirmation(title, text, callback, args, icon)
 	apijs.dialog.dialogConfirmation(apijs.i18n.translate('deleteTitle'), apijs.i18n.translate('deleteText'), apijsActionDeleteAttachment, [action, id, token]);
 }
 

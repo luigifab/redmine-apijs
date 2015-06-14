@@ -1,10 +1,9 @@
 # encoding: utf-8
-#
 # Created V/27/12/2013
-# Updated D/07/09/2014
-# Version 27
+# Updated D/26/04/2015
+# Version 31
 #
-# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -17,7 +16,7 @@
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
 
-module AttachmentPath
+module AttachmentPatch
 
   def self.included(base)
     base.send(:include, InstanceMethods)
@@ -28,22 +27,36 @@ module AttachmentPath
       else
         include ActionController::UrlWriter
       end
-      before_save :update_date
+      if Rails::VERSION::MAJOR >= 4
+        before_create :update_date
+      else
+        before_save :update_date
+      end
     end
   end
 
   module InstanceMethods
 
     # construction des urls
+    # https://www.redmine.org/issues/19024 pour l'éventuel préfixe avec Redmine 2 (Rails 3)
     def getUrl(action, all=false)
 
       if (action == 'redmineshow')
-        return url_for({ :only_path => true, :controller => 'attachments', :action => 'show', :id => self.id, :filename => self.filename })
+        return getSuburi(url_for({ :only_path => true, :controller => 'attachments', :action => 'show', :id => self.id, :filename => self.filename }))
       elsif all
-        return url_for({ :only_path => true, :controller => 'apijs', :action => action, :id => self.id, :filename => self.filename })
+        return getSuburi(url_for({ :only_path => true, :controller => 'apijs', :action => action, :id => self.id, :filename => self.filename }))
       else
-        return url_for({ :only_path => true, :controller => 'apijs', :action => action })
+        return getSuburi(url_for({ :only_path => true, :controller => 'apijs', :action => action }))
       end
+    end
+    def getSuburi(url)
+      if Rails::VERSION::MAJOR >= 3 and Rails::VERSION::MAJOR < 4
+        baseurl = Redmine::Utils.relative_url_root
+        if not baseurl.blank? and not url.match(/^#{baseurl}/)
+          url = baseurl + url
+        end
+      end
+      return url
     end
 
     # adresses dynamiques
@@ -60,7 +73,7 @@ module AttachmentPath
       return "location.href = '" + getUrl('download', true) + "';"
     end
     def getEditButton(token)
-      return "apijsEditAttachment(" + self.id.to_s + ", '" + getUrl('edit') + "', '" + token + "');"
+      return "apijsEditAttachment(" + self.id.to_s + ", '" + getUrl('editdesc') + "', '" + token + "');"
     end
     def getDeleteButton(token)
       return "apijsDeleteAttachment(" + self.id.to_s + ", '" + getUrl('delete') + "', '" + token + "');"
@@ -75,18 +88,27 @@ module AttachmentPath
       end
     end
 
-    # image, photo ou vidéo
+    # image, photo, vidéo
     def isImage?
       return (self.filename =~ /\.(jpg|jpeg|png|svg)$/i) ? true : false
     end
     def isPhoto?
-      return (self.filename =~ /\.(jpg|jpeg)$/i) ? true : false
+      types = []
+      types.push('jpg')  if Setting.plugin_redmine_apijs['album_mimetype_jpg'] == '1'
+      types.push('jpeg') if Setting.plugin_redmine_apijs['album_mimetype_jpeg'] == '1'
+      types.push('png')  if Setting.plugin_redmine_apijs['album_mimetype_png'] == '1'
+      return (self.filename =~ /\.(#{types.join('|')})$/i) ? true : false
     end
     def isVideo?
-      return (self.filename =~ /\.(ogv|webm|mp4|m4v)$/i) ? true : false
+      types = []
+      types.push('ogv')  if Setting.plugin_redmine_apijs['album_mimetype_ogv'] == '1'
+      types.push('webm') if Setting.plugin_redmine_apijs['album_mimetype_webm'] == '1'
+      types.push('mp4')  if Setting.plugin_redmine_apijs['album_mimetype_mp4'] == '1'
+      types.push('m4v')  if Setting.plugin_redmine_apijs['album_mimetype_m4v'] == '1'
+      return (self.filename =~ /\.(#{types.join('|')})$/i) ? true : false
     end
 
-    # exclusion des fichiers de l'album
+    # exclusion des fichiers
     def isExcluded?
 
       names = Setting.plugin_redmine_apijs['album_exclude_name']
@@ -119,7 +141,7 @@ module AttachmentPath
 
         command = 'exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 ' + self.diskfile + ' 2>&1'
         result  = `#{command}`.gsub(/^\s+|\s+$/, '')
-        logger.info 'APIJS::AttachmentPath#update_date: ' + command + ' (' + result + ')'
+        logger.info 'APIJS::AttachmentPatch#update_date: ' + command + ' (' + result + ')'
 
         # 2014:06:14 16:43:53
         # utilise le fuseau horaire de l'utilisateur
@@ -140,7 +162,7 @@ module AttachmentPath
 
           command = 'file --brief --mime-type ' + self.diskfile + ' 2>&1'
           result  = `#{command}`.gsub(/^\s+|\s+$/, '')
-          logger.info 'APIJS::AttachmentPath#getMimeType: ' + command + ' (' + result + ')'
+          logger.info 'APIJS::AttachmentPatch#getMimeType: ' + command + ' (' + result + ')'
 
           self.content_type = (result.length > 0) ? result : 'file/unknown'
           self.save!
@@ -152,4 +174,4 @@ module AttachmentPath
   end
 end
 
-Attachment.send(:include, AttachmentPath)
+Attachment.send(:include, AttachmentPatch)

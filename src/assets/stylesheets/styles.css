@@ -1,6 +1,6 @@
 /**
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * File created in 2012, Updated L/27/10/2014, version 20
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Created in 2012, updated S/30/05/2015, version 24
  * https://redmine.luigifab.info/projects/redmine/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -9,6 +9,7 @@
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogues &&& */
 #apijsDialog { margin:0; }
+
 #apijsBox { font-size:0.8rem; border:none; }
 #apijsBox button::-moz-focus-inner { margin:-1px; padding:0; }
 #apijsBox a { color:blue; }
@@ -25,9 +26,18 @@
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& albums et listes &&& */
 body div.attachments.album { margin:1em 0; text-align:left; }
 
-body div.attachments.album dd { position:relative; margin:0.5em 0 0 0.5em; padding-right:60px; height:17px; }
-body div.attachments.album dd div { display:inline; position:absolute; right:0; }
-body div.attachments.album dd span { line-height:19px; vertical-align:middle; }
+body div.attachments.album dd { position:relative; margin:0.5em 0 0 0.15em; white-space:inherit; }
+body div.attachments.album dd div { display:inline; position:absolute; top:0; right:0; }
+body div.attachments.album dd.one { min-height:1.8em; }
+body div.attachments.album dd.big { min-height:5em; }
+
+body div.attachments.album dd > span {
+	display:block; line-height:165%; overflow:hidden;
+	font-size:inherit; color:inherit; white-space:nowrap; text-overflow:ellipsis;
+}
+
+body div.attachments.album dd > span:nth-of-type(1) { margin:1px 60px 0 0; }
+body div.attachments.album dd > span:nth-of-type(2) { margin-top:2px; }
 
 body ul.attachments { margin:1em 0; padding:0; list-style:none; }
 body ul.attachments li { padding:0.25em 0.5em; }
@@ -48,35 +58,30 @@ body.controller-documents div.wiki.files h2, body.controller-messages div.wiki.f
 }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& boutons &&& */
-body span.attachment.show, body button.attachment {
+body button.attachment, body span.attachment.show {
 	display:inline-block; padding:0; width:16px; height:16px; vertical-align:middle;
 	border:none; color:transparent; cursor:pointer; opacity:0.5;
-	background-color:transparent; background-position:center; background-size:16px;
+	background-color:transparent; background-image:url("../images/humanity.min.svg");
 	transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;
 }
 
-body span.attachment.show, body button.attachment.show { margin:0 -0.2em 0 0.2em; background-image:url("../images/humanity-sprites.svg#zoom"); }
-body button.attachment.download { background-image:url("../images/humanity-sprites.svg#browser-download"); }
-body button.attachment.delete { background-image:url("../images/humanity-sprites.svg#delete"); }
-body button.attachment.edit { background-image:url("../images/humanity-sprites.svg#edit"); }
+body button.attachment.show, body span.attachment.show { margin:0 -0.2em 0 0.2em; background-position:-4px -540px; }
+body button.attachment.download { background-position:-4px -420px; }
+body button.attachment.delete { background-position:-4px -460px; }
+body button.attachment.edit { background-position:-4px -500px; }
 
-body span.attachment.show:hover, body span.attachment.show:active, body span.attachment.show:focus,
-body button.attachment:hover, body button.attachment:active, body button.attachment:focus { opacity:1; }
+body button.attachment:hover, body button.attachment:active, body button.attachment:focus,
+body span.attachment.show:hover, body span.attachment.show:active, body span.attachment.show:focus { opacity:1; }
 
 body span.attachment.show a { display:inline-block; padding:0; width:16px; height:16px; vertical-align:middle; }
-
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-	body button.attachment.download { background-image:url("../images/humanity-browser-download.svg"); }
-	body button.attachment.delete { background-image:url("../images/humanity-delete.svg"); }
-	body button.attachment.edit { background-image:url("../images/humanity-edit.svg"); }
-	body button.attachment.show, a.attachment.show { background-image:url("../images/humanity-zoom.svg"); }
-}
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& configuration &&& */
 fieldset.apijs.tabular.settings { margin:1em; padding:0.5em; border:1px solid #CCC; }
 fieldset.apijs.tabular.settings p span.cmd { white-space:pre-wrap; }
 fieldset.apijs.tabular.settings p em.info { margin:0.2em 0; line-height:140%; }
 fieldset.apijs.tabular.settings p a + em.info { margin:0; }
+fieldset.apijs.tabular.settings p label.bis { margin-left:1px; margin-right:0.7em; width:auto; }
+fieldset.apijs.tabular.settings p label.bis input { margin:0; }
 
 fieldset.apijs.tabular.settings.info { margin:0 0.6em 1.3em; border:none; }
 fieldset.apijs.tabular.settings.info ul { margin:0; padding:0; list-style:none; }

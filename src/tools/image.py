@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
-#
 # Created J/26/12/2013
-# Updated V/31/10/2014
-# Version 7
+# Updated S/25/04/2015
+# Version 9
 #
-# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -21,7 +20,7 @@
 import os
 import re
 import sys
-import Image
+from PIL import Image # sinon il peut s'importer lui même
 
 try:
 	IN = str(sys.argv[1])
@@ -37,9 +36,6 @@ thumb = (SIZE[0] < 351) and True or False
 video = re.compile('\.(ogv|webm|mp4|m4v)$')
 video = video.search(IN) and True or False
 
-png = re.compile('\.png$')
-png = png.search(IN) and True or False
-
 # vérification du dossier
 if not os.path.exists(os.path.dirname(OUT)):
 	os.makedirs(os.path.dirname(OUT))
@@ -49,12 +45,12 @@ if (video):
 	os.system('ffmpegthumbnailer -i ' + IN + ' -o ' + OUT + ' -q 10 -s 200')
 	IN = OUT
 
-# génération de la miniature et recentre l'image (demande explicite)
-# génération de l'aperçu redimensionné si l'image dépasse SIZE[0] ou SIZE[1] (=> .thumbnail)
 # à partir de l'image source (IN) vers l'image de destination (OUT) et à la taille demandée (SIZE)
+# génération de la miniature et recentre l'image (demande explicite par la largeur de l'image inféreure à 351)
+# génération de l'aperçu redimensionné si l'image dépasse SIZE[0] ou SIZE[1] (n'est pas prévu pour les images PNG !)
 sourceImg = Image.open(IN)
 
-if ((thumb or (sourceImg.size[0] > SIZE[0]) or (sourceImg.size[1] > SIZE[1])) and not png):
+if (thumb or (sourceImg.size[0] > SIZE[0]) or (sourceImg.size[1] > SIZE[1])):
 
 	sourceImg.thumbnail(SIZE, Image.ANTIALIAS)
 

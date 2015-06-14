@@ -1,9 +1,9 @@
-<%
+<% #<?
 # Created J/12/12/2013
-# Updated D/08/06/2014
-# Version 22
+# Updated S/23/05/2015
+# Version 25
 #
-# Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -17,11 +17,41 @@
 # GNU General Public License (GPL) for more details.
 
 html_title "Redmine Apijs plugin - " + l(:label_administration)
+size_all   = 0
+size_thumb = 0
+size_show  = 0
+
+if File.directory?(APIJS_ROOT + '/')
+  size_all = `du -hs #{APIJS_ROOT}/ | cut -f1`.strip!
+  size = size_all.to_f
+
+  size_all = number_to_human_size(size * 1024 * 1024 * 1024) if size_all =~ /G/
+  size_all = number_to_human_size(size * 1024 * 1024) if size_all =~ /M/
+  size_all = number_to_human_size(size * 1024) if size_all =~ /K/
+end
+
+if File.directory?(APIJS_ROOT + '/thumb/')
+  size_thumb = `du -hs #{APIJS_ROOT}/thumb/ | cut -f1`.strip!
+  size = size_thumb.to_f
+
+  size_thumb = number_to_human_size(size * 1024 * 1024 * 1024) if size_thumb =~ /G/i
+  size_thumb = number_to_human_size(size * 1024 * 1024) if size_thumb =~ /M/i
+  size_thumb = number_to_human_size(size * 1024) if size_thumb =~ /K/i
+end
+
+if File.directory?(APIJS_ROOT + '/show/')
+  size_show = `du -hs #{APIJS_ROOT}/show/ | cut -f1`.strip!
+  size = size_show.to_f
+
+  size_show = number_to_human_size(size * 1024 * 1024 * 1024) if size_show =~ /G/i
+  size_show = number_to_human_size(size * 1024 * 1024) if size_show =~ /M/i
+  size_show = number_to_human_size(size * 1024) if size_show =~ /K/i
+end
 %>
 
 <fieldset class="apijs tabular settings info">
 	<ul>
-		<li><%= raw l(:apijs_documentation) %> <a href="http://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;">apijs</a>, <a href="<%= raw l(:apijs_pluginlink) %>" onclick="window.open(this.href); return false;"><%= raw l(:apijs_plugin) %></a>, <a href="https://redmine.luigifab.info/projects/apijs/wiki" onclick="window.open(this.href); return false;"><%= raw l(:apijs_translation) %></a></li>
+		<li><%= raw l(:apijs_documentation) %> <a href="http://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;">apijs</a>, <a href="<%= raw l(:apijs_pluginlink) %>" onclick="window.open(this.href); return false;"><%= raw l(:apijs_plugin) %></a>, <a href="https://redmine.luigifab.info/projects/apijs/wiki" onclick="window.open(this.href); return false;"><%= raw l(:apijs_translation) %></a>, <a href="https://www.redmine.org/plugins/apijs" onclick="window.open(this.href); return false;">redmine.org</a></li>
 		<li><%= raw l(:apijs_version) %> <strong><%= Redmine::Plugin.find(:redmine_apijs).version %></strong></li>
 		<li><%= raw l(:apijs_status) %> <strong><%= raw l(settings['enabled'] == '1' ? :apijs_status_enabled : :apijs_status_disabled) %></strong></li>
 		<% if settings['enabled'] == '1' %>
@@ -59,12 +89,19 @@ html_title "Redmine Apijs plugin - " + l(:label_administration)
 </fieldset>
 
 <fieldset class="box apijs tabular settings">
-	<legend><%= raw l(:apijs_config_album) %> (ogv/webm/mp4/m4v/jpg/jpeg)</legend>
+	<legend><%= raw l(:apijs_config_album) %></legend>
 	<p>
 		<label for="apijsShowAlbum"><%= raw l(:apijs_config_show_album) %></label>
 		<select name="settings[show_album]" id="apijsShowAlbum">
 			<option value="0" <%= raw 'selected="selected"' if settings['show_album'] != '1' %>><%= raw l(:general_text_No) %></option>
 			<option value="1" <%= raw 'selected="selected"' if settings['show_album'] == '1' %>><%= raw l(:general_text_Yes) %></option>
+		</select>
+	</p>
+	<p>
+		<label for="apijsShowAlbumInformations"><%= raw l(:apijs_config_show_album_infos) %></label>
+		<select name="settings[show_album_infos]" id="apijsShowAlbumInformations">
+			<option value="0" <%= raw 'selected="selected"' if settings['show_album_infos'] != '1' %>><%= raw l(:general_text_No) %></option>
+			<option value="1" <%= raw 'selected="selected"' if settings['show_album_infos'] == '1' %>><%= raw l(:general_text_Yes) %></option>
 		</select>
 	</p>
 	<p>
@@ -80,6 +117,16 @@ html_title "Redmine Apijs plugin - " + l(:label_administration)
 			<option value="0" <%= raw 'selected="selected"' if settings['show_exifdate'] != '1' %>><%= raw l(:general_text_No) %></option>
 			<option value="1" <%= raw 'selected="selected"' if settings['show_exifdate'] == '1' %>><%= raw l(:general_text_Yes) %></option>
 		</select>
+	</p>
+	<p>
+		<label><%= raw l(:apijs_config_mimetypes) %></label>
+		<label class="bis"><input type="checkbox" name="settings[album_mimetype_jpg]" value="1" <%= raw 'checked="checked"' if settings['album_mimetype_jpg'] == '1' %> /> jpg</label>
+		<label class="bis"><input type="checkbox" name="settings[album_mimetype_jpeg]" value="1" <%= raw 'checked="checked"' if settings['album_mimetype_jpeg'] == '1' %> /> jpeg</label>
+		<label class="bis"><input type="checkbox" name="settings[album_mimetype_png]" value="1" <%= raw 'checked="checked"' if settings['album_mimetype_png'] == '1' %> /> png</label>
+		<label class="bis"><input type="checkbox" name="settings[album_mimetype_ogv]" value="1" <%= raw 'checked="checked"' if settings['album_mimetype_ogv'] == '1' %> /> ogv</label>
+		<label class="bis"><input type="checkbox" name="settings[album_mimetype_webm]" value="1" <%= raw 'checked="checked"' if settings['album_mimetype_webm'] == '1' %> /> webm</label>
+		<label class="bis"><input type="checkbox" name="settings[album_mimetype_mp4]" value="1" <%= raw 'checked="checked"' if settings['album_mimetype_mp4'] == '1' %> /> mp4</label>
+		<label class="bis"><input type="checkbox" name="settings[album_mimetype_m4v]" value="1" <%= raw 'checked="checked"' if settings['album_mimetype_m4v'] == '1' %> /> m4v</label>
 	</p>
 	<p>
 		<label for="apijsAlbumExcludeName"><%= raw l(:apijs_config_album_exclude_name) %></label>
@@ -101,9 +148,9 @@ html_title "Redmine Apijs plugin - " + l(:label_administration)
 	</p>
 	<p>
 		<label><%= raw l(:apijs_config_directories) %></label>
-		<%= APIJS_ROOT %>/ <span class="cmd"><%= `du -hs #{APIJS_ROOT}/ | cut -f1`.strip! %></span>
-		<br /><%= APIJS_ROOT %>/thumb/ <span class="cmd"><%= `du -hs #{APIJS_ROOT}/thumb/ | cut -f1`.strip! %></span>
-		<br /><%= APIJS_ROOT %>/show/ <span class="cmd"><%= `du -hs #{APIJS_ROOT}/show/ | cut -f1`.strip! %></span>
+		<%= APIJS_ROOT %>/ <b><%= size_all %></b>
+		<br /><%= APIJS_ROOT %>/thumb/ <b><%= size_thumb %></b>
+		<br /><%= APIJS_ROOT %>/show/ <b><%= size_show %></b>
 		<em class="info"><%= raw l(:apijs_config_directories_info) %></em>
 	</p>
 </fieldset>
@@ -118,7 +165,7 @@ html_title "Redmine Apijs plugin - " + l(:label_administration)
 	<p>
 		<label>libimage-exiftool-perl</label>
 		<span class="cmd"><%= `exiftool -ver 2>&1`.strip! %></span>
-		<em class="info">exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 .../xyz.webm 2&gt;&amp;1<br />➩ 2008:03:18 10:23:21</em>
+		<em class="info">exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 .../xyz.webm 2&gt;&amp;1</em>
 	</p>
 	<p>
 		<label>ffmpegthumbnailer</label>
@@ -128,6 +175,6 @@ html_title "Redmine Apijs plugin - " + l(:label_administration)
 	<p>
 		<label>file</label>
 		<span class="cmd"><%= `file --version 2>&1`.gsub('file-', '').strip! %></span>
-		<em class="info">file --brief --mime-type .../xyz.webm 2&gt;&amp;1<br />➩ video/webm</em>
+		<em class="info">file --brief --mime-type .../xyz.webm 2&gt;&amp;1</em>
 	</p>
 </fieldset>
