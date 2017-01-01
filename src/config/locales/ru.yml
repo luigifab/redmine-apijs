@@ -1,10 +1,9 @@
-# by Eugene Parfenov (igro) <admin~mytona~com>
+# Eugene Parfenov (igro) <admin~mytona~com>
 # https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
+#
+#
 ru:
-  apijs_documentation: "Документация:"
-  apijs_pluginlink: "https://redmine.luigifab.info/projects/redmine/wiki/Apijs"
-  apijs_plugin: "плагин"
-  apijs_translation: "перевод"
+  apijs_documentation: "Документация: <a %{link1}>apijs</a>, <a %{link2}>плагин</a>, <a %{link3}>перевод</a>"
   apijs_version: "Версия:"
   apijs_status: "Статус:"
   apijs_status_enabled: "Включен"
@@ -17,10 +16,10 @@ ru:
   permission_delete_attachments: "Удалить файлы"
   apijs_config_album: "Фото альбомы"
   apijs_config_show_album: "Отображать фото альбомы"
-  #apijs_config_show_album_infos: ""
+  #apijs_config_show_album_infos: "####"
   apijs_config_show_filename: "Отображать названия фото"
   apijs_config_show_exifdate: "Отображать дату фото"
-  #apijs_config_mimetypes: ""
+  #apijs_config_mimetypes: "####"
   apijs_config_create_all: "Генерировать по два изображения"
   apijs_config_create_all_info: "Генерация одновременно миниатюры и предварительного просмотра замедляет первое отображение страницы, но ускоряет отображение слайд шоу."
   apijs_config_album_exclude_name: "Исключить фото из альбома<br />если название начинается с"
@@ -43,5 +42,3 @@ ru:
   apijs_sample2_title: "Сюрприз!"
   apijs_sample2_text1: "Смотрите видео без проприетарного расширения благодаря новому тегу [em]video[/em] включенному в состав [strong]HTML 5[/strong]."
   apijs_sample2_text2: "Вебсайт: %{value}"
-  apijs_sample3_title: "Сюрприз!"
-  apijs_sample3_text1: "Смотрите заголовки с emoicons..."

@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated S/25/04/2015
-# Version 9
+# Updated W/28/12/2016
 #
-# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -28,6 +27,8 @@ try:
 	SIZE = (int(sys.argv[3]), int(sys.argv[4]))
 except:
 	print "Usage: image.py sourceFileName destinationFileName thumbnailWidth thumbnailHeight"
+	print "sourceFileName: jpg,jpeg,png ogv,webm,mp4,m4v pdf,psd,eps,tif,tiff"
+	print "destinationFileName: jpg only"
 	exit(-1)
 
 # préparation
@@ -36,13 +37,23 @@ thumb = (SIZE[0] < 351) and True or False
 video = re.compile('\.(ogv|webm|mp4|m4v)$')
 video = video.search(IN) and True or False
 
+pdf = re.compile('\.(pdf)$')
+pdf = pdf.search(IN) and True or False
+
 # vérification du dossier
 if not os.path.exists(os.path.dirname(OUT)):
 	os.makedirs(os.path.dirname(OUT))
 
-# extraction de la miniature de la vidéo avec ffmpegthumbnailer
+# extraction de la miniature de la vidéo
+# avec ffmpegthumbnailer
 if (video):
 	os.system('ffmpegthumbnailer -i ' + IN + ' -o ' + OUT + ' -q 10 -s 200')
+	IN = OUT
+
+# extraction de la miniature du pdf
+# avec ghostscript
+if (pdf):
+	os.system('gs -dSAFER -dBATCH -sDEVICE=jpeg -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dFirstPage=1 -dLastPage=1 -dNOPAUSE -dBATCH -r300 -sOutputFile=' + OUT + ' ' + IN)
 	IN = OUT
 
 # à partir de l'image source (IN) vers l'image de destination (OUT) et à la taille demandée (SIZE)
@@ -64,7 +75,7 @@ if (thumb or (sourceImg.size[0] > SIZE[0]) or (sourceImg.size[1] > SIZE[1])):
 		finalImg.paste(sourceImg)
 
 	if (video):
-		playImg = Image.open(os.path.join(os.path.dirname(__file__).replace('tools', 'assets/images/humanity-player.png')))
+		playImg = Image.open(os.path.join(os.path.dirname(__file__).replace('tools', 'assets/images/apijs/player.png')))
 		finalImg.paste(playImg, (0, 0), playImg)
 else:
 	finalImg = sourceImg

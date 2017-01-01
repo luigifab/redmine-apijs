@@ -1,0 +1,44 @@
+# Isabel Mendes <isabel.2012~orange~fr>
+# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
+#
+#
+pt:
+  apijs_documentation: "Documentação: <a %{link1}>apijs</a>, <a %{link2}>extensão</a>, <a %{link3}>tradução</a>"
+  apijs_version: "Versão:"
+  apijs_status: "Estado:"
+  apijs_status_enabled: "Ativado"
+  apijs_status_disabled: "Desativado"
+
+  apijs_config_apijs: "Geral"
+  apijs_config_enable: "Ativar apijs"
+  apijs_config_sort_order: "Ordenar os ficheiros por ordem alfabética"
+  permission_edit_attachments: "Modificar a descrição dos ficheiros"
+  permission_delete_attachments: "Suprimir os ficheiros"
+  apijs_config_album: "Álbuns de fotos"
+  apijs_config_show_album: "Visualizar os álbuns"
+  apijs_config_show_album_infos: "Visualizar todas as informações"
+  apijs_config_show_filename: "Vizualizar o nome no diaporama"
+  apijs_config_show_exifdate: "Visualizar a data no diaporama"
+  apijs_config_mimetypes: "Usar os ficheiros seguintes"
+  apijs_config_create_all: "Gerar as duas imagens"
+  apijs_config_create_all_info: "Gera a miniatura e a imagem de pré-visualização ao mesmo tempo, isto retarda a primeira visualização da página, mas acelera a primeira visualização do diaporama."
+  apijs_config_album_exclude_name: "Excluir as fotos do álbum<br />cujo nome começa por"
+  apijs_config_album_exclude_desc: "Excluir as fotos do álbum<br />cuja descrição começa por"
+  apijs_config_directories: "Diretórios temporários"
+  apijs_config_directories_info: "Usados para armazenar as miniaturas dos álbuns."
+  apijs_config_programs: "Versão dos programas"
+
+  apijs_title_album: "Galeria de fotos"
+  apijs_title_files: "Lista dos ficheiros"
+  apijs_title_download: "Descarregar (%{value})"
+  apijs_zip_button: "Enviar vários ficheiros (ZIP)"
+  apijs_notsaved: "[strong]Atenção[/strong], os seguintes ficheiros não foram registados:"
+  apijs_saved: "[strong]No entanto[/strong], os seguintes ficheiros foram registados corretamente:"
+  apijs_final: "Termine as suas alterações antes de registar o formulário ou [a %{value}]recarregue[/a] simplesmente a página."
+
+  apijs_samples: "Exemplos:"
+  apijs_sample1_title: "Manual do PHP"
+  apijs_sample1_text1: "É importante notar que somente pelo o email ser aceito para entrega, não significa que o e-mail alcancará o destino esperado."
+  apijs_sample2_title: "Surpresa!"
+  apijs_sample2_text1: "Está a ver este vídeo sem extensão proprietário graças ao novo marcador [em]video[/em] integrado no linguagem [strong]HTML 5[/strong]."
+  apijs_sample2_text2: "Sítio Web: %{value}"

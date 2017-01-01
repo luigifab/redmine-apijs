@@ -1,0 +1,44 @@
+# Maria Grasso <mgrasso~outlook~fr>
+# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
+#
+#
+it:
+  apijs_documentation: "Documentazione, <a %{link1}>apijs</a>, <a %{link2}>module</a>, <a %{link3}>traduzione</a>"
+  apijs_version: "Versione:"
+  apijs_status: "Stato:"
+  apijs_status_enabled: "Attivo"
+  apijs_status_disabled: "Disattivo"
+
+  apijs_config_apijs: "Generale"
+  apijs_config_enable: "Attivare l'apijs"
+  apijs_config_sort_order: "Ordinare i file in ordine alfabetico"
+  permission_edit_attachments: "Modificare la descrizione dei file"
+  permission_delete_attachments: "Eliminare i file"
+  apijs_config_album: "Album fotografico"
+  apijs_config_show_album: "Visualizzare l'album"
+  apijs_config_show_album_infos: "Visualizzare tutte le informazioni"
+  apijs_config_show_filename: "Visualizzare il nome nella slide"
+  apijs_config_show_exifdate: "Visualizzare la data nella slide"
+  apijs_config_mimetypes: "Utilizzare i seguenti file"
+  apijs_config_create_all: "Generare le due immagini"
+  apijs_config_create_all_info: "Genera la miniatutua et l'immagine di antemprima allo stesso tempo, questo rallenta la visualizzazione della pagina ma accelera la."
+  apijs_config_album_exclude_name: "Escludere dall'album le foto<br />il cui nome comincia per"
+  apijs_config_album_exclude_desc: "Escludere dall'album le foto<br />la cui descrizione comicia per"
+  apijs_config_directories: "Repertori temporanei"
+  apijs_config_directories_info: "Usati per stoccare le miniature per gli album."
+  apijs_config_programs: "Versione dei programmi"
+
+  apijs_title_album: "Galleria fotografica"
+  apijs_title_files: "Lista dei file"
+  apijs_title_download: "Scaricare (%{value})"
+  apijs_zip_button: "Inviare più file (ZIP)"
+  apijs_notsaved: "[strong]Attenzione[/strong], i seguenti file non sono stati salvati:"
+  apijs_saved: "[strong]Cio' nonostante[/strong], i seguenti file sono stati salvati con successo:"
+  apijs_final: "Finite le vostre modifiche prima di salvare il formulario o [a %{value}]ricaricate[/a] semplicemente la page."
+
+  apijs_samples: "Esempi:"
+  apijs_sample1_title: "Manuale PHP"
+  apijs_sample1_text1: "É importante notare che il fatto che la mail sia stata accettata, non significa che arriverà a destinazione."
+  apijs_sample2_title: "Sorpresa!"
+  apijs_sample2_text1: "State guardando questo video senza estensione proprietario grazie al nuovo tag [em]video[/em] integrato nel linguaggio [strong]HTML 5[/strong]."
+  apijs_sample2_text2: "Sito internet: %{value}"

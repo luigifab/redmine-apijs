@@ -1,9 +1,8 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated D/26/04/2015
-# Version 16
+# Updated J/29/12/2016
 #
-# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -16,6 +15,7 @@
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
 
+# Redmine 2 et + (Rails 3)
 if Rails::VERSION::MAJOR >= 3
   RedmineApp::Application.routes.draw do
 

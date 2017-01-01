@@ -1,9 +1,8 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated J/14/05/2015
-# Version 32
+# Updated J/29/12/2016
 #
-# Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
 # https://redmine.luigifab.info/projects/redmine/wiki/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -23,7 +22,7 @@ class ApijsController < AttachmentsController
   before_filter :read_authorize, :file_readable, :only => [:thumb, :show, :download, :thumbnail]
   before_filter :read_authorize, :only => [:editdesc, :delete]
 
-  # n'existe plus avec Redmine 3 (Rails 4)
+  # n'existe plus avec Redmine 3 et + (Rails 4)
   if Rails::VERSION::MAJOR >= 4
     def find_project
       @attachment = Attachment.find(params[:id])
@@ -101,19 +100,18 @@ class ApijsController < AttachmentsController
 
 
   # #### Gestion de l'image miniature (photo ou vidéo) ################################ public ### #
-  # = révision : 32
-  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de la miniature
+  # = révision : 33
+  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de la miniature au format JPG uniquement
   # » Utilise un script python pour générer l'image miniature (taille 200x150, qualité 85)
   # » Utilise un script python pour générer l'image aperçu (taille 1200x900, qualité 85)
-  # » Utilise la commande python (avec python-imaging et ffmpegthumbnailer)
+  # » Utilise la commande python (avec python-imaging, ghostscript, ffmpegthumbnailer)
   # » Enregistre les commandes et leurs résultats dans les logs
   # » Téléchargement d'une image avec mise en cache (inline/stale?)
   def thumb
 
     # préparation de l'image
     source = @attachment.diskfile
-    target = APIJS_ROOT + '/thumb/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s +
-      ((@attachment.isVideo?) ? '.jpg' : File.extname(@attachment.filename).to_s)
+    target = APIJS_ROOT + '/thumb/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s + '.jpg'
     script = File.dirname(__FILE__).gsub('app/controllers', 'tools/image.py')
 
     # génération des images
@@ -147,31 +145,27 @@ class ApijsController < AttachmentsController
       deny_access
     # envoie de l'image avec mise en cache
     elsif File.file?(target) && stale?(:etag => target)
-      if @attachment.isVideo?
-        send_file(target, :filename => filename_for_content_disposition(@attachment.filename.gsub(/\.(ogv|webm|mp4|m4v)$/i, '.jpg')), :type => 'image/jpeg', :disposition => 'inline')
-      else
-        send_file(target, :filename => filename_for_content_disposition(@attachment.filename), :type => @attachment.getMimeType, :disposition => 'inline')
-      end
+      send_file(target, :filename => filename_for_content_disposition(@attachment.filename.gsub(/\.[a-z0-9]+$/i, '.jpg')), :type => 'image/jpeg', :disposition => 'inline')
     end
   end
 
 
   # #### Gestion de l'image aperçu (photo) ############################################ public ### #
   # = révision : 32
-  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
+  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu au format JPG ou PNG
   # » Utilise un script python pour générer l'image aperçu sauf pour les images PNG (taille 1200x900, qualité 85)
-  # » Utilise la commande python (avec python-imaging uniquement)
+  # » Utilise la commande python (avec python-imaging, ghostscript, ffmpegthumbnailer)
   # » Enregistre les commandes et leurs résultats dans les logs
   # » Téléchargement d'une image avec mise en cache (inline/stale?)
   def show
 
     # préparation de l'image
     source = @attachment.diskfile
-    target = APIJS_ROOT + '/show/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s + File.extname(@attachment.filename).to_s
+    target = APIJS_ROOT + '/show/' + @attachment.created_on.strftime('%Y-%m').to_s + '/' + @attachment.id.to_s + '.jpg'
     script = File.dirname(__FILE__).gsub('app/controllers', 'tools/image.py')
 
     # génération de l'image
-    if File.file?(source) && !File.file?(target) && !@attachment.filename =~ /\.png$/i
+    if File.file?(source) && !File.file?(target) && @attachment.filename !~ /\.png$/i
       command = 'python ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' 1200 900 2>&1'
       result  = `#{command}`.gsub(/^\s+|\s+$/, '')
       logger.info 'APIJS::ApijsController#show: ' + command + ' (' + result + ')'
@@ -182,10 +176,10 @@ class ApijsController < AttachmentsController
       deny_access
     # envoie de l'image avec mise en cache (!=PNG)
     elsif File.file?(target) && stale?(:etag => target)
-      send_file(target, :filename => filename_for_content_disposition(@attachment.filename), :type => @attachment.getMimeType, :disposition => 'inline')
+      send_file(target, :filename => filename_for_content_disposition(@attachment.filename.gsub(/\.[a-z0-9]+$/i, '.jpg')), :type => 'image/jpeg', :disposition => 'inline')
     # envoie de l'image avec mise en cache (=PNG)
-    elsif File.file?(source) && stale?(:etag => source)
-      send_file(source, :filename => filename_for_content_disposition(@attachment.filename), :type => @attachment.getMimeType, :disposition => 'inline')
+    elsif File.file?(source) && stale?(:etag => source) && @attachment.filename =~ /\.png$/i
+      send_file(source, :filename => filename_for_content_disposition(@attachment.filename), :type => 'image/png', :disposition => 'inline')
     end
   end
 

@@ -1,12 +1,11 @@
-# by Adnan Topcu <adnan~topcu~name>
+# Adnan Topcu <adnan~topcu~name>
 # https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
+#
+#
 tr:
-  apijs_documentation: "Dokümantasyon:"
-  apijs_pluginlink: "https://redmine.luigifab.info/projects/redmine/wiki/Apijs"
-  apijs_plugin: "eklenti"
-  apijs_translation: "tercüme"
-  apijs_version: "Versiyon:"
-  apijs_status: "Durum:"
+  apijs_documentation: "Dokümantasyon : <a %{link1}>apijs</a>, <a %{link2}>eklenti</a>, <a %{link3}>tercüme</a>"
+  apijs_version: "Versiyon :"
+  apijs_status: "Durum :"
   apijs_status_enabled: "Etkin"
   apijs_status_disabled: "Pasif"
 
@@ -17,10 +16,10 @@ tr:
   permission_delete_attachments: "Eklenti Sil"
   apijs_config_album: "Fotoğraf Albümü"
   apijs_config_show_album: "Fotoğraf albümünü görüntüle"
-  #apijs_config_show_album_infos: ""
+  #apijs_config_show_album_infos: "####"
   apijs_config_show_filename: "Fotoğraf adını göster"
   apijs_config_show_exifdate: "Fotoğraf tarihini göster"
-  #apijs_config_mimetypes: ""
+  #apijs_config_mimetypes: "####"
   apijs_config_create_all: "iki görüntü oluştur"
   apijs_config_create_all_info: "Simge görüntüsünü ve ön görünümü aynı anda oluşturmak sayfayı ilk görüntülemeyi yavaşlatır fakat slayt gösterisini hızlandırır."
   apijs_config_album_exclude_name: "Fotoğraf isimleri bununla<br />başlayanları hariç tur"
@@ -33,15 +32,13 @@ tr:
   apijs_title_files: "Eklenti listesi"
   apijs_title_download: "İndir (%{value})"
   apijs_zip_button: "Çoklu dosya yükle (ZIP)"
-  apijs_notsaved: "[strong]Uyarı[/strong], aşağıdaki dosyalar yüklenmedi:"
-  apijs_saved: "[strong]Hernasılsa[/strong], aşağıdaki dosyalar başarıyla yüklendi:"
-  apijs_final: "Formu kaydetmeden değişiklikleri tamamlayın veya sayfayı yeniden[a %{value}]yükleyin[/a]."
+  apijs_notsaved: "[strong]Uyarı[/strong], aşağıdaki dosyalar yüklenmedi :"
+  apijs_saved: "[strong]Hernasılsa[/strong], aşağıdaki dosyalar başarıyla yüklendi :"
+  apijs_final: "Formu kaydetmeden değişiklikleri tamamlayın veya sayfayı yeniden [a %{value}]yükleyin[/a]."
 
-  apijs_samples: "Örnekler:"
+  apijs_samples: "Örnekler :"
   apijs_sample1_title: "PHP Kılavuzu"
-  apijs_sample1_text1: "Yalnız şuna dikkat edin: Epostanın sunucu tarafından teslim alınması, epostanın alıcısına ulaştığı anlamına gelmez."
-  #apijs_sample2_title: ""
-  #apijs_sample2_text1: ""
-  #apijs_sample2_text2: ""
-  #apijs_sample3_title: ""
-  #apijs_sample3_text1: ""
+  apijs_sample1_text1: "Yalnız şuna dikkat edin : Epostanın sunucu tarafından teslim alınması, epostanın alıcısına ulaştığı anlamına gelmez."
+  #apijs_sample2_title: "####"
+  #apijs_sample2_text1: "####"
+  apijs_sample2_text2: "Web sitesi : %{value}"

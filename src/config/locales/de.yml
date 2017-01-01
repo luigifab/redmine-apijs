@@ -1,0 +1,44 @@
+# Philip Junietz <info~label-park~com>
+# Pamela Steinborn <st.pamela~laposte~net>
+# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
+#
+de:
+  apijs_documentation: "Dokumentation: <a %{link1}>apijs</a>, <a %{link2}>Plugin</a>, <a %{link3}>übersetzung</a>"
+  apijs_version: "Version:"
+  apijs_status: "Zustand:"
+  apijs_status_enabled: "aktiviert"
+  apijs_status_disabled: "deaktiviert"
+
+  apijs_config_apijs: "Allgemein"
+  apijs_config_enable: "Apijs aktivieren"
+  apijs_config_sort_order: "Dateien alphabetisch sortieren"
+  permission_edit_attachments: "Beschreibung der Datei bearbeiten"
+  permission_delete_attachments: "Datei löschen"
+  apijs_config_album: "Fotoalbum"
+  apijs_config_show_album: "Alben anzeigen"
+  apijs_config_show_album_infos: "Alle Informationen anzeigen"
+  apijs_config_show_filename: "Name in der Diashow anzeigen"
+  apijs_config_show_exifdate: "Datum in der Diashow anzeigen"
+  apijs_config_mimetypes: "Folgende Dateien verwenden"
+  apijs_config_create_all: "Diese zwei Bilder generieren"
+  apijs_config_create_all_info: "Generiert Thumbnail und Vorschaubild gleichzeitig, dies verlangsamt das Anzeigen der Seite beim ersten mal, es ermöglicht jedoch eine schnellere Anzeige der Diashow."
+  apijs_config_album_exclude_name: "Fotoalben ausschliessen die<br />mit folgendem Namen beginnen"
+  apijs_config_album_exclude_desc: "Fotoalben ausschliessen deren Beschreibung<br />mit folgendem Term beginnt"
+  apijs_config_directories: "Temporäre Verzeichnisse"
+  apijs_config_directories_info: "Verwendet zur Speicherung der Thumbnails der Alben"
+  apijs_config_programs: "Version des Programms"
+
+  apijs_title_album: "Fotogalerie"
+  apijs_title_files: "Liste der Dateien"
+  apijs_title_download: "Download (%{value})"
+  apijs_zip_button: "Mehrere Dateien versenden (ZIP)"
+  apijs_notsaved: "[strong]Achtung[/strong], die folgenden Dateien wurden nicht gespeichert:"
+  apijs_saved: "[strong]Jedoch[/strong], wurden die folgenden Dateien erfolgreich gespeichert:"
+  apijs_final: "Beenden Sie Ihre Veränderungen bevor Sie das Formular speichern oder die Seite [a %{value}]neu laden[/a]."
+
+  apijs_samples: "Beispiele:"
+  apijs_sample1_title: "PHP-Handbuch"
+  apijs_sample1_text1: "Dass eine E-Mail für den Versand akzeptiert wurde, bedeutet nicht, dass sie auch wirklich den gewünschten Empfänger erreichen wird. "
+  apijs_sample2_title: "Überraschung!"
+  apijs_sample2_text1: "Du siehst dieses Video ohne Erweiterung dank dem neuen [em]video[/em] Tag welches im Standard [strong]HTML 5[/strong] integriert ist."
+  apijs_sample2_text2: "Website: %{value}"

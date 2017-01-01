@@ -1,6 +1,6 @@
 /**
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * Created in 2012, updated S/30/05/2015, version 24
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Created in 2012, updated S/24/12/2016
  * https://redmine.luigifab.info/projects/redmine/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -9,19 +9,23 @@
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogues &&& */
 #apijsDialog { margin:0; }
-
-#apijsBox { font-size:0.8rem; border:none; }
-#apijsBox button::-moz-focus-inner { margin:-1px; padding:0; }
+#apijsBox { font-size:0.8rem; border:0; }
 #apijsBox a { color:blue; }
 
 #apijsBox.options.editattachment input[type="text"] {
-	display:block; padding:0.3em; width:calc(100% - 4px - 0.6em); width:-moz-calc(100% - 4px - 0.6em); width:-webkit-calc(100% - 4px - 0.6em);
+	display:block; padding:0.3em; width:calc(100% - 4px - 0.6em);
 	border:1px solid #888; background-color:#EEE;
 }
 
 #apijsBox.information.upload.error p { margin:0; }
 #apijsBox.information.upload.error ul { margin:0.3em 0 0.7em 1em; column-count:3; -moz-column-count:3; -webkit-column-count:3; }
-#apijsBox.information.upload.error ul li { font-size:0.85em; color:#444; }
+#apijsBox.information.upload.error li { font-size:0.85em; color:#444; }
+
+body button.attachment:before, body ul.attachments a[id^="slideshow"]:before {
+	-moz-osx-font-smoothing:grayscale; -webkit-font-smoothing:antialiased;
+	font-family:apijsFontello; font-style:normal; font-weight:normal; font-variant:normal; text-transform:none; text-decoration:inherit;
+	user-select:none; -ms-user-select:none; -moz-user-select:none; -webkit-user-select:none;
+}
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& albums et listes &&& */
 body div.attachments.album { margin:1em 0; text-align:left; }
@@ -51,29 +55,26 @@ body ul.attachments li span.date { color:gray; }
 
 body.controller-issues div.issue.details div.wiki.files h2 {
 	margin-bottom:-0.5em; padding-top:12px; font-size:12px;
-	border-top:1px solid #CCC; border-bottom:none;
+	border-top:1px solid #CCC; border-bottom:0;
 }
 body.controller-documents div.wiki.files h2, body.controller-messages div.wiki.files h2 {
 	margin-bottom:-0.5em; font-size:12px;
 }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& boutons &&& */
-body button.attachment, body span.attachment.show {
+body button.attachment, body ul.attachments a[id^="slideshow"] {
 	display:inline-block; padding:0; width:16px; height:16px; vertical-align:middle;
-	border:none; color:transparent; cursor:pointer; opacity:0.5;
-	background-color:transparent; background-image:url("../images/humanity.min.svg");
-	transition:opacity 0.5s; -moz-transition:opacity 0.5s; -webkit-transition:opacity 0.5s;
+	font-size:0.85rem; border:0; color:black; background-color:transparent; cursor:pointer; transition:opacity 0.5s; opacity:0.5;
 }
 
-body button.attachment.show, body span.attachment.show { margin:0 -0.2em 0 0.2em; background-position:-4px -540px; }
-body button.attachment.download { background-position:-4px -420px; }
-body button.attachment.delete { background-position:-4px -460px; }
-body button.attachment.edit { background-position:-4px -500px; }
+body button.attachment.show:before, body ul.attachments a[id^="slideshow"]:before { margin:0 -0.2em 0 0.2em; content:"\E811"; }
+body button.attachment.download:before { content:"\E803"; }
+body button.attachment.delete:before { content:"\E80F"; }
+body button.attachment.edit:before { content:"\E810"; }
 
 body button.attachment:hover, body button.attachment:active, body button.attachment:focus,
-body span.attachment.show:hover, body span.attachment.show:active, body span.attachment.show:focus { opacity:1; }
-
-body span.attachment.show a { display:inline-block; padding:0; width:16px; height:16px; vertical-align:middle; }
+body ul.attachments a[id^="slideshow"]:hover, body ul.attachments a[id^="slideshow"]:active,
+body ul.attachments a[id^="slideshow"]:focus { opacity:1; text-decoration:none; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& configuration &&& */
 fieldset.apijs.tabular.settings { margin:1em; padding:0.5em; border:1px solid #CCC; }
@@ -83,6 +84,6 @@ fieldset.apijs.tabular.settings p a + em.info { margin:0; }
 fieldset.apijs.tabular.settings p label.bis { margin-left:1px; margin-right:0.7em; width:auto; }
 fieldset.apijs.tabular.settings p label.bis input { margin:0; }
 
-fieldset.apijs.tabular.settings.info { margin:0 0.6em 1.3em; border:none; }
+fieldset.apijs.tabular.settings.info { margin:0 0.6em 1.3em; border:0; }
 fieldset.apijs.tabular.settings.info ul { margin:0; padding:0; list-style:none; }
-fieldset.apijs.tabular.settings.info ul li { margin:0; }
+fieldset.apijs.tabular.settings.info li { margin:0; }
