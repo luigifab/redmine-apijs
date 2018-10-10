@@ -1,14 +1,4 @@
-# Paco Aguayo <francisco.aguayocanela~gmail~com>
-# Hugo Baugé & Cédric Scaramuzza <info~label-park~com>
-# Pascale Scellier <scellier.pascale~orange~fr>
-# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
 es:
-  apijs_documentation: "Documentación: <a %{link1}>apijs</a>, <a %{link2}>extensión</a>, <a %{link3}>traducción</a>"
-  apijs_version: "Versión:"
-  apijs_status: "Estado:"
-  apijs_status_enabled: "Activado"
-  apijs_status_disabled: "Desactivado"
-
   apijs_config_apijs: "General"
   apijs_config_enable: "Activar apijs"
   apijs_config_sort_order: "Ordenar archivos alfabéticamente"

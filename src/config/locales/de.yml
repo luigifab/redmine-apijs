@@ -1,14 +1,4 @@
-# Philip Junietz <info~label-park~com>
-# Pamela Steinborn <st.pamela~laposte~net>
-# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
-#
 de:
-  apijs_documentation: "Dokumentation: <a %{link1}>apijs</a>, <a %{link2}>Plugin</a>, <a %{link3}>übersetzung</a>"
-  apijs_version: "Version:"
-  apijs_status: "Zustand:"
-  apijs_status_enabled: "aktiviert"
-  apijs_status_disabled: "deaktiviert"
-
   apijs_config_apijs: "Allgemein"
   apijs_config_enable: "Apijs aktivieren"
   apijs_config_sort_order: "Dateien alphabetisch sortieren"

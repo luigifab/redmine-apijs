@@ -1,14 +1,4 @@
-# Eugene Parfenov (igro) <admin~mytona~com>
-# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
-#
-#
 ru:
-  apijs_documentation: "Документация: <a %{link1}>apijs</a>, <a %{link2}>плагин</a>, <a %{link3}>перевод</a>"
-  apijs_version: "Версия:"
-  apijs_status: "Статус:"
-  apijs_status_enabled: "Включен"
-  apijs_status_disabled: "Отключен"
-
   apijs_config_apijs: "Основная"
   apijs_config_enable: "Включить apijs"
   apijs_config_sort_order: "Сортировать файлы в алфовитном порядке"

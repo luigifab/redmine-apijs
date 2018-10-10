@@ -1,14 +1,4 @@
-# Maria Grasso <mgrasso~outlook~fr>
-# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
-#
-#
 it:
-  apijs_documentation: "Documentazione, <a %{link1}>apijs</a>, <a %{link2}>module</a>, <a %{link3}>traduzione</a>"
-  apijs_version: "Versione:"
-  apijs_status: "Stato:"
-  apijs_status_enabled: "Attivo"
-  apijs_status_disabled: "Disattivo"
-
   apijs_config_apijs: "Generale"
   apijs_config_enable: "Attivare l'apijs"
   apijs_config_sort_order: "Ordinare i file in ordine alfabetico"

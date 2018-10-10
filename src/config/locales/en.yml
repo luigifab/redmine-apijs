@@ -1,14 +1,4 @@
-# Brian Legrand
-# Fabrice Creuzot (luigifab) <code~luigifab~info>
-# Pascale Scellier <scellier.pascale~orange~fr>
-# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
 en:
-  apijs_documentation: "Documentation: <a %{link1}>apijs</a>, <a %{link2}>plugin</a>, <a %{link3}>translation</a>"
-  apijs_version: "Version:"
-  apijs_status: "State:"
-  apijs_status_enabled: "Enabled"
-  apijs_status_disabled: "Disabled"
-
   apijs_config_apijs: "General"
   apijs_config_enable: "Enable apijs"
   apijs_config_sort_order: "Sort files alphabetically"

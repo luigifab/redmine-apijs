@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated W/28/12/2016
+# Updated J/10/08/2017
 #
-# Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://redmine.luigifab.info/projects/redmine/wiki/apijs
+# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# https://www.luigifab.info/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -80,4 +80,4 @@ if (thumb or (sourceImg.size[0] > SIZE[0]) or (sourceImg.size[1] > SIZE[1])):
 else:
 	finalImg = sourceImg
 
-finalImg.save(OUT, 'JPEG')
+finalImg.convert('RGB').save(OUT, 'JPEG')

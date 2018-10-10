@@ -1,9 +1,9 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated J/29/12/2016
+# Updated M/22/08/2017
 #
-# Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://redmine.luigifab.info/projects/redmine/wiki/apijs
+# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# https://www.luigifab.info/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -194,7 +194,7 @@ class ApijsController < AttachmentsController
     # vérification d'accès
     if !User.current.allowed_to?({:controller => 'projects', :action => 'show'}, @project)
       deny_access
-    # ou télachargement d'une vidéo en 206 Partial Content (http://stackoverflow.com/a/7604330 + http://stackoverflow.com/a/16593030)
+    # ou télachargement d'une vidéo en 206 Partial Content (https://stackoverflow.com/a/7604330 + https://stackoverflow.com/a/16593030)
     # téléchargement d'une image avec mise en cache
     # ou téléchargement d'un fichier
     elsif !params[:filename] || params[:inline] || params[:stream]

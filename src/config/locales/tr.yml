@@ -1,14 +1,4 @@
-# Adnan Topcu <adnan~topcu~name>
-# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
-#
-#
 tr:
-  apijs_documentation: "Dokümantasyon : <a %{link1}>apijs</a>, <a %{link2}>eklenti</a>, <a %{link3}>tercüme</a>"
-  apijs_version: "Versiyon :"
-  apijs_status: "Durum :"
-  apijs_status_enabled: "Etkin"
-  apijs_status_disabled: "Pasif"
-
   apijs_config_apijs: "Genel"
   apijs_config_enable: "Apijs etkinleştir"
   apijs_config_sort_order: "Eklentileri alfabetik olarak sırala"

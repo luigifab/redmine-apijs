@@ -1,10 +1,10 @@
 <?php
 /**
  * Created J/26/12/2013
- * Updated M/08/11/2016
+ * Updated M/28/02/2017
  *
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * https://redmine.luigifab.info/projects/redmine/wiki/apijs
+ * Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * https://www.luigifab.info/redmine/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -40,7 +40,7 @@ foreach ($files as $file) {
 			exec('exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal '.$dir.$file.' | cut -c35-', $date);
 		}
 
-		if ($jpg && isset($date[0])) {
+		if ($jpg && !empty($date[0])) {
 			$sql = 'UPDATE attachments SET created_on = "'.date('Y-m-d H:i:s', strtotime($date[0])).'",
 									 filesize = "'.filesize($dir.$file).'", digest = "'.md5_file($dir.$file).'"
 				   WHERE disk_filename = "'.$file.'"';

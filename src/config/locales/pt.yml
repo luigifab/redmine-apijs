@@ -1,14 +1,4 @@
-# Isabel Mendes <isabel.2012~orange~fr>
-# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
-#
-#
 pt:
-  apijs_documentation: "Documentação: <a %{link1}>apijs</a>, <a %{link2}>extensão</a>, <a %{link3}>tradução</a>"
-  apijs_version: "Versão:"
-  apijs_status: "Estado:"
-  apijs_status_enabled: "Ativado"
-  apijs_status_disabled: "Desativado"
-
   apijs_config_apijs: "Geral"
   apijs_config_enable: "Ativar apijs"
   apijs_config_sort_order: "Ordenar os ficheiros por ordem alfabética"

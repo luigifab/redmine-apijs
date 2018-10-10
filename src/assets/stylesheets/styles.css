@@ -1,10 +1,19 @@
 /**
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * Created in 2012, updated S/24/12/2016
- * https://redmine.luigifab.info/projects/redmine/wiki/apijs
+ * Created D/15/12/2013
+ * Updated S/29/09/2018
+ *
+ * Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * https://www.luigifab.info/redmine/apijs
  *
  * This program is free software, you can redistribute it or modify
- * it under the terms of the GNU General Public License (GPL).
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
  */
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogues &&& */
@@ -21,11 +30,7 @@
 #apijsBox.information.upload.error ul { margin:0.3em 0 0.7em 1em; column-count:3; -moz-column-count:3; -webkit-column-count:3; }
 #apijsBox.information.upload.error li { font-size:0.85em; color:#444; }
 
-body button.attachment:before, body ul.attachments a[id^="slideshow"]:before {
-	-moz-osx-font-smoothing:grayscale; -webkit-font-smoothing:antialiased;
-	font-family:apijsFontello; font-style:normal; font-weight:normal; font-variant:normal; text-transform:none; text-decoration:inherit;
-	user-select:none; -ms-user-select:none; -moz-user-select:none; -webkit-user-select:none;
-}
+#apijsBox.upload h1 { letter-spacing:-0.05em; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& albums et listes &&& */
 body div.attachments.album { margin:1em 0; text-align:left; }
@@ -57,6 +62,7 @@ body.controller-issues div.issue.details div.wiki.files h2 {
 	margin-bottom:-0.5em; padding-top:12px; font-size:12px;
 	border-top:1px solid #CCC; border-bottom:0;
 }
+
 body.controller-documents div.wiki.files h2, body.controller-messages div.wiki.files h2 {
 	margin-bottom:-0.5em; font-size:12px;
 }
@@ -64,17 +70,13 @@ body.controller-documents div.wiki.files h2, body.controller-messages div.wiki.f
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& boutons &&& */
 body button.attachment, body ul.attachments a[id^="slideshow"] {
 	display:inline-block; padding:0; width:16px; height:16px; vertical-align:middle;
-	font-size:0.85rem; border:0; color:black; background-color:transparent; cursor:pointer; transition:opacity 0.5s; opacity:0.5;
+	text-decoration:none !important; border:0; background-color:transparent; cursor:pointer; opacity:0.75;
 }
 
-body button.attachment.show:before, body ul.attachments a[id^="slideshow"]:before { margin:0 -0.2em 0 0.2em; content:"\E811"; }
-body button.attachment.download:before { content:"\E803"; }
-body button.attachment.delete:before { content:"\E80F"; }
-body button.attachment.edit:before { content:"\E810"; }
-
-body button.attachment:hover, body button.attachment:active, body button.attachment:focus,
-body ul.attachments a[id^="slideshow"]:hover, body ul.attachments a[id^="slideshow"]:active,
-body ul.attachments a[id^="slideshow"]:focus { opacity:1; text-decoration:none; }
+body button.attachment.show, body ul.attachments a[id^="slideshow"] { background-image:url("../../../images/magnifier.png"); }
+body button.attachment.download { background-image:url("../../../images/download.png"); }
+body button.attachment.delete { background-image:url("../../../images/delete.png"); }
+body button.attachment.edit { background-image:url("../../../images/edit.png"); }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& configuration &&& */
 fieldset.apijs.tabular.settings { margin:1em; padding:0.5em; border:1px solid #CCC; }

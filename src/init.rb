@@ -1,9 +1,9 @@
 # encoding: utf-8
 # Created L/21/05/2012
-# Updated J/29/12/2016
+# Updated S/29/09/2018
 #
-# Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://redmine.luigifab.info/projects/redmine/wiki/apijs
+# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# https://www.luigifab.info/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -19,14 +19,13 @@ require 'redmine'
 require 'const'
 require 'files_hook'
 require 'attachment_patch'
-require 'zip'
 
 Redmine::Plugin.register :redmine_apijs do
   name 'Redmine Apijs plugin'
   author 'Fabrice Creuzot'
   description 'Integrate the apijs javascript library into Redmine.'
-  version '5.3.0'
-  url 'https://redmine.luigifab.info/projects/redmine/wiki/apijs'
+  version '5.3.1'
+  url 'https://www.luigifab.info/redmine/apijs'
   author_url 'https://www.luigifab.info/'
 
   permission :edit_attachments, { :apijs => :edit }, { :require => :loggedin }

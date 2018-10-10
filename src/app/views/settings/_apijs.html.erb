@@ -1,9 +1,9 @@
-<% #<?
+<%
 # Created J/12/12/2013
-# Updated V/30/12/2016
+# Updated S/29/09/2018
 #
-# Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://redmine.luigifab.info/projects/redmine/wiki/apijs
+# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# https://www.luigifab.info/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -48,28 +48,20 @@ if File.directory?(APIJS_ROOT + '/show/')
 end
 
 check = 'checked="checked"'
-link1 = 'href="https://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;"';
-link2 = 'href="https://redmine.luigifab.info/projects/redmine/wiki/apijs" onclick="window.open(this.href); return false;"';
-link3 = 'href="https://redmine.luigifab.info/projects/apijs/wiki" onclick="window.open(this.href); return false;"';
 %>
 
-<fieldset class="apijs tabular settings info">
-	<ul>
-		<li><%= raw l(:apijs_documentation, link1: link1, link2: link2, link3: link3) %></li>
-		<li><%= raw l(:apijs_version) %> <strong><%= Redmine::Plugin.find(:redmine_apijs).version %></strong></li>
-		<li><%= raw l(:apijs_status) %> <strong><%= raw l(settings['enabled'] == '1' ? :apijs_status_enabled : :apijs_status_disabled) %></strong></li>
-		<% if settings['enabled'] == '1' %>
-			<li>
-				<%= raw l(:apijs_samples) %>
-				<button onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_sample1_title) %>','<%= raw l(:apijs_sample1_text1).gsub(/['"\\\x0]/,'\\\\\0') %>');" type="button">1</button>
-				<button onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_sample2_title) %>','[p]<%= raw l(:apijs_sample2_text1).gsub(/['"\\\x0]/,'\\\\\0') %>[/p][p]<%= raw l(:apijs_sample2_text2, value: '[a href=\'https://www.luigifab.info/\' class=\'popup\']www.luigifab.info[/a]').gsub(/['"\\\x0]/,'\\\\\0') %>[/p]');" type="button">2</button>
-			</li>
-		<% end %>
-	</ul>
-</fieldset>
+<p style="margin:0.5em 1em; padding:0.5em;">
+	Luigifab/Apijs <%= Redmine::Plugin.find(:redmine_apijs).version %>
+	<a href="https://www.luigifab.info/redmine/apijs" style="float:right;">luigifab.info/redmine/apijs</a>
+	<a href="https://www.luigifab.info/apijs" style="float:right; margin:0 0.6em;">luigifab.info/apijs</a>
+</p>
 
 <fieldset class="box apijs tabular settings">
 	<legend><%= raw l(:apijs_config_apijs) %></legend>
+	<% if settings['enabled'] == '1' %>
+		<button onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_sample1_title) %>','<%= raw l(:apijs_sample1_text1).gsub(/['"\\\x0]/,'\\\\\0') %>');" type="button">1</button>
+		<button onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_sample2_title) %>','[p]<%= raw l(:apijs_sample2_text1).gsub(/['"\\\x0]/,'\\\\\0') %>[/p][p]<%= raw l(:apijs_sample2_text2, value: '[a href=\'https://www.luigifab.info/\' class=\'popup\']www.luigifab.info[/a]').gsub(/['"\\\x0]/,'\\\\\0') %>[/p]');" type="button">2</button>
+	<% end %>
 	<p>
 		<label for="apijsEnabled"><%= raw l(:apijs_config_enable) %></label>
 		<select name="settings[enabled]" id="apijsEnabled">
@@ -86,7 +78,7 @@ link3 = 'href="https://redmine.luigifab.info/projects/apijs/wiki" onclick="windo
 	</p>
 	<p>
 		<label><%= raw l(:label_role_and_permissions) %></label>
-		<a href="<%= url_for({:controller => 'roles', :action => 'permissions'}) %>" onclick="window.open(this.href); return false;"><%= raw l(:label_role_and_permissions) %></a>
+		<a href="<%= url_for({:controller => 'roles', :action => 'permissions'}) %>"><%= raw l(:label_role_and_permissions) %></a>
 		<em class="info"><%= raw l(:permission_edit_attachments) %>, <%= raw l(:permission_delete_attachments) %></em>
 	</p>
 </fieldset>

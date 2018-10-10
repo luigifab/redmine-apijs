@@ -1,9 +1,9 @@
-<% #<?
+<%
 # Created L/21/05/2012
-# Updated S/24/12/2016
+# Updated S/29/09/2018
 #
-# Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://redmine.luigifab.info/projects/redmine/wiki/apijs
+# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+# https://www.luigifab.info/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -15,7 +15,7 @@
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
 
-attachments.sort! { |a,b| a.filename.downcase <=> b.filename.downcase } if Setting.plugin_redmine_apijs['sort_attachments'] == '1'
+attachments = attachments.to_a.sort! { |a,b| a.filename.downcase <=> b.filename.downcase } if Setting.plugin_redmine_apijs['sort_attachments'] == '1'
 
 settingShowAlbum      = (Setting.plugin_redmine_apijs['show_album'] == '1')       ? true : false
 settingShowAlbumInfos = (Setting.plugin_redmine_apijs['show_album_infos'] == '1') ? true : false

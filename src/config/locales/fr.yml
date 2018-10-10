@@ -1,14 +1,4 @@
-# Fabrice Creuzot (luigifab) <code~luigifab~info>
-# Pascale Scellier <scellier.pascale~orange~fr>
-# https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
-#
 fr:
-  apijs_documentation: "Documentation : <a %{link1}>apijs</a>, <a %{link2}>extension</a>, <a %{link3}>traduction</a>"
-  apijs_version: "Version :"
-  apijs_status: "État :"
-  apijs_status_enabled: "Activé"
-  apijs_status_disabled: "Désactivé"
-
   apijs_config_apijs: "Général"
   apijs_config_enable: "Activer l'apijs"
   apijs_config_sort_order: "Trier les fichiers par ordre alphabétique"

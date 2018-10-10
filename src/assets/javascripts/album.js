@@ -1,97 +1,88 @@
 /**
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * Created D/15/12/2013, updated M/08/11/2016
- * https://redmine.luigifab.info/projects/redmine/wiki/apijs
+ * Created D/15/12/2013
+ * Updated S/29/09/2018
+ *
+ * Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * https://www.luigifab.info/redmine/apijs
  *
  * This program is free software, you can redistribute it or modify
- * it under the terms of the GNU General Public License (GPL).
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
  */
 
-// traductions
 function apijsInitTranslations() {
 
 	var de = apijs.i18n.data.de, en = apijs.i18n.data.en, es = apijs.i18n.data.es, fr = apijs.i18n.data.fr,
 	    it = apijs.i18n.data.it, pt = apijs.i18n.data.pt, ru = apijs.i18n.data.ru;
 
-	de.deleteTitle = "Eine Datei löschen";
-	en.deleteTitle = "Delete a file";
-	es.deleteTitle = "Borrar un archivo";
-	fr.deleteTitle = "Supprimer un fichier";
-	it.deleteTitle = "Eliminare un file";
-	pt.deleteTitle = "Suprimir um ficheiro";
-	ru.deleteTitle = "Удалить файл";
+	de.a250 = "Eine Datei löschen";
+	en.a250 = "Delete a file";
+	es.a250 = "Borrar un archivo";
+	fr.a250 = "Supprimer un fichier";
+	it.a250 = "Eliminare un file";
+	pt.a250 = "Suprimir um ficheiro";
+	ru.a250 = "Удалить файл";
 
-	de.deleteText = "Sind Sie sicher, dass Sie diese Datei löschen möchten?[br]Achtung, diese Aktion ist unrückgängig.";
-	en.deleteText = "Are you sure you want to delete this file?[br]Be careful, you can't cancel this operation.";
-	es.deleteText = "¿Está usted seguro-a de que desea eliminar este archivo?[br]Atención, pues no podrá cancelar esta operación.";
-	fr.deleteText = "Êtes-vous certain(e) de vouloir supprimer ce fichier ?[br]Attention, cette opération n'est pas annulable.";
-	it.deleteText = "Sicuri di voler eliminare il file?[br]Attenzione, questa operazione non puo' essere annullata.";
-	pt.deleteText = "Tem certeza de que quer suprimir este ficheiro?[br]Atenção, não pode cancelar esta operação.";
-	ru.deleteText = "Вы уверены, что хотите удалить этот файл?[br]Осторожно, вы не сможете отменить эту операцию.";
+	de.a251 = "Sind Sie sicher, dass Sie diese Datei löschen möchten?[br]Achtung, diese Aktion ist unrückgängig.";
+	en.a251 = "Are you sure you want to delete this file?[br]Be careful, you can't cancel this operation.";
+	es.a251 = "¿Está usted seguro-a de que desea eliminar este archivo?[br]Atención, pues no podrá cancelar esta operación.";
+	fr.a251 = "Êtes-vous certain(e) de vouloir supprimer ce fichier ?[br]Attention, cette opération n'est pas annulable.";
+	it.a251 = "Sicuri di voler eliminare il file?[br]Attenzione, questa operazione non puo' essere annullata.";
+	pt.a251 = "Tem certeza de que quer suprimir este ficheiro?[br]Atenção, não pode cancelar esta operação.";
+	ru.a251 = "Вы уверены, что хотите удалить этот файл?[br]Осторожно, вы не сможете отменить эту операцию.";
 
-	de.errorTitle = "Fehler";
-	en.errorTitle = "Error";
-	es.errorTitle = "Error";
-	fr.errorTitle = "Erreur";
-	it.errorTitle = "Errore";
-	pt.errorTitle = "Erro";
-	ru.errorTitle = "Ошибка";
+	de.a252 = "Fehler";
+	en.a252 = "Error";
+	es.a252 = "Error";
+	fr.a252 = "Erreur";
+	it.a252 = "Errore";
+	pt.a252 = "Erro";
+	ru.a252 = "Ошибка";
 
-	de.error403 = "Sie verfügen nicht über die notwendigen Rechte um diese Operation durchzuführen, bitte [a §]aktualisieren Sie die Seite[/a].";
-	en.error403 = "You are not authorized to perform this operation, please [a §]refresh the page[/a].";
-	es.error403 = "No está autorizado-a para llevar a cabo esta operación, por favor [a §]actualice la página[/a].";
-	fr.error403 = "Vous n'êtes pas autorisé(e) à effectuer cette opération, veuillez [a §]actualiser la page[/a].";
-	it.error403 = "Non siete autorizzati a eseguire questa operazione, vi preghiamo di [a §]ricaricare la pagina[/a].";
-	pt.error403 = "Não é autorizado(a) para efetuar esta operação, por favor [a §]atualize a página[/a].";
-	ru.error403 = "Вы не авторизованы для выполнения этой операции, пожалуйста [a §]обновите страницу[/a].";
+	de.a253 = "Sie verfügen nicht über die notwendigen Rechte um diese Operation durchzuführen, bitte [a §]aktualisieren Sie die Seite[/a].";
+	en.a253 = "You are not authorized to perform this operation, please [a §]refresh the page[/a].";
+	es.a253 = "No está autorizado-a para llevar a cabo esta operación, por favor [a §]actualice la página[/a].";
+	fr.a253 = "Vous n'êtes pas autorisé(e) à effectuer cette opération, veuillez [a §]actualiser la page[/a].";
+	it.a253 = "Non siete autorizzati a eseguire questa operazione, vi preghiamo di [a §]ricaricare la pagina[/a].";
+	pt.a253 = "Não é autorizado(a) para efetuar esta operação, por favor [a §]atualize a página[/a].";
+	ru.a253 = "Вы не авторизованы для выполнения этой операции, пожалуйста [a §]обновите страницу[/a].";
 
-	de.error404 = "Es tut uns leid, diese Datei existiert nicht mehr, bitte [a §]aktualisieren Sie die Seite[/a].";
-	en.error404 = "Sorry, the file no longer exists, please [a §]refresh the page[/a].";
-	es.error404 = "Lo sentimos, pero el archivo ya no existe, por favor [a §]actualice la página[/a].";
-	fr.error404 = "Désolé, le fichier n'existe plus, veuillez [a §]actualiser la page[/a].";
-	it.error404 = "Spiacenti, il file non esiste più, vi preghiamo di [a §]ricaricare la pagina[/a].";
-	pt.error404 = "Lamento, o ficheiro já não existe, por favor [a §]atualize a página[/a].";
-	ru.error404 = "Извините, но файл не существует, пожалуйста [a §]обновите страницу[/a].";
+	de.a254 = "Es tut uns leid, diese Datei existiert nicht mehr, bitte [a §]aktualisieren Sie die Seite[/a].";
+	en.a254 = "Sorry, the file no longer exists, please [a §]refresh the page[/a].";
+	es.a254 = "Lo sentimos, pero el archivo ya no existe, por favor [a §]actualice la página[/a].";
+	fr.a254 = "Désolé, le fichier n'existe plus, veuillez [a §]actualiser la page[/a].";
+	it.a254 = "Spiacenti, il file non esiste più, vi preghiamo di [a §]ricaricare la pagina[/a].";
+	pt.a254 = "Lamento, o ficheiro já não existe, por favor [a §]atualize a página[/a].";
+	ru.a254 = "Извините, но файл не существует, пожалуйста [a §]обновите страницу[/a].";
 
-	de.sendTitle = "Mehrere Dateien versenden";
-	en.sendTitle = "Send multiple files";
-	es.sendTitle = "Enviar varios archivos";
-	fr.sendTitle = "Envoyer plusieurs fichiers";
-	it.sendTitle = "Inviare più file";
-	pt.sendTitle = "Enviar vários ficheiros";
-	ru.sendTitle = "Отправить несколько файлов";
+	de.a255 = "Eine Beschreibung bearbeiten";
+	en.a255 = "Edit a description";
+	es.a255 = "Editar una descripción";
+	fr.a255 = "Modifier une description";
+	it.a255 = "Modificare una descrizione";
+	pt.a255 = "Modificar uma descrição";
+	ru.a255 = "Редактировать описание";
 
-	de.sendText = "§ Dateien gespeichert. Beenden Sie Ihre Veränderungen bevor Sie das Formular speichern oder die Seite [a §]neu laden[/a].";
-	en.sendText = "§ files saved. Finish your changes before saving the form or simply [a §]reload[/a] the page.";
-	es.sendText = "§ archivos grabados. Termine sus modificaciones antes de grabar el formulario o [a §]recargue[/a] simplemente la página.";
-	fr.sendText = "§ fichiers enregistrés. Terminez vos modifications avant d'enregistrer le formulaire ou [a §]rechargez[/a] simplement la page.";
-	it.sendText = "§ file salvati. Terminate le vostre modifiche prima di salvare il formulario o [a §]ricaricate[/a] semplicemente la pagina.";
-	pt.sendText = "§ ficheiros registados. Termine as suas alterações antes de registar o formulário ou [a §]recarregue[/a] simplesmente a página.";
-	ru.sendText = "§ файлы сохранены. Завершите изменения перед тем как сохранить форму или просто [a §]перезагрузите[/a] страницу.";
-
-	de.editTitle = "Eine Beschreibung bearbeiten";
-	en.editTitle = "Edit a description";
-	es.editTitle = "Editar una descripción";
-	fr.editTitle = "Modifier une description";
-	it.editTitle = "Modificare una descrizione";
-	pt.editTitle = "Modificar uma descrição";
-	ru.editTitle = "Редактировать описание";
-
-	de.editText = "Bitte geben Sie weiter unten die neue Beschreibung für diese Datei an. Um die Beschreibung zu löschen lassen Sie das Feld leer.";
-	en.editText = "Enter below the new description for the file. To remove the description, leave the field empty.";
-	es.editText = "Introduzca a continuación la nueva descripción para el archivo. Para eliminar la descripción, deje el campo en blanco.";
-	fr.editText = "Saisissez ci-dessous la nouvelle description pour ce fichier. Pour supprimer la description, laissez le champ vide.";
-	it.editText = "Inserire qui sotto la nuova descrizione del file. Per cancellare la descrizione, lasciate lo spazio vuoto.";
-	pt.editText = "Digite abaixo a nova descrição para este ficheiro. Para suprimir a descrição, deixe o campo vazio.";
-	ru.editText = "Ниже введите новое описание файла. Оставьте поле пустым, чтобы удалить описание.";
+	de.a256 = "Bitte geben Sie weiter unten die neue Beschreibung für diese Datei an. Um die Beschreibung zu löschen lassen Sie das Feld leer.";
+	en.a256 = "Enter below the new description for the file. To remove the description, leave the field empty.";
+	es.a256 = "Introduzca a continuación la nueva descripción para el archivo. Para eliminar la descripción, deje el campo en blanco.";
+	fr.a256 = "Saisissez ci-dessous la nouvelle description pour ce fichier. Pour supprimer la description, laissez le champ vide.";
+	it.a256 = "Inserire qui sotto la nuova descrizione del file. Per cancellare la descrizione, lasciate lo spazio vuoto.";
+	pt.a256 = "Digite abaixo a nova descrição para este ficheiro. Para suprimir a descrição, deixe o campo vazio.";
+	ru.a256 = "Ниже введите новое описание файла. Оставьте поле пустым, чтобы удалить описание.";
 }
 
-// en cas d'erreur
 function apijsShowError(data) {
 
 	if ((typeof data === 'number') || (data.indexOf('<!DOCTYPE') < 0)) {
 		apijs.dialog.dialogInformation(
-			apijs.i18n.translate('errorTitle'),
+			apijs.i18n.translate('a252'),
 			(typeof data === 'number') ? apijs.i18n.translate('error' + data, "href='javascript:location.reload();'") : data,
 			'error');
 	}
@@ -102,33 +93,10 @@ function apijsShowError(data) {
 }
 
 
-// #### Envoi d'un fichier ZIP ############################################## //
-// = révision : 13
-// » Affiche un formulaire d'upload avec le dialogue d'upload
-// » Envoi un fichier en Ajax (../apijs/uploadzip[get=type,id;post=token,mybigzip])
-function apijsSendZip(url, token, maxsize) {
-
-	if (typeof apijs.i18n.data.en.sendTitle !== 'string')
-		apijsInitTranslations();
-
-	apijs.config.upload.tokenValue = token;
-	apijs.upload.sendFile(apijs.i18n.translate('sendTitle'), url, 'mybigzip', maxsize, 'zip', apijsFinalZip);
-}
-
-function apijsFinalZip(total) {
-	apijs.dialog.dialogInformation(apijs.i18n.translate('sendTitle'), apijs.i18n.translate('sendText', total, "href='javascript:location.reload();'"));
-}
-
-
-// #### Modification d'une description d'un fichier ######################### //
-// = révision : 30
-// » Attention il est admis qu'un code différent de 200/403/404 n'est pas possible
-// » Affiche un formulaire à remplir avec un simple champ texte avec le dialogue d'options
-// » Demande la modification en Ajax (../apijs/edit[get=id;post=token,description])
 function apijsEditAttachment(id, action, token) {
 
 	// gestion des traductions
-	if (typeof apijs.i18n.data.en.editTitle !== 'string')
+	if (typeof apijs.i18n.data.en.a255 !== 'string')
 		apijsInitTranslations();
 
 	// création du formulaire et affichage de celui-ci dans un dialogue
@@ -145,13 +113,13 @@ function apijsEditAttachment(id, action, token) {
 		desc = '';
 	}
 
-	text  = '[p][label for="apijsRedText"]' + apijs.i18n.translate('editText') + '[/label][/p]';
+	text  = '[p][label for="apijsRedText"]' + apijs.i18n.translate('a257') + '[/label][/p]';
 	text += '[input type="text" name="description" value="' + desc + '" spellcheck="true" id="apijsRedText"]';
 
 	// affichage du dialogue
-	apijs.dialog.dialogFormOptions(apijs.i18n.translate('editTitle'), text, action, apijsActionEditAttachment,
+	apijs.dialog.dialogFormOptions(apijs.i18n.translate('a256'), text, action, apijsActionEditAttachment,
 		[action, id, token], 'editattachment');
-	apijs.dialog.tDialog.querySelector('input').select();
+	apijs.dialog.t1.querySelector('input').select();
 }
 
 function apijsActionEditAttachment(action, args) {
@@ -217,17 +185,12 @@ function apijsActionEditAttachment(action, args) {
 }
 
 
-// #### Suppression d'un fichier ############################################ //
-// = révision : 30
-// » Attention il est admis qu'un code différent de 200/403/404 n'est pas possible
-// » Affiche une demande de confirmation de suppression avec le dialogue de confirmation
-// » Demande la suppression en Ajax (../apijs/delete[get=id;post=token])
 function apijsDeleteAttachment(id, action, token) {
 
-	if (typeof apijs.i18n.data.en.deleteTitle !== 'string')
+	if (typeof apijs.i18n.data.en.a250 !== 'string')
 		apijsInitTranslations();
 
-	apijs.dialog.dialogConfirmation(apijs.i18n.translate('deleteTitle'), apijs.i18n.translate('deleteText'),
+	apijs.dialog.dialogConfirmation(apijs.i18n.translate('a250'), apijs.i18n.translate('a251'),
 		apijsActionDeleteAttachment, [action, id, token]);
 }
 
