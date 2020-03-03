@@ -2,8 +2,8 @@
 # Created L/01/09/2014
 # Updated M/28/02/2017
 #
-# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://www.luigifab.info/redmine/apijs
+# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published

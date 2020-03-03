@@ -1,9 +1,9 @@
 <%
 # Created J/12/12/2013
-# Updated S/29/09/2018
+# Updated D/01/12/2019
 #
-# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://www.luigifab.info/redmine/apijs
+# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -16,14 +16,14 @@
 # GNU General Public License (GPL) for more details.
 
 html_title "Redmine Apijs plugin - " + l(:label_administration)
+checked    = 'checked="checked"'
 size_all   = 0
 size_thumb = 0
 size_show  = 0
 
 if File.directory?(APIJS_ROOT + '/')
   size_all = `du -hs #{APIJS_ROOT}/ | cut -f1`.strip!
-  size = size_all.to_f
-
+  size     = size_all.to_f
   size_all = number_to_human_size(size * 1024 * 1024 * 1024) if size_all =~ /G/
   size_all = number_to_human_size(size * 1024 * 1024) if size_all =~ /M/
   size_all = number_to_human_size(size * 1024) if size_all =~ /K/
@@ -31,8 +31,7 @@ end
 
 if File.directory?(APIJS_ROOT + '/thumb/')
   size_thumb = `du -hs #{APIJS_ROOT}/thumb/ | cut -f1`.strip!
-  size = size_thumb.to_f
-
+  size       = size_thumb.to_f
   size_thumb = number_to_human_size(size * 1024 * 1024 * 1024) if size_thumb =~ /G/i
   size_thumb = number_to_human_size(size * 1024 * 1024) if size_thumb =~ /M/i
   size_thumb = number_to_human_size(size * 1024) if size_thumb =~ /K/i
@@ -40,34 +39,30 @@ end
 
 if File.directory?(APIJS_ROOT + '/show/')
   size_show = `du -hs #{APIJS_ROOT}/show/ | cut -f1`.strip!
-  size = size_show.to_f
-
+  size      = size_show.to_f
   size_show = number_to_human_size(size * 1024 * 1024 * 1024) if size_show =~ /G/i
   size_show = number_to_human_size(size * 1024 * 1024) if size_show =~ /M/i
   size_show = number_to_human_size(size * 1024) if size_show =~ /K/i
 end
-
-check = 'checked="checked"'
 %>
 
 <p style="margin:0.5em 1em; padding:0.5em;">
 	Luigifab/Apijs <%= Redmine::Plugin.find(:redmine_apijs).version %>
-	<a href="https://www.luigifab.info/redmine/apijs" style="float:right;">luigifab.info/redmine/apijs</a>
-	<a href="https://www.luigifab.info/apijs" style="float:right; margin:0 0.6em;">luigifab.info/apijs</a>
+	<span style="float:<%= l(:direction) == 'rtl' ? 'left' : 'right' %>; font-size:11px;"><a href="https://www.redmine.org/plugins/apijs">redmine.org/plugins/apijs</a> | <a href="https://www.luigifab.fr/redmine/apijs">luigifab.fr/redmine/apijs</a> | <a href="https://www.luigifab.fr/apijs">luigifab.fr/apijs</a> | ⚠ IPv6</span>
 </p>
 
 <fieldset class="box apijs tabular settings">
 	<legend><%= raw l(:apijs_config_apijs) %></legend>
-	<% if settings['enabled'] == '1' %>
-		<button onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_sample1_title) %>','<%= raw l(:apijs_sample1_text1).gsub(/['"\\\x0]/,'\\\\\0') %>');" type="button">1</button>
-		<button onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_sample2_title) %>','[p]<%= raw l(:apijs_sample2_text1).gsub(/['"\\\x0]/,'\\\\\0') %>[/p][p]<%= raw l(:apijs_sample2_text2, value: '[a href=\'https://www.luigifab.info/\' class=\'popup\']www.luigifab.info[/a]').gsub(/['"\\\x0]/,'\\\\\0') %>[/p]');" type="button">2</button>
-	<% end %>
 	<p>
 		<label for="apijsEnabled"><%= raw l(:apijs_config_enable) %></label>
 		<select name="settings[enabled]" id="apijsEnabled">
 			<option value="0" <%= raw 'selected="selected"' if settings['enabled'] != '1' %>><%= raw l(:general_text_No) %></option>
 			<option value="1" <%= raw 'selected="selected"' if settings['enabled'] == '1' %>><%= raw l(:general_text_Yes) %></option>
 		</select>
+		<% if settings['enabled'] == '1' %>
+			/ <button type="button" style="vertical-align:middle;" onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_example1_title) %>','<%= raw l(:apijs_example1_text).gsub(/['"\\\x0]/,'\\\\\0') %>');"><%= l(:apijs_example, v: 1) %></button>
+			<button type="button" style="vertical-align:middle;" onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_example2_title) %>','[p]<%= raw l(:apijs_example2_text).gsub(/['"\\\x0]/,'\\\\\0') %>[/p][p]<%= raw l(:apijs_example2_link, v: '[a href=\'https://www.luigifab.fr/\' class=\'popup\']www.luigifab.fr[/a]').gsub(/['"\\\x0]/,'\\\\\0') %>[/p]');"><%= l(:apijs_example, v: 2) %></button>
+		<% end %>
 	</p>
 	<p>
 		<label for="apijsSort"><%= raw l(:apijs_config_sort_order) %></label>
@@ -77,9 +72,23 @@ check = 'checked="checked"'
 		</select>
 	</p>
 	<p>
+		<label for="apijsBrowser"><%= raw l(:apijs_config_browser) %></label>
+		<select name="settings[browser]" id="apijsBrowser">
+			<option value="0" <%= raw 'selected="selected"' if settings['browser'] != '1' %>><%= raw l(:general_text_No) %></option>
+			<option value="1" <%= raw 'selected="selected"' if settings['browser'] == '1' %>><%= raw l(:general_text_Yes) %></option>
+		</select>
+		<em class="info"><%= raw l(:apijs_config_browser_help) %></em>
+	</p>
+	<p>
 		<label><%= raw l(:label_role_and_permissions) %></label>
 		<a href="<%= url_for({:controller => 'roles', :action => 'permissions'}) %>"><%= raw l(:label_role_and_permissions) %></a>
-		<em class="info"><%= raw l(:permission_edit_attachments) %>, <%= raw l(:permission_delete_attachments) %></em>
+		<em class="info"><%= raw l(:permission_edit_attachments) %><br /><%= raw l(:permission_delete_attachments) %></em>
+	</p>
+	<p>
+		<label><%= raw l(:apijs_config_directories) %></label>
+		<%= APIJS_ROOT %>/ <b><%= size_all %></b>
+		<br /><%= APIJS_ROOT %>/thumb/ <b><%= size_thumb %></b>
+		<br /><%= APIJS_ROOT %>/show/ <b><%= size_show %></b>
 	</p>
 </fieldset>
 
@@ -118,43 +127,43 @@ check = 'checked="checked"'
 		<span style="display:block; line-height:200%;">
 			(libimage-exiftool-perl)
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_jpg]"  value="1" <%= raw check if settings['album_mimetype_jpg'] == '1' %>  /> jpg
+				<input type="checkbox" name="settings[album_mimetype_jpg]"  value="1" <%= raw checked if settings['album_mimetype_jpg'] == '1' %>  /> jpg
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_jpeg]" value="1" <%= raw check if settings['album_mimetype_jpeg'] == '1' %> /> jpeg
+				<input type="checkbox" name="settings[album_mimetype_jpeg]" value="1" <%= raw checked if settings['album_mimetype_jpeg'] == '1' %> /> jpeg
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_png]"  value="1" <%= raw check if settings['album_mimetype_png'] == '1' %>  /> png
+				<input type="checkbox" name="settings[album_mimetype_png]"  value="1" <%= raw checked if settings['album_mimetype_png'] == '1' %>  /> png
 			</label>
 		</span>
 		<span style="display:block; line-height:200%;">
 			(ffmpegthumbnailer)
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_ogv]"  value="1" <%= raw check if settings['album_mimetype_ogv'] == '1' %>  /> ogv
+				<input type="checkbox" name="settings[album_mimetype_ogv]"  value="1" <%= raw checked if settings['album_mimetype_ogv'] == '1' %>  /> ogv
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_webm]" value="1" <%= raw check if settings['album_mimetype_webm'] == '1' %> /> webm
+				<input type="checkbox" name="settings[album_mimetype_webm]" value="1" <%= raw checked if settings['album_mimetype_webm'] == '1' %> /> webm
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_mp4]"  value="1" <%= raw check if settings['album_mimetype_mp4'] == '1' %>  /> mp4
+				<input type="checkbox" name="settings[album_mimetype_mp4]"  value="1" <%= raw checked if settings['album_mimetype_mp4'] == '1' %>  /> mp4
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_m4v]"  value="1" <%= raw check if settings['album_mimetype_m4v'] == '1' %>  /> m4v
+				<input type="checkbox" name="settings[album_mimetype_m4v]"  value="1" <%= raw checked if settings['album_mimetype_m4v'] == '1' %>  /> m4v
 			</label>
 		</span>
 		<span style="display:block; line-height:200%;">
 			(gs/Ghostscript)
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_pdf]"  value="1" <%= raw check if settings['album_mimetype_pdf'] == '1' %>  /> pdf
+				<input type="checkbox" name="settings[album_mimetype_pdf]"  value="1" <%= raw checked if settings['album_mimetype_pdf'] == '1' %>  /> pdf
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_psd]"  value="1" <%= raw check if settings['album_mimetype_psd'] == '1' %>  /> psd
+				<input type="checkbox" name="settings[album_mimetype_psd]"  value="1" <%= raw checked if settings['album_mimetype_psd'] == '1' %>  /> psd
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_eps]"  value="1" <%= raw check if settings['album_mimetype_eps'] == '1' %>  /> eps
+				<input type="checkbox" name="settings[album_mimetype_eps]"  value="1" <%= raw checked if settings['album_mimetype_eps'] == '1' %>  /> eps
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_tiff]" value="1" <%= raw check if settings['album_mimetype_tiff'] == '1' %> /> tif/tiff
+				<input type="checkbox" name="settings[album_mimetype_tiff]" value="1" <%= raw checked if settings['album_mimetype_tiff'] == '1' %> /> tif/tiff
 			</label>
 		</span>
 	</p>
@@ -176,38 +185,31 @@ check = 'checked="checked"'
 		</select>
 		<em class="info"><%= raw l(:apijs_config_create_all_info) %></em>
 	</p>
-	<p>
-		<label><%= raw l(:apijs_config_directories) %></label>
-		<%= APIJS_ROOT %>/ <b><%= size_all %></b>
-		<br /><%= APIJS_ROOT %>/thumb/ <b><%= size_thumb %></b>
-		<br /><%= APIJS_ROOT %>/show/ <b><%= size_show %></b>
-		<em class="info"><%= raw l(:apijs_config_directories_info) %></em>
-	</p>
 </fieldset>
 
 <fieldset class="box apijs tabular settings">
 	<legend><%= raw l(:apijs_config_programs) %></legend>
-	<p>
+	<p dir="ltr">
 		<label>python</label>
 		<span class="cmd"><%= `python --version 2>&1`.gsub('Python ', '').strip! %></span>
 		<em class="info">python .../redmine_apijs/tools/image.py .../xyz.jpg .../xyz.jpg 200 150 2&gt;&amp;1<br /></em>
 	</p>
-	<p>
+	<p dir="ltr">
 		<label>libimage-exiftool-perl</label>
 		<span class="cmd"><%= `exiftool -ver 2>&1`.strip! %></span>
 		<em class="info">exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 .../xyz.webm 2&gt;&amp;1</em>
 	</p>
-	<p>
+	<p dir="ltr">
 		<label>ffmpegthumbnailer</label>
 		<span class="cmd"><%= `ffmpegthumbnailer -v 2>&1`.gsub('ffmpegthumbnailer version:', '').strip! %></span>
 		<em class="info">ffmpegthumbnailer -i .../xyz.webm -o .../xyz.jpg -q 10 -s 200</em>
 	</p>
-	<p>
+	<p dir="ltr">
 		<label>gs (Ghostscript)</label>
 		<span class="cmd"><%= `gs --version 2>&1`.strip! %></span>
 		<em class="info">gs ... 2&gt;&amp;1</em>
 	</p>
-	<p>
+	<p dir="ltr">
 		<label>file</label>
 		<span class="cmd"><%= `file --version 2>&1`.gsub('file-', '').strip! %></span>
 		<em class="info">file --brief --mime-type .../xyz.webm 2&gt;&amp;1</em>

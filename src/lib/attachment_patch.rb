@@ -1,9 +1,9 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated M/28/02/2017
+# Updated J/02/01/2020
 #
-# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://www.luigifab.info/redmine/apijs
+# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -21,13 +21,11 @@ module AttachmentPatch
     base.send(:include, InstanceMethods)
     base.class_eval do
       unloadable
-      # Redmine 2 et + (Rails 3)
       if Rails::VERSION::MAJOR >= 3
         include Rails.application.routes.url_helpers
       else
         include ActionController::UrlWriter
       end
-      # Redmine 3 et + (Rails 4)
       if Rails::VERSION::MAJOR >= 4
         before_create :update_date
       else
@@ -39,7 +37,7 @@ module AttachmentPatch
   module InstanceMethods
 
     # construction des urls
-    # https://www.redmine.org/issues/19024 pour l'éventuel préfixe avec Redmine 2 (Rails 3)
+    # https://www.redmine.org/issues/19024 pour l'éventuel préfixe avec Redmine 2
     def getUrl(action, all=false)
       if (action == 'redmineshow')
         return getSuburi(url_for({ :only_path => true, :controller=>'attachments', :action => 'show', :id => self.id, :filename => self.filename }))
@@ -51,8 +49,7 @@ module AttachmentPatch
     end
 
     def getSuburi(url)
-      # Redmine 2 (Rails 3)
-      if Rails::VERSION::MAJOR == 3
+      if Redmine::VERSION::MAJOR == 2
         baseurl = Redmine::Utils.relative_url_root
         if not baseurl.blank? and not url.match(/^#{baseurl}/)
           url = baseurl + url
@@ -75,15 +72,15 @@ module AttachmentPatch
     end
 
     def getDownloadButton
-      return "location.href = '" + getUrl('download', true) + "';"
+      return "self.location.href = '" + getUrl('download', true) + "';"
     end
 
     def getEditButton(token)
-      return "apijsEditAttachment(" + self.id.to_s + ", '" + getUrl('editdesc') + "', '" + token + "');"
+      return "apijsRedmine.editAttachment(" + self.id.to_s + ", '" + getUrl('editdesc') + "', '" + token + "');"
     end
 
     def getDeleteButton(token)
-      return "apijsDeleteAttachment(" + self.id.to_s + ", '" + getUrl('delete') + "', '" + token + "');"
+      return "apijsRedmine.deleteAttachment(" + self.id.to_s + ", '" + getUrl('delete') + "', '" + token + "');"
     end
 
     def getShowButton(settingShowFilename, settingShowExifdate, description)
@@ -92,13 +89,13 @@ module AttachmentPatch
       elsif self.isVideo?
         return "apijs.dialog.dialogVideo('" + self.getDownloadUrl + "', '" + ((settingShowFilename) ? self.filename : 'false') + "', '" + ((settingShowExifdate) ? format_time(self.created_on) : 'false') + "', '" + description + "');"
       elsif self.is_text?
-        return "location.href = '" + getUrl('redmineshow', false) + "';"
+        return "self.location.href = '" + getUrl('redmineshow', false) + "';"
       end
     end
 
     # image, photo, vidéo
     def isImage?
-      return (self.filename =~ /\.(jpg|jpeg|png|svg)$/i) ? true : false
+      return self.filename =~ /\.(jpg|jpeg|png|svg)$/i
     end
 
     def isPhoto?
@@ -111,7 +108,7 @@ module AttachmentPatch
       types.push('eps')  if Setting.plugin_redmine_apijs['album_mimetype_eps']  == '1'
       types.push('tif')  if Setting.plugin_redmine_apijs['album_mimetype_tiff'] == '1'
       types.push('tiff') if Setting.plugin_redmine_apijs['album_mimetype_tiff'] == '1'
-      return (self.filename =~ /\.(#{types.join('|')})$/i) ? true : false
+      return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
     def isVideo?
@@ -120,7 +117,7 @@ module AttachmentPatch
       types.push('webm') if Setting.plugin_redmine_apijs['album_mimetype_webm'] == '1'
       types.push('mp4')  if Setting.plugin_redmine_apijs['album_mimetype_mp4']  == '1'
       types.push('m4v')  if Setting.plugin_redmine_apijs['album_mimetype_m4v']  == '1'
-      return (self.filename =~ /\.(#{types.join('|')})$/i) ? true : false
+      return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
     # exclusion des fichiers

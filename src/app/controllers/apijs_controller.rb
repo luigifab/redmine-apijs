@@ -1,9 +1,9 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated M/22/08/2017
+# Updated D/11/08/2019
 #
-# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://www.luigifab.info/redmine/apijs
+# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -17,13 +17,20 @@
 
 class ApijsController < AttachmentsController
 
-  before_filter :find_project, :except => [:upload, :uploadzip]
-  before_filter :authorize_global, :only => [:upload, :uploadzip]
-  before_filter :read_authorize, :file_readable, :only => [:thumb, :show, :download, :thumbnail]
-  before_filter :read_authorize, :only => [:editdesc, :delete]
+  if Redmine::VERSION::MAJOR >= 4
+    before_action :find_project, :except => [:upload]
+    before_action :authorize_global, :only => [:upload]
+    before_action :read_authorize, :file_readable, :only => [:thumb, :show, :download, :thumbnail]
+    before_action :read_authorize, :only => [:editdesc, :delete]
+  else
+    before_filter :find_project, :except => [:upload]
+    before_filter :authorize_global, :only => [:upload]
+    before_filter :read_authorize, :file_readable, :only => [:thumb, :show, :download, :thumbnail]
+    before_filter :read_authorize, :only => [:editdesc, :delete]
+  end
 
-  # n'existe plus avec Redmine 3 et + (Rails 4)
-  if Rails::VERSION::MAJOR >= 4
+  # n'existe plus avec Redmine 3+ (copie de 2.6.10)
+  if Redmine::VERSION::MAJOR >= 3
     def find_project
       @attachment = Attachment.find(params[:id])
       raise ActiveRecord::RecordNotFound if params[:filename] && params[:filename] != @attachment.filename
@@ -34,73 +41,7 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Gestion des fichiers ZIP ##################################################### public ### #
-  # = révision : 9
-  # » Vérifie si l'utilisateur a accès au projet
-  # » Permet d'ajouter plusieurs fichiers en utilisant un fichier ZIP
-  # » Disponible uniquement dans le wiki, les annonces et les demandes
-  # » Ouvre et importe chaque fichier du fichier ZIP (avec ruby-zip)
-  # » Une erreur dans le traitement ne veux pas forcément dire aucun fichier traité
-  def uploadzip
-
-    msg = []
-    success = []
-    error = []
-
-    # recherche du conteneur (avec vérification d'accès)
-    # uniquement pour une demande, le wiki ou une annonce (qui existe déjà)
-    case params[:type]
-      when 'Issue'
-        obj = Issue.find_by_id(params[:id].to_i)
-        if Redmine::VERSION.to_s.gsub('.','').to_i >= 230
-          obj = (obj && obj.visible?(User.current) && obj.editable?(User.current)) ? obj : nil
-        else
-          obj = (obj && obj.visible?(User.current) && (User.current.allowed_to?(:edit_issues, obj.project) ||
-                 User.current.allowed_to?(:add_issue_notes, obj.project))) ? obj : nil
-        end
-      when 'Wiki'
-        obj = WikiPage.find_by_id(params[:id].to_i)
-        obj = (obj && obj.visible?(User.current) && obj.editable_by?(User.current)) ? obj : nil
-      when 'News'
-        obj = News.find_by_id(params[:id].to_i)
-        obj = (obj && obj.visible?(User.current)) ? obj : nil
-    end
-
-    # lecture du fichier zip
-    # import de chaque fichier
-    if (obj)
-      Zip::File.open(params[:mybigzip].path) do |zip_file|
-        zip_file.each do |file|
-          attachment = Attachment.new(:file => file.get_input_stream.read)
-          attachment.author = User.current
-          attachment.filename = file.name
-          attachment.container = obj
-          ok = attachment.save
-          success.push(file.name) if ok
-          error.push(file.name) if !ok
-        end
-      end
-
-      if (error.length > 0)
-        msg.push('[p]' + l(:apijs_notsaved) + '[/p][ul][li]' +   error.join('[/li][li]') + '[/li][/ul]')
-        msg.push('[p]' + l(:apijs_saved)    + '[/p][ul][li]' + success.join('[/li][li]') + '[/li][/ul][p]' + l(:apijs_final, "href='javascript:location.reload();'") + '[/p]') if (success.length > 0)
-      else
-        msg.push('success-' + success.length.to_s)
-      end
-
-      if params[:isAjax] && !params[:noAjax]
-        render(:text => msg.join(''))
-      else
-        redirect_to :back
-      end
-    else
-      deny_access
-    end
-  end
-
-
   # #### Gestion de l'image miniature (photo ou vidéo) ################################ public ### #
-  # = révision : 33
   # » Vérifie si l'utilisateur a accès au projet avant l'envoi de la miniature au format JPG uniquement
   # » Utilise un script python pour générer l'image miniature (taille 200x150, qualité 85)
   # » Utilise un script python pour générer l'image aperçu (taille 1200x900, qualité 85)
@@ -145,13 +86,12 @@ class ApijsController < AttachmentsController
       deny_access
     # envoie de l'image avec mise en cache
     elsif File.file?(target) && stale?(:etag => target)
-      send_file(target, :filename => filename_for_content_disposition(@attachment.filename.gsub(/\.[a-z0-9]+$/i, '.jpg')), :type => 'image/jpeg', :disposition => 'inline')
+      send_file(target, :filename => filename_for_content_disposition(@attachment.filename.gsub(/\.\w+$/i, '.jpg')), :type => 'image/jpeg', :disposition => 'inline')
     end
   end
 
 
   # #### Gestion de l'image aperçu (photo) ############################################ public ### #
-  # = révision : 32
   # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu au format JPG ou PNG
   # » Utilise un script python pour générer l'image aperçu sauf pour les images PNG (taille 1200x900, qualité 85)
   # » Utilise la commande python (avec python-imaging, ghostscript, ffmpegthumbnailer)
@@ -176,7 +116,7 @@ class ApijsController < AttachmentsController
       deny_access
     # envoie de l'image avec mise en cache (!=PNG)
     elsif File.file?(target) && stale?(:etag => target)
-      send_file(target, :filename => filename_for_content_disposition(@attachment.filename.gsub(/\.[a-z0-9]+$/i, '.jpg')), :type => 'image/jpeg', :disposition => 'inline')
+      send_file(target, :filename => filename_for_content_disposition(@attachment.filename.gsub(/\.\w+$/i, '.jpg')), :type => 'image/jpeg', :disposition => 'inline')
     # envoie de l'image avec mise en cache (=PNG)
     elsif File.file?(source) && stale?(:etag => source) && @attachment.filename =~ /\.png$/i
       send_file(source, :filename => filename_for_content_disposition(@attachment.filename), :type => 'image/png', :disposition => 'inline')
@@ -185,7 +125,6 @@ class ApijsController < AttachmentsController
 
 
   # #### Gestion du téléchargement des fichiers ####################################### public ### #
-  # = révision : 21
   # » Vérifie si l'utilisateur a accès au projet avant tout
   # » Téléchargement d'une vidéo en 206 Partial Content (inline)
   # » Téléchargement d'une image avec mise en cache (inline/stale?) ou téléchargement d'un fichier (attachment)
@@ -195,7 +134,7 @@ class ApijsController < AttachmentsController
     if !User.current.allowed_to?({:controller => 'projects', :action => 'show'}, @project)
       deny_access
     # ou télachargement d'une vidéo en 206 Partial Content (https://stackoverflow.com/a/7604330 + https://stackoverflow.com/a/16593030)
-    # téléchargement d'une image avec mise en cache
+    # ou téléchargement d'une image avec mise en cache
     # ou téléchargement d'un fichier
     elsif !params[:filename] || params[:inline] || params[:stream]
       @attachment.increment_download if @attachment.container.is_a?(Version) || @attachment.container.is_a?(Project)
@@ -250,7 +189,6 @@ class ApijsController < AttachmentsController
 
 
   # #### Modification d'une description ############################################### public ### #
-  # = révision : 13
   # » Vérifie si l'utilisateur a accès au projet et à la modification
   # » Renvoie l'id du fichier suivi de la description en cas de modification réussie
   # » Supprime certains caractères de la description avant son enregistrement
@@ -264,7 +202,11 @@ class ApijsController < AttachmentsController
       deny_access
     # modification
     elsif @attachment.save
-      render(:text => 'attachmentId' + @attachment.id.to_s + ':' + @attachment.description)
+      if Rails::VERSION::MAJOR >= 5
+        render(:plain => 'attachmentId' + @attachment.id.to_s + ':' + @attachment.description)
+      else
+        render(:text => 'attachmentId' + @attachment.id.to_s + ':' + @attachment.description)
+      end
     # en cas d'erreur
     else
       render_validation_errors(@attachment)
@@ -273,7 +215,6 @@ class ApijsController < AttachmentsController
 
 
   # #### Suppression d'un fichier ##################################################### public ### #
-  # = révision : 16
   # » Vérifie si l'utilisateur a accès au projet et à la suppresion
   # » Renvoie l'id du fichier suivi en cas de suppression réussie
   # » Supprime définitivement le fichier et les fichiers générés (miniature et aperçu)
@@ -284,7 +225,6 @@ class ApijsController < AttachmentsController
       deny_access
     # suppression
     elsif @attachment.delete
-
       @attachment.container.init_journal(User.current) if @attachment.container.respond_to?(:init_journal)
       @attachment.container.attachments.delete(@attachment)
 
@@ -298,7 +238,11 @@ class ApijsController < AttachmentsController
         File.delete(target) if File.file?(target)
       end
 
-      render(:text => 'attachmentId' + @attachment.id.to_s)
+      if Rails::VERSION::MAJOR >= 5
+        render(:plain => 'attachmentId' + @attachment.id.to_s)
+      else
+        render(:text => 'attachmentId' + @attachment.id.to_s)
+      end
     # en cas d'erreur
     else
       render_validation_errors(@attachment)

@@ -1,9 +1,9 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated M/28/02/2017
+# Updated D/11/08/2019
 #
-# Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
-# https://www.luigifab.info/redmine/apijs
+# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -15,8 +15,7 @@
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
 
-# Redmine 2 et + (Rails 3)
-if Rails::VERSION::MAJOR >= 3
+if Redmine::VERSION::MAJOR >= 2
   RedmineApp::Application.routes.draw do
 
     match 'apijs/thumb/:id/:filename', :to => 'apijs#thumb',
@@ -39,9 +38,6 @@ if Rails::VERSION::MAJOR >= 3
 
     match 'apijs/delete', :to => 'apijs#delete',
       :via => :get
-
-    match 'apijs/uploadzip', :to => 'apijs#uploadzip',
-      :via => :post
   end
 else
   ActionController::Routing::Routes.draw do |map|
@@ -78,9 +74,5 @@ else
     map.connect 'apijs/delete',
       :controller => 'apijs', :action => 'delete',
       :conditions => { :method => :get }
-
-    map.connect 'apijs/uploadzip',
-      :controller => 'apijs', :action => 'uploadzip',
-      :conditions => { :method => :post }
   end
 end

@@ -1,9 +1,9 @@
 /**
  * Created D/15/12/2013
- * Updated S/29/09/2018
+ * Updated D/01/12/2019
  *
- * Copyright 2008-2018 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * https://www.luigifab.info/redmine/apijs
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/redmine/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -18,6 +18,7 @@
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogues &&& */
 #apijsDialog { margin:0; }
+
 #apijsBox { font-size:0.8rem; border:0; }
 #apijsBox a { color:blue; }
 
@@ -26,46 +27,28 @@
 	border:1px solid #888; background-color:#EEE;
 }
 
-#apijsBox.information.upload.error p { margin:0; }
-#apijsBox.information.upload.error ul { margin:0.3em 0 0.7em 1em; column-count:3; -moz-column-count:3; -webkit-column-count:3; }
-#apijsBox.information.upload.error li { font-size:0.85em; color:#444; }
-
-#apijsBox.upload h1 { letter-spacing:-0.05em; }
-
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& albums et listes &&& */
 body div.attachments.album { margin:1em 0; text-align:left; }
-
-body div.attachments.album dd { position:relative; margin:0.5em 0 0 0.15em; white-space:inherit; }
-body div.attachments.album dd div { display:inline; position:absolute; top:0; right:0; }
-body div.attachments.album dd.one { min-height:1.8em; }
+body div.attachments.album dd { position:relative; margin:0.5em 0 0 0.15em; min-height:1.8em; }
 body div.attachments.album dd.big { min-height:5em; }
+body div.attachments.album dd div { float:right; }
 
-body div.attachments.album dd > span {
-	display:block; line-height:165%; overflow:hidden;
+body div.attachments.album dd span {
+	display:block; line-height:16px; overflow:hidden;
 	font-size:inherit; color:inherit; white-space:nowrap; text-overflow:ellipsis;
 }
 
-body div.attachments.album dd > span:nth-of-type(1) { margin:1px 60px 0 0; }
-body div.attachments.album dd > span:nth-of-type(2) { margin-top:2px; }
+body div.attachments.album dd span:first-child { margin-right:60px; }
 
 body ul.attachments { margin:1em 0; padding:0; list-style:none; }
-body ul.attachments li { padding:0.25em 0.5em; }
-body ul.attachments li:hover { background-color:#DEDEDE; }
+body ul.attachments li { padding:0.25em 0.5em; transition:background-color 0.3s; }
+body ul.attachments li:hover { background-color:#EFEFEF; }
 
 body ul.attachments li a { vertical-align:middle; }
 body ul.attachments li strong { padding:0 0.3em; }
 body ul.attachments li span { padding:0 0.1em; }
 body ul.attachments li span.size { color:gray; }
 body ul.attachments li span.date { color:gray; }
-
-body.controller-issues div.issue.details div.wiki.files h2 {
-	margin-bottom:-0.5em; padding-top:12px; font-size:12px;
-	border-top:1px solid #CCC; border-bottom:0;
-}
-
-body.controller-documents div.wiki.files h2, body.controller-messages div.wiki.files h2 {
-	margin-bottom:-0.5em; font-size:12px;
-}
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& boutons &&& */
 body button.attachment, body ul.attachments a[id^="slideshow"] {
@@ -79,13 +62,12 @@ body button.attachment.delete { background-image:url("../../../images/delete.png
 body button.attachment.edit { background-image:url("../../../images/edit.png"); }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& configuration &&& */
-fieldset.apijs.tabular.settings { margin:1em; padding:0.5em; border:1px solid #CCC; }
-fieldset.apijs.tabular.settings p span.cmd { white-space:pre-wrap; }
-fieldset.apijs.tabular.settings p em.info { margin:0.2em 0; line-height:140%; }
-fieldset.apijs.tabular.settings p a + em.info { margin:0; }
-fieldset.apijs.tabular.settings p label.bis { margin-left:1px; margin-right:0.7em; width:auto; }
-fieldset.apijs.tabular.settings p label.bis input { margin:0; }
+body fieldset.apijs.tabular.settings { margin:1em; padding:0.5em; border:1px solid #CCC; }
+body fieldset.apijs.tabular.settings p span.cmd { white-space:pre-wrap; }
+body fieldset.apijs.tabular.settings p em.info { margin:0.2em 0; line-height:140%; }
+body fieldset.apijs.tabular.settings p a + em.info { margin:0; }
+body fieldset.apijs.tabular.settings p label.bis { margin-left:1px; margin-right:0.7em; width:auto; }
+body fieldset.apijs.tabular.settings p label.bis input { margin:0; }
 
-fieldset.apijs.tabular.settings.info { margin:0 0.6em 1.3em; border:0; }
-fieldset.apijs.tabular.settings.info ul { margin:0; padding:0; list-style:none; }
-fieldset.apijs.tabular.settings.info li { margin:0; }
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& navigateur &&& */
+body .flash.error.apijs { margin:0; border:0; border-radius:0; font-size:11px; }
