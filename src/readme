@@ -20,10 +20,11 @@ Rewrite
 - app/views/attachments/_links.html.erb
 - lib/attachment_patch.rb
 Depends
-- python[2|3]-pil
-- libimage-exiftool-perl
-- ffmpegthumbnailer
 - file
+- python-pil
+- libimage-exiftool-perl
+- ffmpegthumbnailer (optional)
+- ghostscript (optional)
 Notes
 - For the Magento module, read: https://www.luigifab.fr/magento/apijs
 - For the Redmine plugin, read: https://www.luigifab.fr/redmine/apijs
@@ -59,8 +60,9 @@ If you like, take some of your time to improve the translations, go to https://b
 
 
 File: /lib/useragentparser.rb
-Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (0.15.1)
-Copyright: 2013-2019 Jesse G. Donat <donatj@gmail.com>
+Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.0.0-fork2)
+Copyright: 2013-2020 Jesse G. Donat <donatj@gmail.com>
+Copyright: 2019-2020 Fabrice Creuzot (luigifab) <code@luigifab.fr>
 License: MIT (https://opensource.org/licenses/mit)
 
 Files: /assets/fonts/apijs/fontello.woff /assets/fonts/apijs/fontello.woff2

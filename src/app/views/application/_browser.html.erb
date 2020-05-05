@@ -1,6 +1,6 @@
 <%
 # Created S/17/08/2019
-# Updated M/25/02/2020
+# Updated V/01/05/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -16,11 +16,11 @@
 # GNU General Public License (GPL) for more details.
 
 text = ''
-data = (Useragentparser.new).parse()
+data = (Useragentparser.new).parse
 
 if data['browser'] && data['version']
   data['version'] = Thread.current[:request].query_parameters[:browser] ? 1 : data['version'].to_f
-  if (data['browser'] == 'MSIE') && (data['version'] < 14)
+  if (data['browser'] == 'MSIE') && (data['version'] < 13)
     text = raw l(:apijs_browser_warning, { n: 'Internet Explorer', v: data['version'], l: 'href="https://www.microsoft.com/windows/microsoft-edge"' })
   elsif (data['browser'] == 'Edge') && (data['version'] < 14)
     text = raw l(:apijs_browser_warning, { n: 'Edge', v: data['version'], l: 'href="https://www.microsoft.com/windows/microsoft-edge"' })
@@ -36,5 +36,10 @@ if data['browser'] && data['version']
 end
 %>
 <% if text.length > 0 %>
-	<div class="flash error apijs" id="oldBrowser"><%= text %></div>
+	<% if pos == "bottom" %>
+		<div class="flash error apijs" id="oldBrowser" style="position:absolute; top:25px; left:33%; width:31%; z-index:9000;"><%= text %></div>
+		<script>var e = document.getElementById('oldBrowser'); document.body.insertBefore(e, document.getElementById('wrapper')); e.removeAttribute('style');</script>
+	<% else %>
+		<div class="flash error apijs" id="oldBrowser"><%= text %></div>
+	<% end %>
 <% end %>

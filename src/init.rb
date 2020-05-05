@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created L/21/05/2012
-# Updated V/13/03/2020
+# Updated D/03/05/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -25,37 +25,37 @@ Redmine::Plugin.register :redmine_apijs do
   name 'Redmine Apijs plugin'
   author 'Fabrice Creuzot'
   description 'Integrate the apijs javascript library into Redmine.'
-  version '6.0.1'
+  version '6.1.0'
   url 'https://www.luigifab.fr/redmine/apijs'
   author_url 'https://www.luigifab.fr/'
 
-  permission :edit_attachments, { :apijs => :edit }, { :require => :loggedin }
-  permission :delete_attachments, { :apijs => :delete }, { :require => [:loggedin, :member] }
+  permission :edit_attachments, {apijs: :edit}, {require: :loggedin}
+  permission :delete_attachments, {apijs: :delete}, {require: [:loggedin, :member]}
 
   settings({
-    :partial => 'settings/apijs',
-    :default => {
-      :enabled => '0',
-      :sort_attachments => '0',
-      :browser => '0',
-      :show_album => '0',
-      :show_album_infos => '0',
-      :show_filename => '0',
-      :show_exifdate => '0',
-      :album_mimetype_jpg  => '1',
-      :album_mimetype_jpeg => '1',
-      :album_mimetype_png  => '0',
-      :album_mimetype_ogv  => '1',
-      :album_mimetype_webm => '1',
-      :album_mimetype_mp4  => '0',
-      :album_mimetype_m4v  => '0',
-      :album_mimetype_pdf  => '0',
-      :album_mimetype_psd  => '0',
-      :album_mimetype_eps  => '0',
-      :album_mimetype_tiff => '0',
-      :album_exclude_name  => '',
-      :album_exclude_desc  => '',
-      :create_all => '0'
+    partial: 'settings/apijs',
+    default: {
+      enabled: '0',
+      sort_attachments: '0',
+      browser: '0',
+      show_album: '0',
+      show_album_infos: '0',
+      show_filename: '0',
+      show_exifdate: '0',
+      album_mimetype_jpg: '1',
+      album_mimetype_jpeg: '1',
+      album_mimetype_png: '0',
+      album_mimetype_ogv: '1',
+      album_mimetype_webm: '1',
+      album_mimetype_mp4: '0',
+      album_mimetype_m4v: '0',
+      album_mimetype_pdf: '0',
+      album_mimetype_psd: '0',
+      album_mimetype_eps: '0',
+      album_mimetype_tiff: '0',
+      album_exclude_name: '',
+      album_exclude_desc: '',
+      create_all: '0'
     }
   })
 end

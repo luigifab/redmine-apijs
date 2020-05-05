@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated S/19/10/2019
+# Updated D/03/05/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -22,47 +22,52 @@ import sys
 from PIL import Image
 
 try:
-	IN   = str(sys.argv[1])
-	OUT  = str(sys.argv[2])
-	SIZE = (int(sys.argv[3]), int(sys.argv[4]))
+	filein  = str(sys.argv[1])
+	fileout = str(sys.argv[2])
+	sizes   = (int(sys.argv[3]), int(sys.argv[4]))
 except:
-	print("Usage: image.py sourceFileName destinationFileName thumbnailWidth thumbnailHeight")
-	print("sourceFileName: jpg,jpeg,png ogv,webm,mp4,m4v pdf,psd,eps,tif,tiff")
-	print("destinationFileName: jpg only")
+	print("Usage: image.py source destination width height")
+	print("source: jpg,jpeg,png ogv,webm,mp4,m4v pdf,psd,eps,tif,tiff")
+	print("destination: jpg,png")
 	exit(-1)
 
 video = re.compile('\.(ogv|webm|mp4|m4v)$')
-video = video.search(IN) and True or False
-thumb = (SIZE[0] < 351) and True or False
+video = video.search(filein) and True or False
+pdf   = re.compile('\.pdf$')
+pdf   = pdf.search(filein) and True or False
+thumb = (sizes[0] < 351) and True or False
 
-if not os.path.exists(os.path.dirname(OUT)):
-	os.makedirs(os.path.dirname(OUT))
+if not os.path.exists(os.path.dirname(fileout)):
+	os.makedirs(os.path.dirname(fileout))
 
 if (video):
-	os.system('ffmpegthumbnailer -i ' + IN + ' -o ' + OUT + ' -q 10 -s 200')
-	IN = OUT
-elif (re.compile('\.(pdf)$').search(IN) and True or False):
-	os.system('gs -dSAFER -dBATCH -sDEVICE=jpeg -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dFirstPage=1 -dLastPage=1 -dNOPAUSE -dBATCH -r300 -sOutputFile=' + OUT + ' ' + IN)
-	IN = OUT
+	os.system('ffmpegthumbnailer -i ' + filein + ' -o ' + fileout + ' -q 10 -s 200')
+	filein = fileout
+elif (pdf):
+	os.system('gs -dSAFER -dBATCH -sDEVICE=jpeg -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dFirstPage=1 -dLastPage=1 -dNOPAUSE -dBATCH -r300 -sOutputFile=' + fileout + ' ' + filein)
+	filein = fileout
 
-sourceImg = Image.open(IN)
-if (thumb or (sourceImg.size[0] > SIZE[0]) or (sourceImg.size[1] > SIZE[1])):
+source = Image.open(filein)
+if (thumb or (source.size[0] > sizes[0]) or (source.size[1] > sizes[1])):
 
-	sourceImg.thumbnail(SIZE, Image.ANTIALIAS)
+	source.thumbnail(sizes, Image.ANTIALIAS)
 
 	if (thumb):
-		offset_x = int(max((SIZE[0] - sourceImg.size[0]) / 2, 0))
-		offset_y = int(max((SIZE[1] - sourceImg.size[1]) / 2, 0))
-		finalImg = Image.new('RGBA', SIZE, (0,0,0,0))
-		finalImg.paste(sourceImg, (offset_x, offset_y))
+		offset_x = int(max((sizes[0] - source.size[0]) / 2, 0))
+		offset_y = int(max((sizes[1] - source.size[1]) / 2, 0))
+		dest = Image.new('RGBA', sizes, (0,0,0,0))
+		dest.paste(source, (offset_x, offset_y))
 	else:
-		finalImg = Image.new('RGBA', (sourceImg.size[0], sourceImg.size[1]), (0,0,0,0))
-		finalImg.paste(sourceImg)
+		dest = Image.new('RGBA', (source.size[0], source.size[1]), (0,0,0,0))
+		dest.paste(source)
 
 	if (video):
-		playImg = Image.open(os.path.join(os.path.dirname(__file__).replace('tools', 'assets/images/apijs/player.png')))
-		finalImg.paste(playImg, (0, 0), playImg)
+		play = Image.open(os.path.join(os.path.dirname(__file__).replace('tools', 'assets/images/apijs/player.png')))
+		dest.paste(play, (0, 0), play)
 else:
-	finalImg = sourceImg
+	dest = source
 
-finalImg.convert('RGB').save(OUT, 'JPEG')
+if ".png" in fileout:
+	dest.convert('RGB').save(fileout, 'PNG')
+else:
+	dest.convert('RGB').save(fileout, 'JPEG')

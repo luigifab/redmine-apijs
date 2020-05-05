@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated J/02/01/2020
+# Updated D/03/05/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -31,20 +31,20 @@ module AttachmentPatch
       else
         before_save :update_date
       end
+      after_destroy :delete_cache
     end
   end
 
   module InstanceMethods
 
-    # construction des urls
     # https://www.redmine.org/issues/19024 pour l'éventuel préfixe avec Redmine 2
     def getUrl(action, all=false)
-      if (action == 'redmineshow')
-        return getSuburi(url_for({ :only_path => true, :controller=>'attachments', :action => 'show', :id => self.id, :filename => self.filename }))
+      if action == 'redmineshow'
+        return getSuburi(url_for({only_path: true, controller: 'attachments', action: 'show', id: self.id, filename: self.filename}))
       elsif all
-        return getSuburi(url_for({ :only_path => true, :controller=>'apijs', :action => action, :id => self.id, :filename => self.filename }))
+        return getSuburi(url_for({only_path: true, controller: 'apijs', action: action, id: self.id, filename: self.filename}))
       else
-        return getSuburi(url_for({ :only_path => true, :controller=>'apijs', :action => action }))
+        return getSuburi(url_for({only_path: true, controller: 'apijs', action: action}))
       end
     end
 
@@ -58,7 +58,7 @@ module AttachmentPatch
       return url
     end
 
-    # adresses dynamiques
+    # liens
     def getShowUrl
       return getUrl('show', true)
     end
@@ -83,11 +83,11 @@ module AttachmentPatch
       return "apijsRedmine.deleteAttachment(" + self.id.to_s + ", '" + getUrl('delete') + "', '" + token + "');"
     end
 
-    def getShowButton(settingShowFilename, settingShowExifdate, description)
+    def getShowButton(setting_show_filename, setting_show_exifdate, description)
       if self.isImage?
-        return "apijs.dialog.dialogPhoto('" + self.getShowUrl + "', '" + ((settingShowFilename) ? self.filename : 'false') + "', '" + ((settingShowExifdate) ? format_time(self.created_on) : 'false') + "', '" + description + "');"
+        return "apijs.dialog.dialogPhoto('" + self.getShowUrl + "', '" + ((setting_show_filename) ? self.filename : 'false') + "', '" + ((setting_show_exifdate) ? format_time(self.created_on) : 'false') + "', '" + description + "');"
       elsif self.isVideo?
-        return "apijs.dialog.dialogVideo('" + self.getDownloadUrl + "', '" + ((settingShowFilename) ? self.filename : 'false') + "', '" + ((settingShowExifdate) ? format_time(self.created_on) : 'false') + "', '" + description + "');"
+        return "apijs.dialog.dialogVideo('" + self.getDownloadUrl + "', '" + ((setting_show_filename) ? self.filename : 'false') + "', '" + ((setting_show_exifdate) ? format_time(self.created_on) : 'false') + "', '" + description + "');"
       elsif self.is_text?
         return "self.location.href = '" + getUrl('redmineshow', false) + "';"
       end
@@ -120,28 +120,44 @@ module AttachmentPatch
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
-    # exclusion des fichiers
+    # commande python
+    def getCmd(source, target, width, height)
+      cmd = `command -v python3 || command -v python || command -v python2`.strip!
+      script = File.dirname(__FILE__).gsub('lib', 'tools/image.py')
+      return cmd + ' ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' ' + width.to_s + ' ' + height.to_s + ' 2>&1'
+    end
+
+    # exclusion
     def isExcluded?
 
-      names = Setting.plugin_redmine_apijs['album_exclude_name']
-      descs = Setting.plugin_redmine_apijs['album_exclude_desc']
-
-      names = (names.blank?) ? [] : names.split(',')
-      descs = (descs.blank?) ? [] : descs.split(',')
+      names = Setting.plugin_redmine_apijs['album_exclude_name'].split(',')
+      descs = Setting.plugin_redmine_apijs['album_exclude_desc'].split(',')
 
       unless names.empty?
-        for token in names
+        names.each { |token|
           return true if (!self.filename.blank? && self.filename.index(token) == 0)
-        end
+        }
       end
 
       unless descs.empty?
-        for token in descs
+        descs.each { |token|
           return true if (!self.description.blank? && self.description.index(token) == 0)
-        end
+        }
       end
 
       return false
+    end
+
+    # supprime les images en cache
+    def delete_cache
+
+      img_thumb = File.extname(self.filename).downcase == '.png' ? '.png' : '.jpg'
+      img_thumb = File.join(APIJS_ROOT, 'thumb', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + img_thumb)
+      File.delete(img_thumb) if File.file?(img_thumb)
+
+      img_show = File.extname(self.filename).downcase == '.png' ? '.png' : '.jpg'
+      img_show = File.join(APIJS_ROOT, 'show', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + img_show)
+      File.delete(img_show) if File.file?(img_show)
     end
 
     # lecture de la date exif et mise à jour de la date de création
@@ -151,10 +167,10 @@ module AttachmentPatch
 
       if new_record? && (self.isPhoto? || self.isVideo?) && self.readable?
 
-        command = 'exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 ' + self.diskfile + ' 2>&1'
-        result  = `#{command}`.gsub(/^\s+|\s+$/, '')
+        cmd    = 'exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 ' + self.diskfile + ' 2>&1'
+        result = `#{cmd}`.gsub(/^\s+|\s+$/, '')
 
-        logger.info 'APIJS::AttachmentPatch#update_date: ' + command + ' (' + result + ')'
+        logger.info 'APIJS::AttachmentPatch#update_date: ' + cmd + ' (' + result + ')'
 
         # 2014:06:14 16:43:53 (utilise le fuseau horaire de l'utilisateur)
         if result.length >= 19
@@ -170,38 +186,39 @@ module AttachmentPatch
     end
 
     # déplace le nouveau fichier s'il n'est pas dans le bon dossier
-    # le bon dossier est définie en fonction du résultat de update_date
     def update_filedir!
 
-      src = diskfile
-      self.disk_directory = target_directory
-      dest = diskfile
+      return unless defined? self.disk_directory
+
+      src  = self.diskfile
+      time = self.created_on || DateTime.now
+      self.disk_directory = time.strftime("%Y/%m")
+      dest = self.diskfile
 
       return if src == dest
 
-      if !FileUtils.mkdir_p(File.dirname(dest))
+      unless FileUtils.mkdir_p(File.dirname(dest))
         logger.error 'Could not create directory ' + File.dirname(dest)
         return
       end
 
-      if !FileUtils.mv(src, dest)
+      unless FileUtils.mv(src, dest)
         logger.error 'Could not move attachment from ' + src + ' to ' + dest
         return
       end
 
-      update_column :disk_directory, disk_directory if !new_record?
+      update_column :disk_directory, self.disk_directory unless new_record?
       logger.info 'APIJS::AttachmentPatch#update_filedir: moving file from ' + src + ' to ' + dest
     end
 
-    # recherche du type mime
-    # utilise la commande file (file)
+    # recherche du type mime avec la commande file
     def getMimeType
 
         if self.readable? && self.content_type.blank?
 
-          command = 'file --brief --mime-type ' + self.diskfile + ' 2>&1'
-          result  = `#{command}`.gsub(/^\s+|\s+$/, '')
-          logger.info 'APIJS::AttachmentPatch#getMimeType: ' + command + ' (' + result + ')'
+          cmd    = 'file --brief --mime-type ' + self.diskfile + ' 2>&1'
+          result = `#{cmd}`.gsub(/^\s+|\s+$/, '')
+          logger.info 'APIJS::AttachmentPatch#getMimeType: ' + cmd + ' (' + result + ')'
 
           self.content_type = (result.length > 0) ? result : 'file/unknown'
           self.save!

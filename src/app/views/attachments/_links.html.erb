@@ -1,6 +1,6 @@
 <%
 # Created L/21/05/2012
-# Updated D/26/01/2020
+# Updated S/02/05/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -19,58 +19,58 @@ if Setting.plugin_redmine_apijs['sort_attachments'] == '1'
   attachments = attachments.to_a.sort! { |a,b| a.filename.downcase <=> b.filename.downcase }
 end
 
-settingEnabled        = Setting.plugin_redmine_apijs['enabled'] == '1'
-settingShowAlbum      = Setting.plugin_redmine_apijs['show_album'] == '1'
-settingShowAlbumInfos = Setting.plugin_redmine_apijs['show_album_infos'] == '1'
-settingShowFilename   = Setting.plugin_redmine_apijs['show_filename'] == '1'
-settingShowExifdate   = Setting.plugin_redmine_apijs['show_exifdate'] == '1'
-permissionDelete      = User.current.allowed_to?(:delete_attachments, @project)
-permissionEdit        = User.current.allowed_to?(:edit_attachments, @project)
+setting_enabled          = Setting.plugin_redmine_apijs['enabled'] == '1'
+setting_show_album       = Setting.plugin_redmine_apijs['show_album'] == '1'
+setting_show_album_infos = Setting.plugin_redmine_apijs['show_album_infos'] == '1'
+setting_show_filename    = Setting.plugin_redmine_apijs['show_filename'] == '1'
+setting_show_exifdate    = Setting.plugin_redmine_apijs['show_exifdate'] == '1'
+permission_delete        = User.current.allowed_to?(:delete_attachments, @project)
+permission_edit          = User.current.allowed_to?(:edit_attachments, @project)
 
-@slideshowI = 0 unless defined? @slideshowI
+@slideshowi = 0 unless defined? @slideshowi
 showAlbum = showList = false
 
-if settingShowAlbum
-  for attachment in attachments
+if setting_show_album
+  attachments.each { |attachment|
     if (attachment.isPhoto? || attachment.isVideo?) && !attachment.isExcluded?
       showAlbum = true
     else
       showList = true
     end
-  end
+  }
 else
   showList = true
 end
 %>
 
-<% if settingEnabled %>
+<% if setting_enabled %>
 	<% if showAlbum %>
 		<p class="apijs section"><strong><%= l(:apijs_title_album) %></strong></p>
-		<div class="attachments album" id="slideshow.<%= @slideshowI %>">
-			<% slideshowJ = 0 %>
-			<% for attachment in attachments %>
+		<div class="attachments album" id="slideshow.<%= @slideshowi %>">
+			<% slideshowj = 0 %>
+			<% attachments.each { |attachment| %>
 				<% if (attachment.isPhoto? || attachment.isVideo?) && !attachment.isExcluded? %>
 					<% description = (attachment.description.blank?) ? ' ' : attachment.description.gsub(/["\\\x0]/, ' ') %>
 					<dl id="attachmentId<%= attachment.id %>">
 						<dt>
-							<a href="<%= (attachment.isVideo?) ? attachment.getDownloadUrl + '?stream=1' : attachment.getShowUrl %>" type="<%= attachment.getMimeType %>" onclick="return false" id="slideshow.<%= @slideshowI %>.<%= slideshowJ %>">
-								<img src="<%= attachment.getThumbUrl %>" width="200" height="150" alt="<%= h(description) %>" />
-								<input type="hidden" value="<%= (settingShowFilename) ? attachment.filename : 'false' %>|<%= (settingShowExifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>" />
+							<a href="<%= (attachment.isVideo?) ? attachment.getDownloadUrl + '?stream=1' : attachment.getShowUrl %>" type="<%= attachment.getMimeType %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
+								<img src="<%= attachment.getThumbUrl %>" width="200" height="150" alt="<%= h(description) %>"/>
+								<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>"/>
 							</a>
 						</dt>
-						<dd class="<%= (settingShowAlbumInfos) ? 'big' : 'one' %>">
+						<dd class="<%= (setting_show_album_infos) ? 'big' : 'one' %>">
 							<div class="action">
 								<% if attachment.readable? %>
 									<button type="button" class="attachment download" title="<%= l(:apijs_title_download, v: number_to_human_size(attachment.filesize)) %>" onclick="<%= raw attachment.getDownloadButton %>"></button>
 								<% end %>
-								<% if permissionEdit %>
+								<% if permission_edit %>
 									<button type="button" class="attachment edit" title="<%= l(:button_edit) %>" onclick="<%= raw attachment.getEditButton(form_authenticity_token) %>"></button>
 								<% end %>
-								<% if permissionDelete %>
+								<% if permission_delete %>
 									<button type="button" class="attachment delete" title="<%= l(:button_delete) %>" onclick="<%= raw attachment.getDeleteButton(form_authenticity_token) %>"></button>
 								<% end %>
 							</div>
-							<% if settingShowAlbumInfos %>
+							<% if setting_show_album_infos %>
 								<span class="filename"><%= h(attachment.filename) %></span>
 								<span class="author date"><%= h(attachment.author) %> (<%= format_time(attachment.created_on) %>)</span>
 								<span class="description"><%= h(description) %></span>
@@ -79,24 +79,24 @@ end
 							<% end %>
 						</dd>
 					</dl>
-					<% slideshowJ += 1 %>
+					<% slideshowj += 1 %>
 				<% end %>
-			<% end %>
-			<% @slideshowI += 1 if slideshowJ > 0 %>
+			<% } %>
+			<% @slideshowi += 1 if slideshowj > 0 %>
 		</div>
 	<% end %>
 	<% if showList %>
 		<p class="apijs section"><strong><%= l(:apijs_title_files) %></strong></p>
-		<ul class="attachments" id="slideshow.<%= @slideshowI %>">
-			<% slideshowJ = 0 %>
-			<% for attachment in attachments %>
-				<% if !settingShowAlbum || (!attachment.isPhoto? && !attachment.isVideo?) || attachment.isExcluded? %>
+		<ul class="attachments" id="slideshow.<%= @slideshowi %>">
+			<% slideshowj = 0 %>
+			<% attachments.each { |attachment| %>
+				<% if !setting_show_album || (!attachment.isPhoto? && !attachment.isVideo?) || attachment.isExcluded? %>
 					<% description = (attachment.description.blank?) ? ' ' : attachment.description.gsub(/["\\\x0]/, ' ') %>
 					<li id="attachmentId<%= attachment.id %>">
-						<% if permissionDelete %>
+						<% if permission_delete %>
 							<button type="button" class="attachment delete" title="<%= l(:button_delete) %>" onclick="<%= raw attachment.getDeleteButton(form_authenticity_token) %>"></button>
 						<% end %>
-						<% if permissionEdit %>
+						<% if permission_edit %>
 							<button type="button" class="attachment edit" title="<%= l(:button_edit) %>" onclick="<%= raw attachment.getEditButton(form_authenticity_token) %>"></button>
 						<% end %>
 						<% if attachment.readable? %>
@@ -104,12 +104,12 @@ end
 						<% end %>
 						<% if attachment.is_text? || attachment.isImage? || attachment.isVideo? %>
 							<% if attachment.isImage? || attachment.isVideo? %>
-								<a href="<%= attachment.getDownloadUrl.gsub('download', 'show') %>" type="<%= attachment.getMimeType %>" onclick="return false" id="slideshow.<%= @slideshowI %>.<%= slideshowJ %>">
-									<input type="hidden" value="<%= (settingShowFilename) ? attachment.filename : 'false' %>|<%= (settingShowExifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>" />
+								<a href="<%= attachment.getDownloadUrl.gsub('download', 'show') %>" type="<%= attachment.getMimeType %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
+									<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>" />
 								</a>
-								<% slideshowJ += 1 %>
+								<% slideshowj += 1 %>
 							<% else %>
-								<button type="button" class="attachment show" title="<%= l(:button_show) %>" onclick="<%= raw attachment.getShowButton(settingShowFilename, settingShowExifdate, description) %>"></button>
+								<button type="button" class="attachment show" title="<%= l(:button_show) %>" onclick="<%= raw attachment.getShowButton(setting_show_filename, setting_show_exifdate, description) %>"></button>
 							<% end %>
 						<% end %>
 						<strong><%= attachment.filename %></strong>
@@ -119,21 +119,21 @@ end
 						<span class="date">(<%= format_time(attachment.created_on) %>)</span>
 					</li>
 				<% end %>
-			<% end %>
-			<% @slideshowI += 1 if slideshowJ > 0 %>
+			<% } %>
+			<% @slideshowi += 1 if slideshowj > 0 %>
 		</ul>
 	<% end %>
 <% else %>
 	<ul class="attachments">
-		<% for attachment in attachments %>
+		<% attachments.each { |attachment| %>
 			<li id="attachmentId<%= attachment.id %>">
 				<% if options[:deletable] %>
-					<%= link_to(image_tag('delete.png'), attachment_path(attachment), :confirm => l(:text_are_you_sure), :method => :delete, :title => l(:button_delete)) %>
+					<%= link_to(image_tag('delete.png'), attachment_path(attachment), confirm: l(:text_are_you_sure), method: :delete, title: l(:button_delete)) %>
 				<% end %>
 				<% if attachment.is_text? %>
-					<%= link_to(image_tag('magnifier.png'), :controller => 'attachments', :action => 'show', :id => attachment, :filename => attachment.filename) %>
+					<%= link_to(image_tag('magnifier.png'), controller: 'attachments', action: 'show', id: attachment, filename: attachment.filename) %>
 				<% end %>
-				<%= link_to_attachment(attachment, :class => 'icon icon-attachment', :download => true) %>
+				<%= link_to_attachment(attachment, class: 'icon icon-attachment', download: true) %>
 				<% unless attachment.description.blank? %>
 					<span class="description"><%= h(attachment.description) %></span>
 				<% end %>
@@ -141,6 +141,6 @@ end
 				<span class="author"><%= h(attachment.author) %></span>
 				<span class="date">(<%= format_time(attachment.created_on) %>)</span>
 			</li>
-		<% end %>
+		<% } %>
 	</ul>
 <% end %>

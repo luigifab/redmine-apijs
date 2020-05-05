@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated D/01/12/2019
+ * Updated S/02/05/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
@@ -57,7 +57,7 @@ body button.attachment, body ul.attachments a[id^="slideshow"] {
 }
 
 body button.attachment.show, body ul.attachments a[id^="slideshow"] { background-image:url("../../../images/magnifier.png"); }
-body button.attachment.download { background-image:url("../../../images/download.png"); }
+body button.attachment.download { background-image:url("../../../images/attachment.png"); }
 body button.attachment.delete { background-image:url("../../../images/delete.png"); }
 body button.attachment.edit { background-image:url("../../../images/edit.png"); }
 
