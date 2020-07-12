@@ -1,6 +1,6 @@
 <%
 # Created J/12/12/2013
-# Updated V/01/05/2020
+# Updated J/25/06/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -16,10 +16,11 @@
 # GNU General Public License (GPL) for more details.
 
 html_title "Redmine Apijs plugin - " + l(:label_administration)
-checked    = 'checked="checked"'
-size_files = 0
-size_thumb = 0
-size_show  = 0
+checked     = 'checked="checked"'
+size_files  = 0
+size_thumb  = 0
+size_srcset = 0
+size_show   = 0
 
 if File.directory?(ALL_FILES)
   size_files = `du -hs #{ALL_FILES} | cut -f1`.strip!
@@ -35,6 +36,14 @@ if File.directory?(APIJS_ROOT + '/thumb/')
   size_thumb = number_to_human_size(size * 1024 * 1024 * 1024) if size_thumb =~ /G/i
   size_thumb = number_to_human_size(size * 1024 * 1024) if size_thumb =~ /M/i
   size_thumb = number_to_human_size(size * 1024) if size_thumb =~ /K/i
+end
+
+if File.directory?(APIJS_ROOT + '/srcset/')
+  size_srcset = `du -hs #{APIJS_ROOT}/srcset/ | cut -f1`.strip!
+  size        = size_srcset.to_f
+  size_srcset = number_to_human_size(size * 1024 * 1024 * 1024) if size_srcset =~ /G/i
+  size_srcset = number_to_human_size(size * 1024 * 1024) if size_srcset =~ /M/i
+  size_srcset = number_to_human_size(size * 1024) if size_srcset =~ /K/i
 end
 
 if File.directory?(APIJS_ROOT + '/show/')
@@ -88,6 +97,7 @@ end
 		<label><%= raw l(:apijs_config_directories) %></label>
 		      <%= ALL_FILES  %>/ <b><%= size_files %></b>
 		<br /><%= APIJS_ROOT %>/thumb/ <b><%= size_thumb %></b> (200x150)
+		<br /><%= APIJS_ROOT %>/srcset/ <b><%= size_srcset %></b> (400x300)
 		<br /><%= APIJS_ROOT %>/show/ <b><%= size_show %></b> (1200x900)
 		<% # will be removed %>
 		<% if APIJS_ROOT != APIJS_OLD_ROOT && File.directory?(APIJS_OLD_ROOT + '/thumb/') %>
@@ -129,7 +139,6 @@ end
 	<p>
 		<label><%= raw l(:apijs_config_mimetypes) %></label>
 		<span style="display:block; line-height:200%;">
-			(libimage-exiftool-perl)
 			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_jpg]"  value="1" <%= raw checked if settings['album_mimetype_jpg'] == '1' %> /> jpg
 			</label>
@@ -139,9 +148,27 @@ end
 			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_png]"  value="1" <%= raw checked if settings['album_mimetype_png'] == '1' %> /> png
 			</label>
-		</span>
-		<span style="display:block; line-height:200%;">
-			(ffmpegthumbnailer)
+			<label class="bis">
+				<input type="checkbox" name="settings[album_mimetype_gif]"  value="1" <%= raw checked if settings['album_mimetype_gif'] == '1' %> /> gif
+			</label>
+			<label class="bis">
+				<input type="checkbox" name="settings[album_mimetype_webp]" value="1" <%= raw checked if settings['album_mimetype_webp'] == '1' %> /> webp
+			</label>
+			<label class="bis">
+				<input type="checkbox" name="settings[album_mimetype_tif]"  value="1" <%= raw checked if settings['album_mimetype_tif'] == '1' %> /> tif
+			</label>
+			<label class="bis">
+				<input type="checkbox" name="settings[album_mimetype_tiff]" value="1" <%= raw checked if settings['album_mimetype_tiff'] == '1' %> /> tiff
+			</label>
+			<label class="bis">
+				<input type="checkbox" name="settings[album_mimetype_bmp]"  value="1" <%= raw checked if settings['album_mimetype_bmp'] == '1' %> /> bmp
+			</label>
+			<label class="bis">
+				<input type="checkbox" name="settings[album_mimetype_eps]"  value="1" <%= raw checked if settings['album_mimetype_eps'] == '1' %> /> eps
+			</label>
+			<label class="bis">
+				<input type="checkbox" name="settings[album_mimetype_psd]"  value="1" <%= raw checked if settings['album_mimetype_psd'] == '1' %> /> psd
+			</label>
 			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_ogv]"  value="1" <%= raw checked if settings['album_mimetype_ogv'] == '1' %> /> ogv
 			</label>
@@ -153,21 +180,6 @@ end
 			</label>
 			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_m4v]"  value="1" <%= raw checked if settings['album_mimetype_m4v'] == '1' %> /> m4v
-			</label>
-		</span>
-		<span style="display:block; line-height:200%;">
-			(ghostscript)
-			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_pdf]"  value="1" <%= raw checked if settings['album_mimetype_pdf'] == '1' %> /> pdf
-			</label>
-			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_psd]"  value="1" <%= raw checked if settings['album_mimetype_psd'] == '1' %> /> psd
-			</label>
-			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_eps]"  value="1" <%= raw checked if settings['album_mimetype_eps'] == '1' %> /> eps
-			</label>
-			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_tiff]" value="1" <%= raw checked if settings['album_mimetype_tiff'] == '1' %> /> tif/tiff
 			</label>
 		</span>
 	</p>
@@ -195,19 +207,23 @@ end
 	<legend><%= raw l(:apijs_config_programs) %></legend>
 	<p dir="ltr">
 		<label>python / python-pil</label>
-		<% cmd = `command -v python3 || command -v python || command -v python2`.strip! %>
-		<% pil = "from PIL import Image; print(Image.__version__)" %>
-		<% pil = `#{cmd} -c "#{pil}" 2>&1`.strip! %>
-		<span class="cmd"><%= `#{cmd} --version 2>&1`.gsub('Python ', '').strip! %> / <%
-			if pil.include? "o module named"
-				%>PIL is <b>not</b> available<%
-			elsif pil.include? "__version__"
-				%>PIL is available<%
+		<%
+			cmd = `command -v python3 || command -v python || command -v python2`.strip!
+			if cmd.include? ":"
+				pyt = 'not found'
+				pil = 'not found'
 			else
-				%><%= pil %><%
+				pyt = `#{cmd} --version 2>&1`.gsub('Python ', '').strip!
+				pil = `#{cmd} -c "from PIL import Image; print(Image.__version__)" 2>&1`.strip!
+				if pil.include? "o module named"
+					pil = 'not available'
+				elsif pil.include? "__version__"
+					pil = 'available'
+				end
 			end
-		%></span>
-		<em class="info">python .../redmine_apijs/tools/image.py .../xyz.jpg .../xyz.jpg 200 150 2&gt;&amp;1<br /></em>
+		%>
+		<span class="cmd"><%= pyt %> / <%= pil %> (<a href="https://pillow.readthedocs.io/en/latest/">docs</a>)</span>
+		<em class="info">python .../redmine_apijs/lib/image.py .../xyz.jpg .../xyz.jpg 200 150 0 2&gt;&amp;1</em>
 	</p>
 	<p dir="ltr">
 		<label>libimage-exiftool-perl</label>
@@ -218,11 +234,6 @@ end
 		<label>ffmpegthumbnailer</label>
 		<span class="cmd"><%= `ffmpegthumbnailer -v 2>&1`.gsub('ffmpegthumbnailer version:', '').strip! %></span>
 		<em class="info">ffmpegthumbnailer -i .../xyz.webm -o .../xyz.jpg -q 10 -s 200</em>
-	</p>
-	<p dir="ltr">
-		<label>ghostscript</label>
-		<span class="cmd"><%= `gs --version 2>&1`.strip! %></span>
-		<em class="info">gs ... .../xyz.pdf</em>
 	</p>
 	<p dir="ltr">
 		<label>file</label>

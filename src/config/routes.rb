@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated D/03/05/2020
+# Updated D/10/05/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -19,6 +19,9 @@ if Redmine::VERSION::MAJOR >= 2
   RedmineApp::Application.routes.draw do
 
     match 'apijs/thumb/:id/:filename', to: 'apijs#thumb',
+      id: /\d+/, filename: /.*/, via: :get
+
+    match 'apijs/srcset/:id/:filename', to: 'apijs#srcset',
       id: /\d+/, filename: /.*/, via: :get
 
     match 'apijs/show/:id/:filename', to: 'apijs#show',
@@ -44,6 +47,11 @@ else
 
     map.connect 'apijs/thumb/:id/:filename',
       controller: 'apijs', action: 'thumb',
+      id: /\d+/, filename: /.*/,
+      conditions: {method: :get}
+
+    map.connect 'apijs/srcset/:id/:filename',
+      controller: 'apijs', action: 'srcset',
       id: /\d+/, filename: /.*/,
       conditions: {method: :get}
 

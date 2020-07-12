@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated S/02/05/2020
+ * Updated L/18/05/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
@@ -66,7 +66,7 @@ body fieldset.apijs.tabular.settings { margin:1em; padding:0.5em; border:1px sol
 body fieldset.apijs.tabular.settings p span.cmd { white-space:pre-wrap; }
 body fieldset.apijs.tabular.settings p em.info { margin:0.2em 0; line-height:140%; }
 body fieldset.apijs.tabular.settings p a + em.info { margin:0; }
-body fieldset.apijs.tabular.settings p label.bis { margin-left:1px; margin-right:0.7em; width:auto; }
+body fieldset.apijs.tabular.settings p label.bis { margin-left:1px; margin-right:0.7em; width:auto; min-width:5.5em; text-align:left; }
 body fieldset.apijs.tabular.settings p label.bis input { margin:0; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& navigateur &&& */

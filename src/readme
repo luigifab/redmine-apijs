@@ -1,7 +1,11 @@
 Docs      : https://www.luigifab.fr/redmine/apijs
+Mirror    : https://github.com/luigifab/apijs
 Plugin    : Luigifab/Apijs
 License   : GNU GPL 2 (https://opensource.org/licenses/gpl-2.0)
-Copyright : 2008-2020 Fabrice Creuzot (luigifab) <code@luigifab.fr>
+Copyright : 2008-2020 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+
+
+
 
 
 
@@ -9,7 +13,7 @@ Copyright : 2008-2020 Fabrice Creuzot (luigifab) <code@luigifab.fr>
 
 
 THE PLUGIN AND ALL THE TRANSLATIONS AND ALL THE DOCUMENTATION ARE EXCEPTIONALLY MAGNIFICENT.
-IF YOU FOUND A MISTAKE OR A BUG, PLEASE, CONTACT ME (IN FRENCH OR IN ENGLISH) AT code@luigifab.fr
+IF YOU FOUND A MISTAKE OR A BUG, PLEASE, CONTACT ME (IN FRENCH OR IN ENGLISH) AT code~luigifab~fr
 
 CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/UglifyJS2).
 ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF GNU GPL 2.0+ LICENSE.
@@ -24,45 +28,45 @@ Depends
 - python-pil
 - libimage-exiftool-perl
 - ffmpegthumbnailer (optional)
-- ghostscript (optional)
 Notes
-- For the Magento module, read: https://www.luigifab.fr/magento/apijs
-- For the Redmine plugin, read: https://www.luigifab.fr/redmine/apijs
 - For the JavaScript application, read: https://www.luigifab.fr/apijs
+- For the Redmine plugin, read: https://www.luigifab.fr/redmine/apijs
+- For the Magento module, read: https://www.luigifab.fr/magento/apijs
+- For the OpenMage module, read: https://www.luigifab.fr/openmage/apijs
 
 
 Translations in de-DE (deutsch/Deutschland) by:
-- Philip Junietz <info@label-park.com> 2016
-- Pamela Steinborn <st.pamela@laposte.net> 2016
+- Philip Junietz <info~label-park~com> 2016
+- Pamela Steinborn <st.pamela~laposte~net> 2016
 Translations in en-US (english/United-States) by:
-- Fabrice Creuzot (luigifab) <code@luigifab.fr> 2008-2020
-- Brian Legrand <mrbibi1987@gmail.com> 2012
-- Pascale Scellier <scellier.pascale@orange.fr> 2016
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2020
+- Brian Legrand <mrbibi1987~gmail~com> 2012
+- Pascale Scellier <scellier.pascale~orange~fr> 2016
 Translations in es-ES (español/España) by:
-- Paco Aguayo <francisco.aguayocanela@gmail.com> 2014
-- Hugo Baugé & Cédric Scaramuzza <info@label-park.com> 2016
-- Pascale Scellier <scellier.pascale@orange.fr> 2016
-- Guillaume Genetet <genetet.incorporated@gmail.com> 2018 https://fr.tipeee.com/william-broome
+- Paco Aguayo <francisco.aguayocanela~gmail~com> 2014
+- Hugo Baugé & Cédric Scaramuzza <info~label-park~com> 2016
+- Pascale Scellier <scellier.pascale~orange~fr> 2016
+- Guillaume Genetet <genetet.incorporated~gmail~com> 2018 https://fr.tipeee.com/william-broome
 Translations in fr-FR (français/France) by:
-- Fabrice Creuzot (luigifab) <code@luigifab.fr> 2008-2020
-- Pascale Scellier <scellier.pascale@orange.fr> 2016
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2020
+- Pascale Scellier <scellier.pascale~orange~fr> 2016
 Translations in it-IT (italiano/Italia) by:
-- Maria Grasso <mgrasso@outlook.fr> 2016-2017
+- Maria Grasso <mgrasso~outlook~fr> 2016-2017
 Translations in pt-PT (português/Portugal) by:
-- Greg Lacan <greg.lacan@label-park.com> 2016
-- Isabel Mendes <isabel.2012@orange.fr> 2016
+- Greg Lacan <greg.lacan~label-park~com> 2016
+- Isabel Mendes <isabel.2012~orange~fr> 2016
 Translations in ru-RU (русский/Россия) by:
-- Eugene Parfenov (igro) <admin@mytona.com>
+- Eugene Parfenov (igro) <admin~mytona~com>
 Translations in tr-TR (türkçe/Türkiye) by:
-- Adnan Topcu <adnan@topcu.name>
+- Adnan Topcu <adnan~topcu~name>
 
 If you like, take some of your time to improve the translations, go to https://bit.ly/2HyCCEc
 
 
 File: /lib/useragentparser.rb
 Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.0.0-fork2)
-Copyright: 2013-2020 Jesse G. Donat <donatj@gmail.com>
-Copyright: 2019-2020 Fabrice Creuzot (luigifab) <code@luigifab.fr>
+Copyright: 2013-2020 Jesse G. Donat <donatj~gmail~com>
+Copyright: 2019-2020 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 License: MIT (https://opensource.org/licenses/mit)
 
 Files: /assets/fonts/apijs/fontello.woff /assets/fonts/apijs/fontello.woff2

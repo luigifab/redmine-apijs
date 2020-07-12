@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated D/03/05/2020
+# Updated J/02/07/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -41,29 +41,33 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Gestion de l'image miniature (photo ou vidéo) ################################ public ### #
-  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de la miniature au format JPG ou PNG
+  # #### Gestion de l'image miniature (photo ou vidéo) ################################# #
+  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de la miniature
   # » Utilise un script python pour générer l'image thumb (taille 200x150)
+  # » Utilise un script python pour générer l'image srcset (taille 400x300)
   # » Utilise un script python pour générer l'image show (taille 1200x900)
   # » Enregistre les commandes et leurs résultats dans le log
   # » Téléchargement d'une image avec mise en cache (inline/stale)
   def thumb
 
     source = @attachment.diskfile
-    img_thumb = File.extname(@attachment.filename).downcase == '.png' ? '.png' : '.jpg'
-    img_thumb = File.join(APIJS_ROOT, 'thumb', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + img_thumb)
+    img_thumb = File.join(APIJS_ROOT, 'thumb', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
 
     # génération de l'image thumb
     if File.file?(source) && !File.file?(img_thumb)
-      cmd = @attachment.getCmd(source, img_thumb, 200, 150)
+      cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
       logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
     end
-    # génération de l'image show
+    # génération des images srcset et show
     if @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '1' && File.file?(source)
-      img_show = File.extname(@attachment.filename).downcase == '.png' ? '.png' : '.jpg'
-      img_show = File.join(APIJS_ROOT, 'show', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + img_show)
+      img_srcset = File.join(APIJS_ROOT, 'srcset', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
+      unless File.file?(img_srcset)
+        cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
+        logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+      end
+      img_show = File.join(APIJS_ROOT, 'show', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
       unless File.file?(img_show)
-        cmd = @attachment.getCmd(source, img_show, 1200, 900)
+        cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
         logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
       end
     end
@@ -74,25 +78,51 @@ class ApijsController < AttachmentsController
     # envoie de l'image avec mise en cache
     elsif File.file?(img_thumb) && stale?(etag: img_thumb)
       send_file(img_thumb, filename: filename_for_content_disposition(@attachment.filename),
-        type: File.extname(img_thumb).downcase == '.png' ? 'image/png' : 'image/jpeg', disposition: 'inline')
+        type: Redmine::MimeType.of(img_thumb), disposition: 'inline')
     end
   end
 
 
-  # #### Gestion de l'image aperçu (photo) ############################################ public ### #
-  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu au format JPG ou PNG
+  # #### Gestion de l'image miniature 2x (photo ou vidéo) ############################## #
+  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
+  # » Utilise un script python pour générer l'image srcset (taille 400x300)
+  # » Enregistre les commandes et leurs résultats dans le log
+  # » Téléchargement d'une image avec mise en cache (inline/stale)
+  def srcset
+
+    source = @attachment.diskfile
+    img_srcset = File.join(APIJS_ROOT, 'srcset', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
+
+    # génération de l'image srcset
+    if File.file?(source) && !File.file?(img_srcset)
+      cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
+      logger.info 'APIJS::ApijsController#srcset: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+    end
+
+    # vérification d'accès
+    if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
+      deny_access
+    # envoie de l'image avec mise en cache
+    elsif File.file?(img_srcset) && stale?(etag: img_srcset)
+      send_file(img_srcset, filename: filename_for_content_disposition(@attachment.filename),
+        type: Redmine::MimeType.of(img_srcset), disposition: 'inline')
+    end
+  end
+
+
+  # #### Gestion de l'image aperçu (photo) ############################################# #
+  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
   # » Utilise un script python pour générer l'image show (taille 1200x900)
   # » Enregistre les commandes et leurs résultats dans le log
   # » Téléchargement d'une image avec mise en cache (inline/stale)
   def show
 
     source = @attachment.diskfile
-    img_show = File.extname(@attachment.filename).downcase == '.png' ? '.png' : '.jpg'
-    img_show = File.join(APIJS_ROOT, 'show', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + img_show)
+    img_show = File.join(APIJS_ROOT, 'show', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
 
     # génération de l'image show
     if File.file?(source) && !File.file?(img_show)
-      cmd = @attachment.getCmd(source, img_show, 1200, 900)
+      cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
       logger.info 'APIJS::ApijsController#show: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
     end
 
@@ -102,12 +132,12 @@ class ApijsController < AttachmentsController
     # envoie de l'image avec mise en cache
     elsif File.file?(img_show) && stale?(etag: img_show)
       send_file(img_show, filename: filename_for_content_disposition(@attachment.filename),
-        type: File.extname(img_show).downcase == '.png' ? 'image/png' : 'image/jpeg', disposition: 'inline')
+        type: Redmine::MimeType.of(img_show), disposition: 'inline')
     end
   end
 
 
-  # #### Gestion du téléchargement des fichiers ####################################### public ### #
+  # #### Gestion du téléchargement des fichiers ######################################## #
   # » Vérifie si l'utilisateur a accès au projet avant
   # » Téléchargement d'une vidéo en 206 Partial Content (inline)
   # » Téléchargement d'une image avec mise en cache (inline/stale) ou téléchargement d'un fichier (attachment)
@@ -171,7 +201,7 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Modification d'une description ############################################### public ### #
+  # #### Modification d'une description ################################################ #
   # » Vérifie si l'utilisateur a accès au projet et à la modification
   # » Renvoie l'id du fichier suivi de la description en cas de modification réussie
   # » Supprime certains caractères de la description avant son enregistrement
@@ -197,7 +227,7 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Suppression d'un fichier ##################################################### public ### #
+  # #### Suppression d'un fichier ###################################################### #
   # » Vérifie si l'utilisateur a accès au projet et à la suppresion
   # » Renvoie l'id du fichier suivi en cas de suppression réussie
   def delete

@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated D/03/05/2020
+# Updated L/06/07/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -67,6 +67,10 @@ module AttachmentPatch
       return getUrl('thumb', true)
     end
 
+    def getSrcsetUrl
+      return getUrl('srcset', true)
+    end
+
     def getDownloadUrl
       return getUrl('download', true)
     end
@@ -80,7 +84,7 @@ module AttachmentPatch
     end
 
     def getDeleteButton(token)
-      return "apijsRedmine.deleteAttachment(" + self.id.to_s + ", '" + getUrl('delete') + "', '" + token + "');"
+      return "apijsRedmine.removeAttachment(" + self.id.to_s + ", '" + getUrl('delete') + "', '" + token + "');"
     end
 
     def getShowButton(setting_show_filename, setting_show_exifdate, description)
@@ -95,19 +99,21 @@ module AttachmentPatch
 
     # image, photo, vidéo
     def isImage?
-      return self.filename =~ /\.(jpg|jpeg|png|svg)$/i
+      return self.filename =~ /\.(jpg|jpeg|png|gif|webp|svg)$/i
     end
 
     def isPhoto?
       types = []
-      types.push('jpeg') if Setting.plugin_redmine_apijs['album_mimetype_jpeg'] == '1'
       types.push('jpg')  if Setting.plugin_redmine_apijs['album_mimetype_jpg']  == '1'
+      types.push('jpeg') if Setting.plugin_redmine_apijs['album_mimetype_jpeg'] == '1'
       types.push('png')  if Setting.plugin_redmine_apijs['album_mimetype_png']  == '1'
-      types.push('pdf')  if Setting.plugin_redmine_apijs['album_mimetype_pdf']  == '1'
-      types.push('psd')  if Setting.plugin_redmine_apijs['album_mimetype_psd']  == '1'
-      types.push('eps')  if Setting.plugin_redmine_apijs['album_mimetype_eps']  == '1'
-      types.push('tif')  if Setting.plugin_redmine_apijs['album_mimetype_tiff'] == '1'
+      types.push('gif')  if Setting.plugin_redmine_apijs['album_mimetype_gif']  == '1'
+      types.push('webp') if Setting.plugin_redmine_apijs['album_mimetype_webp'] == '1'
+      types.push('tif')  if Setting.plugin_redmine_apijs['album_mimetype_tif']  == '1'
       types.push('tiff') if Setting.plugin_redmine_apijs['album_mimetype_tiff'] == '1'
+      types.push('bmp')  if Setting.plugin_redmine_apijs['album_mimetype_bmp']  == '1'
+      types.push('eps')  if Setting.plugin_redmine_apijs['album_mimetype_eps']  == '1'
+      types.push('psd')  if Setting.plugin_redmine_apijs['album_mimetype_psd']  == '1'
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
@@ -120,11 +126,21 @@ module AttachmentPatch
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
+    # extension des images générées
+    def getExt
+        ext = File.extname(self.filename).downcase
+        return ext if ext == '.png'
+        return ext if ext == '.gif'
+        return ext if ext == '.webp'
+        return '.jpg'
+    end
+
     # commande python
-    def getCmd(source, target, width, height)
+    def getCmd(source, target, width, height, fixed=false)
       cmd = `command -v python3 || command -v python || command -v python2`.strip!
-      script = File.dirname(__FILE__).gsub('lib', 'tools/image.py')
-      return cmd + ' ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' ' + width.to_s + ' ' + height.to_s + ' 2>&1'
+      script = File.dirname(__FILE__) + (self.isPhoto? ? '/image.py' : '/video.py')
+      return cmd + ' ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' ' +
+        width.to_s + ' ' + height.to_s + (fixed ? ' 90 fixed' : ' 90') + ' 2>&1'
     end
 
     # exclusion
@@ -151,12 +167,13 @@ module AttachmentPatch
     # supprime les images en cache
     def delete_cache
 
-      img_thumb = File.extname(self.filename).downcase == '.png' ? '.png' : '.jpg'
-      img_thumb = File.join(APIJS_ROOT, 'thumb', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + img_thumb)
+      img_thumb = File.join(APIJS_ROOT, 'thumb', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + getExt)
       File.delete(img_thumb) if File.file?(img_thumb)
 
-      img_show = File.extname(self.filename).downcase == '.png' ? '.png' : '.jpg'
-      img_show = File.join(APIJS_ROOT, 'show', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + img_show)
+      img_srcset = File.join(APIJS_ROOT, 'srcset', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + getExt)
+      File.delete(img_srcset) if File.file?(img_srcset)
+
+      img_show = File.join(APIJS_ROOT, 'show', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + getExt)
       File.delete(img_show) if File.file?(img_show)
     end
 

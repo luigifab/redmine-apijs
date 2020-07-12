@@ -1,6 +1,6 @@
 <%
 # Created L/21/05/2012
-# Updated S/02/05/2020
+# Updated D/10/05/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -28,23 +28,23 @@ permission_delete        = User.current.allowed_to?(:delete_attachments, @projec
 permission_edit          = User.current.allowed_to?(:edit_attachments, @project)
 
 @slideshowi = 0 unless defined? @slideshowi
-showAlbum = showList = false
+show_album = show_list = false
 
 if setting_show_album
   attachments.each { |attachment|
     if (attachment.isPhoto? || attachment.isVideo?) && !attachment.isExcluded?
-      showAlbum = true
+      show_album = true
     else
-      showList = true
+      show_list = true
     end
   }
 else
-  showList = true
+  show_list = true
 end
 %>
 
 <% if setting_enabled %>
-	<% if showAlbum %>
+	<% if show_album %>
 		<p class="apijs section"><strong><%= l(:apijs_title_album) %></strong></p>
 		<div class="attachments album" id="slideshow.<%= @slideshowi %>">
 			<% slideshowj = 0 %>
@@ -54,7 +54,7 @@ end
 					<dl id="attachmentId<%= attachment.id %>">
 						<dt>
 							<a href="<%= (attachment.isVideo?) ? attachment.getDownloadUrl + '?stream=1' : attachment.getShowUrl %>" type="<%= attachment.getMimeType %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
-								<img src="<%= attachment.getThumbUrl %>" width="200" height="150" alt="<%= h(description) %>"/>
+								<img src="<%= attachment.getThumbUrl %>" srcset="<%= attachment.getSrcsetUrl %> 2x" width="200" height="150" alt="<%= h(description) %>"/>
 								<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>"/>
 							</a>
 						</dt>
@@ -85,7 +85,7 @@ end
 			<% @slideshowi += 1 if slideshowj > 0 %>
 		</div>
 	<% end %>
-	<% if showList %>
+	<% if show_list %>
 		<p class="apijs section"><strong><%= l(:apijs_title_files) %></strong></p>
 		<ul class="attachments" id="slideshow.<%= @slideshowi %>">
 			<% slideshowj = 0 %>

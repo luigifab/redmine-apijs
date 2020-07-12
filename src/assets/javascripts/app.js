@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated J/06/02/2020
+ * Updated L/06/07/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
@@ -33,8 +33,8 @@ var apijsRedmine = new (function () {
 		d.de[254] = "Es tut uns leid, diese Datei existiert nicht mehr, bitte [a §]aktualisieren Sie die Seite[/a].";
 		d.de[255] = "Eine Beschreibung bearbeiten";
 		d.de[256] = "Bitte geben Sie weiter unten die neue Beschreibung für diese Datei an. Um die Beschreibung zu löschen lassen Sie das Feld leer.";
-		d.en[250] = "Delete a file";
-		d.en[251] = "Are you sure you want to delete this file?[br]Be careful, you can't cancel this operation.";
+		d.en[250] = "Remove a file";
+		d.en[251] = "Are you sure you want to remove this file?[br]Be careful, you can't cancel this operation.";
 		d.en[252] = "Error";
 		d.en[253] = "You are not authorized to perform this operation, please [a §]refresh the page[/a].";
 		d.en[254] = "Sorry, the file no longer exists, please [a §]refresh the page[/a].";
@@ -71,7 +71,6 @@ var apijsRedmine = new (function () {
 		d.pt[254] = "Lamento, o ficheiro já não existe, por favor [a §]atualize a página[/a].";
 		d.pt[255] = "Modificar uma descrição";
 		d.pt[256] = "Digite abaixo a nova descrição para este ficheiro. Para suprimir a descrição, deixe o campo vazio.";
-		d.ptBR[252] = "Erro";
 		d.ru[250] = "Удалить файл";
 		d.ru[251] = "Вы уверены, что хотите удалить этот файл?[br]Осторожно, вы не сможете отменить эту операцию.";
 		d.ru[252] = "Ошибка";
@@ -172,11 +171,11 @@ var apijsRedmine = new (function () {
 		}
 	};
 
-	this.deleteAttachment = function (id, action, token) {
-		apijs.dialog.dialogConfirmation(apijs.i18n.translate(250), apijs.i18n.translate(251), apijsRedmine.actionDeleteAttachment, [id, action, token]);
+	this.removeAttachment = function (id, action, token) {
+		apijs.dialog.dialogConfirmation(apijs.i18n.translate(250), apijs.i18n.translate(251), apijsRedmine.actionRemoveAttachment, [id, action, token]);
 	};
 
-	this.actionDeleteAttachment = function (args) {
+	this.actionRemoveAttachment = function (args) {
 
 		// args = [id, action, token]
 		var xhr = new XMLHttpRequest();
