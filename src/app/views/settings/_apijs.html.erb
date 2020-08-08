@@ -1,6 +1,6 @@
 <%
 # Created J/12/12/2013
-# Updated J/25/06/2020
+# Updated D/26/07/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -30,7 +30,7 @@ if File.directory?(ALL_FILES)
   size_files = number_to_human_size(size * 1024) if size_files =~ /K/
 end
 
-if File.directory?(APIJS_ROOT + '/thumb/')
+if File.directory?(File.join(APIJS_ROOT, 'thumb'))
   size_thumb = `du -hs #{APIJS_ROOT}/thumb/ | cut -f1`.strip!
   size       = size_thumb.to_f
   size_thumb = number_to_human_size(size * 1024 * 1024 * 1024) if size_thumb =~ /G/i
@@ -38,7 +38,7 @@ if File.directory?(APIJS_ROOT + '/thumb/')
   size_thumb = number_to_human_size(size * 1024) if size_thumb =~ /K/i
 end
 
-if File.directory?(APIJS_ROOT + '/srcset/')
+if File.directory?(File.join(APIJS_ROOT, 'srcset'))
   size_srcset = `du -hs #{APIJS_ROOT}/srcset/ | cut -f1`.strip!
   size        = size_srcset.to_f
   size_srcset = number_to_human_size(size * 1024 * 1024 * 1024) if size_srcset =~ /G/i
@@ -46,12 +46,41 @@ if File.directory?(APIJS_ROOT + '/srcset/')
   size_srcset = number_to_human_size(size * 1024) if size_srcset =~ /K/i
 end
 
-if File.directory?(APIJS_ROOT + '/show/')
+if File.directory?(File.join(APIJS_ROOT, 'show'))
   size_show = `du -hs #{APIJS_ROOT}/show/ | cut -f1`.strip!
   size      = size_show.to_f
   size_show = number_to_human_size(size * 1024 * 1024 * 1024) if size_show =~ /G/i
   size_show = number_to_human_size(size * 1024 * 1024) if size_show =~ /M/i
   size_show = number_to_human_size(size * 1024) if size_show =~ /K/i
+end
+
+
+if Redmine::Platform.mswin?
+  cmd = 'python.exe'
+else
+  cmd = `command -v python3 || command -v python || command -v python2`.to_s.strip!
+end
+
+if cmd.length == 0
+  pyt = 'not found'
+  pil = pyt
+  sco = pyt
+else
+  pyt = `#{cmd} --version 2>&1`.gsub('Python ', '').strip!
+
+  pil = `#{cmd} -c "from PIL import Image; print(Image.__version__)" 2>&1`.strip!
+  if pil.include? "o module named"
+    pil = 'not available'
+  elsif pil.include? "__version__"
+    pil = 'available'
+  end
+
+  sco = `#{cmd} -c "import scour; print(scour.__version__)" 2>&1`.strip!
+  if sco.include? "o module named"
+    sco = 'not available'
+  elsif sco.include? "__version__"
+    sco = 'available'
+  end
 end
 %>
 
@@ -95,14 +124,10 @@ end
 	</p>
 	<p>
 		<label><%= raw l(:apijs_config_directories) %></label>
-		      <%= ALL_FILES  %>/ <b><%= size_files %></b>
+		      <%= ALL_FILES %>/ <b><%= size_files %></b>
 		<br /><%= APIJS_ROOT %>/thumb/ <b><%= size_thumb %></b> (200x150)
 		<br /><%= APIJS_ROOT %>/srcset/ <b><%= size_srcset %></b> (400x300)
 		<br /><%= APIJS_ROOT %>/show/ <b><%= size_show %></b> (1200x900)
-		<% # will be removed %>
-		<% if APIJS_ROOT != APIJS_OLD_ROOT && File.directory?(APIJS_OLD_ROOT + '/thumb/') %>
-			<br /><br /><b>Warning</b>, in previous versions, the temporary directory may have been incorrectly set to <u><%= APIJS_OLD_ROOT %>/</u>, please move your files to the new directory and remove it. The new temporary directory is invalid? :'(
-		<% end %>
 	</p>
 </fieldset>
 
@@ -146,19 +171,19 @@ end
 				<input type="checkbox" name="settings[album_mimetype_jpeg]" value="1" <%= raw checked if settings['album_mimetype_jpeg'] == '1' %> /> jpeg
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_png]"  value="1" <%= raw checked if settings['album_mimetype_png'] == '1' %> /> png
-			</label>
-			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_gif]"  value="1" <%= raw checked if settings['album_mimetype_gif'] == '1' %> /> gif
 			</label>
 			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_webp]" value="1" <%= raw checked if settings['album_mimetype_webp'] == '1' %> /> webp
+				<input type="checkbox" name="settings[album_mimetype_png]"  value="1" <%= raw checked if settings['album_mimetype_png'] == '1' %> /> png
 			</label>
 			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_tif]"  value="1" <%= raw checked if settings['album_mimetype_tif'] == '1' %> /> tif
 			</label>
 			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_tiff]" value="1" <%= raw checked if settings['album_mimetype_tiff'] == '1' %> /> tiff
+			</label>
+			<label class="bis">
+				<input type="checkbox" name="settings[album_mimetype_webp]" value="1" <%= raw checked if settings['album_mimetype_webp'] == '1' %> /> webp
 			</label>
 			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_bmp]"  value="1" <%= raw checked if settings['album_mimetype_bmp'] == '1' %> /> bmp
@@ -170,6 +195,9 @@ end
 				<input type="checkbox" name="settings[album_mimetype_psd]"  value="1" <%= raw checked if settings['album_mimetype_psd'] == '1' %> /> psd
 			</label>
 			<label class="bis">
+				<input type="checkbox" name="settings[album_mimetype_svg]"  value="1" <%= raw checked if settings['album_mimetype_svg'] == '1' %> /> <u>svg</u>
+			</label>
+			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_ogv]"  value="1" <%= raw checked if settings['album_mimetype_ogv'] == '1' %> /> ogv
 			</label>
 			<label class="bis">
@@ -177,9 +205,6 @@ end
 			</label>
 			<label class="bis">
 				<input type="checkbox" name="settings[album_mimetype_mp4]"  value="1" <%= raw checked if settings['album_mimetype_mp4'] == '1' %> /> mp4
-			</label>
-			<label class="bis">
-				<input type="checkbox" name="settings[album_mimetype_m4v]"  value="1" <%= raw checked if settings['album_mimetype_m4v'] == '1' %> /> m4v
 			</label>
 		</span>
 	</p>
@@ -196,8 +221,15 @@ end
 	<p>
 		<label for="apijsCreateAll"><%= raw l(:apijs_config_create_all) %></label>
 		<select name="settings[create_all]" id="apijsCreateAll">
-			<option value="0" <%= raw 'selected="selected"' if settings['create_all'] != '1' %>><%= raw l(:general_text_No) %></option>
-			<option value="1" <%= raw 'selected="selected"' if settings['create_all'] == '1' %>><%= raw l(:general_text_Yes) %></option>
+			<option value="0" <%= raw 'selected="selected"' if settings['create_all'] == '0' %>>
+				<%= raw l(:general_text_No) %>
+			</option>
+			<option value="1" <%= raw 'selected="selected"' if settings['create_all'] == '1' %>>
+				<%= raw l(:general_text_Yes) %> - single thread
+			</option>
+			<option value="2" <%= raw 'selected="selected"' if settings['create_all'] == '2' %>>
+				<%= raw l(:general_text_Yes) %> - multi thread (<%= `nproc 2>&1`.strip!.to_i %> cpu)
+			</option>
 		</select>
 		<em class="info"><%= raw l(:apijs_config_create_all_info) %></em>
 	</p>
@@ -206,38 +238,19 @@ end
 <fieldset class="box apijs tabular settings">
 	<legend><%= raw l(:apijs_config_programs) %></legend>
 	<p dir="ltr">
-		<label>python / python-pil</label>
-		<%
-			cmd = `command -v python3 || command -v python || command -v python2`.strip!
-			if cmd.include? ":"
-				pyt = 'not found'
-				pil = 'not found'
-			else
-				pyt = `#{cmd} --version 2>&1`.gsub('Python ', '').strip!
-				pil = `#{cmd} -c "from PIL import Image; print(Image.__version__)" 2>&1`.strip!
-				if pil.include? "o module named"
-					pil = 'not available'
-				elsif pil.include? "__version__"
-					pil = 'available'
-				end
-			end
-		%>
-		<span class="cmd"><%= pyt %> / <%= pil %> (<a href="https://pillow.readthedocs.io/en/latest/">docs</a>)</span>
-		<em class="info">python .../redmine_apijs/lib/image.py .../xyz.jpg .../xyz.jpg 200 150 0 2&gt;&amp;1</em>
+		<label>python / python-pil / python-scour</label>
+		<span class="cmd"><%= pyt %> / <%= pil %> (<a href="https://pillow.readthedocs.io/en/latest/">docs</a>) / <%= sco %> (svg, <a href="https://github.com/scour-project/scour/wiki/Documentation">docs</a>)</span>
+		<em class="info">python .../redmine_apijs/lib/image.py .../xyz.jpg .../xyz.jpg 200 150 90 2&gt;&amp;1</em>
+		<em class="info">python .../redmine_apijs/lib/video.py .../xyz.ogv .../xyz.jpg 200 150 90 2&gt;&amp;1</em>
 	</p>
 	<p dir="ltr">
 		<label>libimage-exiftool-perl</label>
 		<span class="cmd"><%= `exiftool -ver 2>&1`.strip! %></span>
-		<em class="info">exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 .../xyz.webm 2&gt;&amp;1</em>
+		<em class="info">exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 .../xyz.jpg 2&gt;&amp;1</em>
 	</p>
 	<p dir="ltr">
 		<label>ffmpegthumbnailer</label>
 		<span class="cmd"><%= `ffmpegthumbnailer -v 2>&1`.gsub('ffmpegthumbnailer version:', '').strip! %></span>
 		<em class="info">ffmpegthumbnailer -i .../xyz.webm -o .../xyz.jpg -q 10 -s 200</em>
-	</p>
-	<p dir="ltr">
-		<label>file</label>
-		<span class="cmd"><%= `file --version 2>&1`.gsub('file-', '').strip! %></span>
-		<em class="info">file --brief --mime-type .../xyz.webm 2&gt;&amp;1</em>
 	</p>
 </fieldset>

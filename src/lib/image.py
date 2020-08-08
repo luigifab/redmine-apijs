@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated D/12/07/2020
+# Updated D/26/07/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/openmage/apijs
@@ -29,13 +29,26 @@ try:
 	fixed   = len(sys.argv) == 7 and sys.argv[6] == 'fixed'
 except:
 	print("Usage: image.py source destination width height [quality=0=auto] [fixed]")
-	print("source: all supported format by python-pil (including animated gif/png/webp)")
-	print("destination: jpg,png,gif,webp")
+	print("source: all supported format by python-pil (including animated gif/png/webp) or svg")
+	print("destination: jpg,png,gif,webp or svg")
 	exit(-1)
 
 if not os.path.exists(os.path.dirname(fileout)):
 	os.makedirs(os.path.dirname(fileout))
 
+# python-scour
+if ".svg" in fileout:
+	from scour.scour import (sanitizeOptions, start)
+	options = sanitizeOptions()
+	options.strip_xml_prolog = True # --strip-xml-prolog
+	options.remove_metadata = True  # --remove-metadata
+	options.strip_comments = True   # --enable-comment-stripping
+	options.strip_ids = True        # --enable-id-stripping
+	options.indent_type = None      # --indent=none
+	start(options, open(filein, 'rb'), open(fileout, 'wb'))
+	exit(0)
+
+# python-pil
 source = Image.open(filein)
 if size[1] == 0 and size[0] == 0:
 	size = (source.size[0], source.size[1])
@@ -184,3 +197,5 @@ else:
 	elif quality > 95:
 		quality = 95
 	dest.convert('RGB').save(fileout, 'JPEG', optimize=True, quality=quality)
+
+exit(0)

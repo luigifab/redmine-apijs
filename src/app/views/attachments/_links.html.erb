@@ -1,6 +1,6 @@
 <%
 # Created L/21/05/2012
-# Updated D/10/05/2020
+# Updated D/26/07/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -53,8 +53,8 @@ end
 					<% description = (attachment.description.blank?) ? ' ' : attachment.description.gsub(/["\\\x0]/, ' ') %>
 					<dl id="attachmentId<%= attachment.id %>">
 						<dt>
-							<a href="<%= (attachment.isVideo?) ? attachment.getDownloadUrl + '?stream=1' : attachment.getShowUrl %>" type="<%= attachment.getMimeType %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
-								<img src="<%= attachment.getThumbUrl %>" srcset="<%= attachment.getSrcsetUrl %> 2x" width="200" height="150" alt="<%= h(description) %>"/>
+							<a href="<%= (attachment.isVideo?) ? attachment.getDownloadUrl + '?stream=1' : attachment.getShowUrl %>" type="<%= attachment.content_type %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
+								<img src="<%= attachment.getThumbUrl %>" srcset="<%= attachment.getSrcsetUrl %> 2x" width="200" height="150" alt="<%= h(description).strip! %>"/>
 								<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>"/>
 							</a>
 						</dt>
@@ -104,7 +104,7 @@ end
 						<% end %>
 						<% if attachment.is_text? || attachment.isImage? || attachment.isVideo? %>
 							<% if attachment.isImage? || attachment.isVideo? %>
-								<a href="<%= attachment.getDownloadUrl.gsub('download', 'show') %>" type="<%= attachment.getMimeType %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
+								<a href="<%= attachment.getDownloadUrl.gsub('download', 'show') %>" type="<%= attachment.content_type %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
 									<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>" />
 								</a>
 								<% slideshowj += 1 %>

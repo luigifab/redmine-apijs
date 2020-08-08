@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created L/21/05/2012
-# Updated L/18/05/2020
+# Updated V/24/07/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -18,19 +18,21 @@
 require 'redmine'
 require 'apijs_const'
 require 'apijs_files'
-require 'attachment_patch'
+require 'apijs_attachment'
+require 'useragentparser'
 
 Redmine::Plugin.register :redmine_apijs do
 
   name 'Redmine Apijs plugin'
   author 'Fabrice Creuzot'
   description 'Integrate the apijs javascript library into Redmine.'
-  version '6.2.0'
+  version '6.3.0'
   url 'https://www.luigifab.fr/redmine/apijs'
   author_url 'https://www.luigifab.fr/'
 
   permission :edit_attachments, {apijs: :edit}, {require: :loggedin}
   permission :delete_attachments, {apijs: :delete}, {require: [:loggedin, :member]}
+  requires_redmine version_or_higher: '1.4.0'
 
   settings({
     partial: 'settings/apijs',
@@ -48,19 +50,20 @@ Redmine::Plugin.register :redmine_apijs do
       # python-pil
       album_mimetype_jpg: '1',
       album_mimetype_jpeg: '1',
-      album_mimetype_png: '0',
       album_mimetype_gif: '0',
-      album_mimetype_webp: '0',
+      album_mimetype_png: '0',
       album_mimetype_tif: '0',
       album_mimetype_tiff: '0',
+      album_mimetype_webp: '0',
       album_mimetype_bmp: '0',
       album_mimetype_eps: '0',
       album_mimetype_psd: '0',
+      # python-scour
+      album_mimetype_svg: '1',
       # ffmpegthumbnailer
       album_mimetype_ogv: '1',
       album_mimetype_webm: '1',
-      album_mimetype_mp4: '0',
-      album_mimetype_m4v: '0',
+      album_mimetype_mp4: '0'
     }
   })
 end

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated J/25/06/2020
+# Updated J/23/07/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -28,7 +28,7 @@ try:
 	quality = int(sys.argv[5])
 except:
 	print("Usage: video.py source destination width height [quality=0=auto]")
-	print("source: ogv,webm,mp4,m4v")
+	print("source: ogv,webm,mp4")
 	print("destination: jpg")
 	exit(-1)
 
@@ -53,12 +53,20 @@ pixels = sorted(pixels, key=lambda t: t[0])
 if (pixels[-1][1] > (127,127,127)): # white background, black player
 	dest = Image.new('RGBA', size, (255,255,255,0))
 	dest.paste(source, (offset_x, offset_y))
-	play = Image.open(os.path.join(os.path.dirname(__file__).replace('lib', 'assets/images/apijs/player-black-' + str(size[0]) + '.png')))
+	# https://stackoverflow.com/a/59082116 (replace only last lib)
+	# /var/lib/gems/2.7.0/gems/redmine_apijs-6.3.0/lib » /var/lib/gems/2.7.0/gems/redmine_apijs-6.3.0/assets/images...
+	path = os.path.dirname(__file__)
+	path = ('/assets/images/apijs/player-black-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
+	play = Image.open(path)
 	dest.paste(play, (0, 0), play)
 else:
 	dest = Image.new('RGBA', size, (0,0,0,0))
 	dest.paste(source, (offset_x, offset_y))
-	play = Image.open(os.path.join(os.path.dirname(__file__).replace('lib', 'assets/images/apijs/player-white-' + str(size[0]) + '.png')))
+	# https://stackoverflow.com/a/59082116 (replace only last lib)
+	# /var/lib/gems/2.7.0/gems/redmine_apijs-6.3.0/lib » /var/lib/gems/2.7.0/gems/redmine_apijs-6.3.0/assets/images...
+	path = os.path.dirname(__file__)
+	path = ('/assets/images/apijs/player-white-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
+	play = Image.open(path)
 	dest.paste(play, (0, 0), play)
 
 # https://pillow.readthedocs.io/en/latest/handbook/image-file-formats.html

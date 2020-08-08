@@ -1,0 +1,31 @@
+Source: redmine-plugin-apijs
+Section: web
+Priority: optional
+Maintainer: Fabrice Creuzot <code@luigifab.fr>
+Build-Depends: debhelper-compat (= 13)
+Rules-Requires-Root: no
+Standards-Version: 4.5.0
+Homepage: https://github.com/luigifab/redmine-apijs
+Vcs-Browser: https://github.com/luigifab/redmine-apijs
+Vcs-Git: https://github.com/luigifab/redmine-apijs.git
+
+Package: redmine-plugin-apijs
+Architecture: all
+Pre-Depends: redmine
+Depends: redmine (>= 2.0.0), ruby (>= 1.9), python3-pil, python3-scour, libimage-exiftool-perl, ${misc:Depends}
+Recommends: ffmpegthumbnailer
+Enhances: redmine
+Description: Redmine plugin to display gallery from attachments
+ This plugin integrates apijs JavaScript library into Redmine.
+ For more information about the library, go to luigifab.fr/apijs.
+ .
+ This plugin allows:
+   * to sort out attachments in alphabetical order
+   * to display a photo/video gallery from attachments
+   * to display videos in streaming (HTTP 206 Partial Content)
+   * to cache displayed images (browser cache)
+   * to keep the animation of GIF/PNG/WEBP images thanks to python-pil
+   * to redefine the date of creation of the photos from the EXIF date
+   * to download attachments with the download dialog box of a browser's file
+   * to modify the description of attachments
+   * to remove attachments

@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated J/02/07/2020
+# Updated D/26/07/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -50,25 +50,54 @@ class ApijsController < AttachmentsController
   # » Téléchargement d'une image avec mise en cache (inline/stale)
   def thumb
 
-    source = @attachment.diskfile
-    img_thumb = File.join(APIJS_ROOT, 'thumb', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
+    source    = @attachment.diskfile
+    img_thumb = @attachment.getImgThumb
 
-    # génération de l'image thumb
-    if File.file?(source) && !File.file?(img_thumb)
-      cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
-      logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
-    end
-    # génération des images srcset et show
-    if @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '1' && File.file?(source)
-      img_srcset = File.join(APIJS_ROOT, 'srcset', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
-      unless File.file?(img_srcset)
-        cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
+    if File.file?(source) && @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '2'
+      # génération de l'image thumb
+      t1 = Thread.new {
+        unless File.file?(img_thumb)
+          cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
+          logger.info 'APIJS::ApijsController#thumb:t1: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
+      }
+      # génération des images srcset et show
+      t2 = Thread.new {
+        img_srcset = @attachment.getImgSrcset
+        unless File.file?(img_srcset)
+          cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
+          logger.info 'APIJS::ApijsController#thumb:t2: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
+      }
+      t3 = Thread.new {
+        img_show = @attachment.getImgShow
+        unless File.file?(img_show)
+          cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
+          logger.info 'APIJS::ApijsController#thumb:t3: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
+      }
+      # attends la fin des threads
+      t1.join
+      t2.join
+      t3.join
+    elsif File.file?(source)
+      # génération de l'image thumb
+      unless File.file?(img_thumb)
+        cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
         logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
       end
-      img_show = File.join(APIJS_ROOT, 'show', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
-      unless File.file?(img_show)
-        cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-        logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+      # génération des images srcset et show
+      if @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '1'
+        img_srcset = @attachment.getImgSrcset
+        unless File.file?(img_srcset)
+          cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
+          logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
+        img_show = @attachment.getImgShow
+        unless File.file?(img_show)
+          cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
+          logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
       end
     end
 
@@ -86,17 +115,61 @@ class ApijsController < AttachmentsController
   # #### Gestion de l'image miniature 2x (photo ou vidéo) ############################## #
   # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
   # » Utilise un script python pour générer l'image srcset (taille 400x300)
+  # » Utilise un script python pour générer l'image thumb (taille 200x150)
+  # » Utilise un script python pour générer l'image show (taille 1200x900)
   # » Enregistre les commandes et leurs résultats dans le log
   # » Téléchargement d'une image avec mise en cache (inline/stale)
   def srcset
 
-    source = @attachment.diskfile
-    img_srcset = File.join(APIJS_ROOT, 'srcset', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
+    source     = @attachment.diskfile
+    img_srcset = @attachment.getImgSrcset
 
-    # génération de l'image srcset
-    if File.file?(source) && !File.file?(img_srcset)
-      cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
-      logger.info 'APIJS::ApijsController#srcset: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+    if File.file?(source) && @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '2'
+      # génération de l'image srcset
+      t1 = Thread.new {
+        unless File.file?(img_srcset)
+          cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
+          logger.info 'APIJS::ApijsController#srcset:t1: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
+      }
+      # génération des images thumb et show
+      t2 = Thread.new {
+        img_thumb = @attachment.getImgThumb
+        unless File.file?(img_thumb)
+          cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
+          logger.info 'APIJS::ApijsController#srcset:t2: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
+      }
+      t3 = Thread.new {
+        img_show = @attachment.getImgShow
+        unless File.file?(img_show)
+          cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
+          logger.info 'APIJS::ApijsController#srcset:t3: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
+      }
+      # attends la fin des threads
+      t1.join
+      t2.join
+      t3.join
+    elsif File.file?(source)
+      # génération de l'image srcset
+      unless File.file?(img_srcset)
+        cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
+        logger.info 'APIJS::ApijsController#srcset: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+      end
+      # génération des images thumb et show
+      if @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '1'
+        img_thumb = @attachment.getImgThumb
+        unless File.file?(img_thumb)
+          cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
+          logger.info 'APIJS::ApijsController#srcset: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
+        img_show = @attachment.getImgShow
+        unless File.file?(img_show)
+          cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
+          logger.info 'APIJS::ApijsController#srcset: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        end
+      end
     end
 
     # vérification d'accès
@@ -117,8 +190,8 @@ class ApijsController < AttachmentsController
   # » Téléchargement d'une image avec mise en cache (inline/stale)
   def show
 
-    source = @attachment.diskfile
-    img_show = File.join(APIJS_ROOT, 'show', @attachment.created_on.strftime('%Y-%m').to_s, @attachment.id.to_s + @attachment.getExt)
+    source   = @attachment.diskfile
+    img_show = @attachment.getImgShow
 
     # génération de l'image show
     if File.file?(source) && !File.file?(img_show)
@@ -173,11 +246,11 @@ class ApijsController < AttachmentsController
         if !request.headers['Range']
           send_file(@attachment.diskfile,
             filename: filename_for_content_disposition(@attachment.filename),
-            type: @attachment.getMimeType, disposition: 'inline')
+            type: @attachment.content_type, disposition: 'inline')
         else
           send_data(File.binread(@attachment.diskfile, file_end - file_begin + 1, file_begin),
             filename: filename_for_content_disposition(@attachment.filename),
-            type: @attachment.getMimeType, disposition: 'inline', status: '206 Partial Content')
+            type: @attachment.content_type, disposition: 'inline', status: '206 Partial Content')
         end
 
         response.close
@@ -185,18 +258,18 @@ class ApijsController < AttachmentsController
       elsif @attachment.isImage?
         if stale?(etag: @attachment.diskfile)
           send_file(@attachment.diskfile, filename: filename_for_content_disposition(@attachment.filename),
-            type: @attachment.getMimeType, disposition: 'inline')
+            type: @attachment.content_type, disposition: 'inline')
         end
       # fichier
       else
         send_file(@attachment.diskfile, filename: filename_for_content_disposition(@attachment.filename),
-          type: @attachment.getMimeType, disposition: 'attachment')
+          type: @attachment.content_type, disposition: 'attachment')
       end
     # téléchargement d'un fichier
     else
       @attachment.increment_download if @attachment.container.is_a?(Version) || @attachment.container.is_a?(Project)
       send_file(@attachment.diskfile, filename: filename_for_content_disposition(@attachment.filename),
-        type: @attachment.getMimeType, disposition: 'attachment')
+        type: @attachment.content_type, disposition: 'attachment')
     end
   end
 

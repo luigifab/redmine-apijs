@@ -123,7 +123,7 @@ class Useragentparser
 		elsif browser == 'AppleWebKit'
 			if platform == 'Android'
 				browser = 'Android Browser'
-			elsif platform.index('BB') === 0
+			elsif platform && platform.index('BB') === 0
 				browser  = 'BlackBerry Browser'
 				platform = 'BlackBerry'
 			elsif platform == 'BlackBerry' || platform == 'PlayBook'

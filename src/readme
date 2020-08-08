@@ -1,7 +1,8 @@
 Docs      : https://www.luigifab.fr/redmine/apijs
-Mirror    : https://github.com/luigifab/apijs
+Tracker   : https://github.com/luigifab/redmine-apijs
+Rubygems  : https://rubygems.org/gems/redmine_apijs
 Plugin    : Luigifab/Apijs
-License   : GNU GPL 2 (https://opensource.org/licenses/gpl-2.0)
+License   : GNU GPL 2+ (https://opensource.org/licenses/gpl-2.0)
 Copyright : 2008-2020 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 
 
@@ -11,25 +12,23 @@ Copyright : 2008-2020 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 
 
 
-
-THE PLUGIN AND ALL THE TRANSLATIONS AND ALL THE DOCUMENTATION ARE EXCEPTIONALLY MAGNIFICENT.
 IF YOU FOUND A MISTAKE OR A BUG, PLEASE, CONTACT ME (IN FRENCH OR IN ENGLISH) AT code~luigifab~fr
-
 CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/UglifyJS2).
-ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF GNU GPL 2.0+ LICENSE.
+ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2+ LICENSE.
 THAT BEING SAID SOME FILES COME FROM OTHER PROJECTS AND ARE UNDER OTHER LICENSES (SEE AT THE END OF THIS FILE).
 
 
 Rewrite
 - app/views/attachments/_links.html.erb
-- lib/attachment_patch.rb
+- lib/apijs_attachment.rb
 Depends
-- file
 - python-pil
-- libimage-exiftool-perl
+- python-scour
+- libimage-exiftool-perl (optional)
 - ffmpegthumbnailer (optional)
+- also used: command -v, python3 or python or python2, nproc, du -hs, cut -f1
 Notes
-- For the JavaScript application, read: https://www.luigifab.fr/apijs
+- For the app, read: https://www.luigifab.fr/apijs
 - For the Redmine plugin, read: https://www.luigifab.fr/redmine/apijs
 - For the Magento module, read: https://www.luigifab.fr/magento/apijs
 - For the OpenMage module, read: https://www.luigifab.fr/openmage/apijs
@@ -46,6 +45,7 @@ Translations in es-ES (español/España) by:
 - Paco Aguayo <francisco.aguayocanela~gmail~com> 2014
 - Hugo Baugé & Cédric Scaramuzza <info~label-park~com> 2016
 - Pascale Scellier <scellier.pascale~orange~fr> 2016
+- Hélène Vergine <vergineh~gmail~com> 2017, 2020
 - Guillaume Genetet <genetet.incorporated~gmail~com> 2018 https://fr.tipeee.com/william-broome
 Translations in fr-FR (français/France) by:
 - Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2020

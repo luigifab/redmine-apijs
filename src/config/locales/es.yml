@@ -25,6 +25,6 @@ es:
   apijs_config_mimetypes: "Utilizar los siguientes archivos"
   apijs_config_album_exclude_name: "Excluir las fotos del álbum<br />cuyo nombre comienza con"
   apijs_config_album_exclude_desc: "Excluir las fotos del álbum<br />cuya descripción comienza con"
-  apijs_config_create_all: "Generate the three images"
-  apijs_config_create_all_info: "Genera la miniatura y la vista previa al mismo tiempo, esto ralentiza la primera visualización de la página, pero acelera la primera visualización del diaporama."
+  apijs_config_create_all: "Generar las tres imágenes"
+  apijs_config_create_all_info: "Genera las miniaturas y la vista previa al mismo tiempo, esto ralentiza la primera visualización de la página, pero acelera la primera visualización del diaporama."
   apijs_config_programs: "Versión de los programas"

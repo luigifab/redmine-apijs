@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated L/06/07/2020
+# Updated D/26/07/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -15,7 +15,7 @@
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
 
-module AttachmentPatch
+module ApijsAttachment
 
   def self.included(base)
     base.send(:include, InstanceMethods)
@@ -37,19 +37,19 @@ module AttachmentPatch
 
   module InstanceMethods
 
-    # https://www.redmine.org/issues/19024 pour l'éventuel préfixe avec Redmine 2
+    # https://www.redmine.org/issues/19024
     def getUrl(action, all=false)
       if action == 'redmineshow'
-        return getSuburi(url_for({only_path: true, controller: 'attachments', action: 'show', id: self.id, filename: self.filename}))
+        return self.getSuburi(url_for({only_path: true, controller: 'attachments', action: 'show', id: self.id, filename: self.filename}))
       elsif all
-        return getSuburi(url_for({only_path: true, controller: 'apijs', action: action, id: self.id, filename: self.filename}))
+        return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: action, id: self.id, filename: self.filename}))
       else
-        return getSuburi(url_for({only_path: true, controller: 'apijs', action: action}))
+        return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: action}))
       end
     end
 
     def getSuburi(url)
-      if Redmine::VERSION::MAJOR == 2
+      if Redmine::VERSION::MAJOR >= 2
         baseurl = Redmine::Utils.relative_url_root
         if not baseurl.blank? and not url.match(/^#{baseurl}/)
           url = baseurl + url
@@ -60,31 +60,31 @@ module AttachmentPatch
 
     # liens
     def getShowUrl
-      return getUrl('show', true)
+      return self.getUrl('show', true)
     end
 
     def getThumbUrl
-      return getUrl('thumb', true)
+      return self.filename =~ /\.svg$/i ? self.getShowUrl : self.getUrl('thumb', true)
     end
 
     def getSrcsetUrl
-      return getUrl('srcset', true)
+      return self.filename =~ /\.svg$/i ? self.getShowUrl : self.getUrl('srcset', true)
     end
 
     def getDownloadUrl
-      return getUrl('download', true)
+      return self.getUrl('download', true)
     end
 
     def getDownloadButton
-      return "self.location.href = '" + getUrl('download', true) + "';"
+      return "self.location.href = '" + self.getUrl('download', true) + "';"
     end
 
     def getEditButton(token)
-      return "apijsRedmine.editAttachment(" + self.id.to_s + ", '" + getUrl('editdesc') + "', '" + token + "');"
+      return "apijsRedmine.editAttachment(" + self.id.to_s + ", '" + self.getUrl('editdesc') + "', '" + token + "');"
     end
 
     def getDeleteButton(token)
-      return "apijsRedmine.removeAttachment(" + self.id.to_s + ", '" + getUrl('delete') + "', '" + token + "');"
+      return "apijsRedmine.removeAttachment(" + self.id.to_s + ", '" + self.getUrl('delete') + "', '" + token + "');"
     end
 
     def getShowButton(setting_show_filename, setting_show_exifdate, description)
@@ -93,27 +93,41 @@ module AttachmentPatch
       elsif self.isVideo?
         return "apijs.dialog.dialogVideo('" + self.getDownloadUrl + "', '" + ((setting_show_filename) ? self.filename : 'false') + "', '" + ((setting_show_exifdate) ? format_time(self.created_on) : 'false') + "', '" + description + "');"
       elsif self.is_text?
-        return "self.location.href = '" + getUrl('redmineshow', false) + "';"
+        return "self.location.href = '" + self.getUrl('redmineshow', false) + "';"
       end
+    end
+
+    # chemin
+    def getImgThumb
+        return File.join(APIJS_ROOT, 'thumb', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + self.getExt)
+    end
+
+    def getImgSrcset
+      return File.join(APIJS_ROOT, 'srcset', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + self.getExt)
+    end
+
+    def getImgShow
+      return File.join(APIJS_ROOT, 'show', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + self.getExt)
     end
 
     # image, photo, vidéo
     def isImage?
-      return self.filename =~ /\.(jpg|jpeg|png|gif|webp|svg)$/i
+      return self.filename =~ /\.(jpg|jpeg|gif|png|webp|svg)$/i
     end
 
     def isPhoto?
       types = []
       types.push('jpg')  if Setting.plugin_redmine_apijs['album_mimetype_jpg']  == '1'
       types.push('jpeg') if Setting.plugin_redmine_apijs['album_mimetype_jpeg'] == '1'
-      types.push('png')  if Setting.plugin_redmine_apijs['album_mimetype_png']  == '1'
       types.push('gif')  if Setting.plugin_redmine_apijs['album_mimetype_gif']  == '1'
-      types.push('webp') if Setting.plugin_redmine_apijs['album_mimetype_webp'] == '1'
+      types.push('png')  if Setting.plugin_redmine_apijs['album_mimetype_png']  == '1'
       types.push('tif')  if Setting.plugin_redmine_apijs['album_mimetype_tif']  == '1'
       types.push('tiff') if Setting.plugin_redmine_apijs['album_mimetype_tiff'] == '1'
+      types.push('webp') if Setting.plugin_redmine_apijs['album_mimetype_webp'] == '1'
       types.push('bmp')  if Setting.plugin_redmine_apijs['album_mimetype_bmp']  == '1'
       types.push('eps')  if Setting.plugin_redmine_apijs['album_mimetype_eps']  == '1'
       types.push('psd')  if Setting.plugin_redmine_apijs['album_mimetype_psd']  == '1'
+      types.push('svg')  if Setting.plugin_redmine_apijs['album_mimetype_svg']  == '1'
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
@@ -122,23 +136,29 @@ module AttachmentPatch
       types.push('ogv')  if Setting.plugin_redmine_apijs['album_mimetype_ogv']  == '1'
       types.push('webm') if Setting.plugin_redmine_apijs['album_mimetype_webm'] == '1'
       types.push('mp4')  if Setting.plugin_redmine_apijs['album_mimetype_mp4']  == '1'
-      types.push('m4v')  if Setting.plugin_redmine_apijs['album_mimetype_m4v']  == '1'
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
     # extension des images générées
     def getExt
         ext = File.extname(self.filename).downcase
-        return ext if ext == '.png'
         return ext if ext == '.gif'
+        return ext if ext == '.png'
         return ext if ext == '.webp'
+        return ext if ext == '.svg'
         return '.jpg'
     end
 
     # commande python
     def getCmd(source, target, width, height, fixed=false)
-      cmd = `command -v python3 || command -v python || command -v python2`.strip!
-      script = File.dirname(__FILE__) + (self.isPhoto? ? '/image.py' : '/video.py')
+
+      if Redmine::Platform.mswin?
+        cmd = 'python.exe'
+      else
+        cmd = `command -v python3 || command -v python || command -v python2`.to_s.strip!
+      end
+
+      script = File.join(File.dirname(__FILE__), (self.isPhoto? ? 'image.py' : 'video.py'))
       return cmd + ' ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' ' +
         width.to_s + ' ' + height.to_s + (fixed ? ' 90 fixed' : ' 90') + ' 2>&1'
     end
@@ -167,19 +187,17 @@ module AttachmentPatch
     # supprime les images en cache
     def delete_cache
 
-      img_thumb = File.join(APIJS_ROOT, 'thumb', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + getExt)
+      img_thumb = self.getImgThumb
       File.delete(img_thumb) if File.file?(img_thumb)
 
-      img_srcset = File.join(APIJS_ROOT, 'srcset', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + getExt)
+      img_srcset = self.getImgSrcset
       File.delete(img_srcset) if File.file?(img_srcset)
 
-      img_show = File.join(APIJS_ROOT, 'show', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + getExt)
+      img_show = self.getImgShow
       File.delete(img_show) if File.file?(img_show)
     end
 
-    # lecture de la date exif et mise à jour de la date de création
-    # uniquement lors de la création d'une pièce jointe photo ou vidéo
-    # utilise la commande exiftool (libimage-exiftool-perl)
+    # lecture de la date exif et maj de la date de création avec exiftool (libimage-exiftool)
     def update_date
 
       if new_record? && (self.isPhoto? || self.isVideo?) && self.readable?
@@ -187,10 +205,10 @@ module AttachmentPatch
         cmd    = 'exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 ' + self.diskfile + ' 2>&1'
         result = `#{cmd}`.gsub(/^\s+|\s+$/, '')
 
-        logger.info 'APIJS::AttachmentPatch#update_date: ' + cmd + ' (' + result + ')'
+        logger.info 'APIJS::ApijsAttachment#update_date: ' + cmd + ' (' + result + ')'
 
         # 2014:06:14 16:43:53 (utilise le fuseau horaire de l'utilisateur)
-        if result.length >= 19
+        if result =~ /^[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}.[0-9]{2}.[0-9]{2}/
 
           date = result[0..9].gsub(':', '-') + ' ' + result[11..18]
           zone = User.current.time_zone
@@ -225,26 +243,10 @@ module AttachmentPatch
       end
 
       update_column :disk_directory, self.disk_directory unless new_record?
-      logger.info 'APIJS::AttachmentPatch#update_filedir: moving file from ' + src + ' to ' + dest
-    end
-
-    # recherche du type mime avec la commande file
-    def getMimeType
-
-        if self.readable? && self.content_type.blank?
-
-          cmd    = 'file --brief --mime-type ' + self.diskfile + ' 2>&1'
-          result = `#{cmd}`.gsub(/^\s+|\s+$/, '')
-          logger.info 'APIJS::AttachmentPatch#getMimeType: ' + cmd + ' (' + result + ')'
-
-          self.content_type = (result.length > 0) ? result : 'file/unknown'
-          self.save!
-        end
-
-        return self.content_type
+      logger.info 'APIJS::ApijsAttachment#update_filedir: moving file from ' + src + ' to ' + dest
     end
 
   end
 end
 
-Attachment.send(:include, AttachmentPatch)
+Attachment.send(:include, ApijsAttachment)
