@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated D/10/05/2020
+# Updated J/20/08/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -39,8 +39,11 @@ if Redmine::VERSION::MAJOR >= 2
     match 'apijs/editdesc', to: 'apijs#editdesc',
       via: :post
 
+    match 'apijs/editname', to: 'apijs#editname',
+      via: :post
+
     match 'apijs/delete', to: 'apijs#delete',
-      via: :get
+      via: :post
   end
 else
   ActionController::Routing::Routes.draw do |map|
@@ -79,8 +82,12 @@ else
       controller: 'apijs', action: 'editdesc',
       conditions: {method: :post}
 
+    map.connect 'apijs/editname',
+      controller: 'apijs', action: 'editname',
+      conditions: {method: :post}
+
     map.connect 'apijs/delete',
       controller: 'apijs', action: 'delete',
-      conditions: {method: :get}
+      conditions: {method: :post}
   end
 end

@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated L/06/07/2020
+ * Updated D/27/09/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
@@ -23,6 +23,7 @@ var apijsRedmine = new (function () {
 	this.start = function () {
 
 		var d = apijs.i18n.data;
+		if (!d.frca) d.frca = {};
 		// https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
 		// auto start
 		d.cs[252] = "Chyba";
@@ -33,26 +34,30 @@ var apijsRedmine = new (function () {
 		d.de[254] = "Es tut uns leid, diese Datei existiert nicht mehr, bitte [a §]aktualisieren Sie die Seite[/a].";
 		d.de[255] = "Eine Beschreibung bearbeiten";
 		d.de[256] = "Bitte geben Sie weiter unten die neue Beschreibung für diese Datei an. Um die Beschreibung zu löschen lassen Sie das Feld leer.";
-		d.en[250] = "Remove a file";
+		d.en[250] = "Remove file";
 		d.en[251] = "Are you sure you want to remove this file?[br]Be careful, you can't cancel this operation.";
 		d.en[252] = "Error";
 		d.en[253] = "You are not authorized to perform this operation, please [a §]refresh the page[/a].";
 		d.en[254] = "Sorry, the file no longer exists, please [a §]refresh the page[/a].";
-		d.en[255] = "Edit a description";
+		d.en[255] = "Edit description";
 		d.en[256] = "Enter below the new description for the file. To remove the description, leave the field empty.";
+		d.en[257] = "Rename file";
+		d.en[258] = "Enter below the new name for the file.";
 		d.es[250] = "Borrar un archivo";
-		d.es[251] = "¿Está usted seguro-a de que desea eliminar este archivo?[br]Atención, pues no podrá cancelar esta operación.";
+		d.es[251] = "¿Está usted seguro(a) de que desea eliminar este archivo?[br]Atención, pues no podrá cancelar esta operación.";
 		d.es[253] = "No está autorizado-a para llevar a cabo esta operación, por favor [a §]actualice la página[/a].";
 		d.es[254] = "Disculpe, pero el archivo ya no existe, por favor [a §]actualice la página[/a].";
 		d.es[255] = "Editar una descripción";
 		d.es[256] = "Introduzca a continuación la nueva descripción para el archivo. Para eliminar la descripción, deje el campo en blanco.";
-		d.fr[250] = "Supprimer un fichier";
-		d.fr[251] = "Êtes-vous certain(e) de vouloir supprimer ce fichier ?[br]Attention, cette opération n'est pas annulable.";
+		d.fr[250] = "Supprimer le fichier";
+		d.fr[251] = "Êtes-vous sûr(e) de vouloir supprimer ce fichier ?[br]Attention, cette opération n'est pas annulable.";
 		d.fr[252] = "Erreur";
 		d.fr[253] = "Vous n'êtes pas autorisé(e) à effectuer cette opération, veuillez [a §]actualiser la page[/a].";
 		d.fr[254] = "Désolé, le fichier n'existe plus, veuillez [a §]actualiser la page[/a].";
-		d.fr[255] = "Modifier une description";
+		d.fr[255] = "Modifier la description";
 		d.fr[256] = "Saisissez ci-dessous la nouvelle description pour ce fichier. Pour supprimer la description, laissez le champ vide.";
+		d.fr[257] = "Renommer le fichier";
+		d.fr[258] = "Saisissez ci-dessous le nouveau nom pour ce fichier.";
 		d.it[250] = "Eliminare un file";
 		d.it[251] = "Sicuri di voler eliminare il file?[br]Attenzione, questa operazione non può essere annullata.";
 		d.it[252] = "Errore";
@@ -65,7 +70,7 @@ var apijsRedmine = new (function () {
 		d.nl[252] = "Fout";
 		d.pl[252] = "Błąd";
 		d.pt[250] = "Suprimir um ficheiro";
-		d.pt[251] = "Tem certeza de que quer suprimir este ficheiro?[br]Atenção, não pode cancelar esta operação.";
+		d.pt[251] = "Tem certeza de que quer suprimir este ficheiro?[br]Cuidado, não pode cancelar esta operação.";
 		d.pt[252] = "Erro";
 		d.pt[253] = "Não é autorizado(a) para efetuar esta operação, por favor [a §]atualize a página[/a].";
 		d.pt[254] = "Lamento, o ficheiro já não existe, por favor [a §]atualize a página[/a].";
@@ -78,14 +83,15 @@ var apijsRedmine = new (function () {
 		d.ru[254] = "Извините, но файл не существует, пожалуйста [a §]обновите страницу[/a].";
 		d.ru[255] = "Редактировать описание";
 		d.ru[256] = "Ниже введите новое описание файла. Оставьте поле пустым, чтобы удалить описание.";
+		d.sk[252] = "Chyba";
 		d.tr[252] = "Hata";
 		d.zh[252] = "错误信息";
-	// auto end
+		// auto end
 	};
 
 	this.error = function (data) {
 
-		if ((typeof data == 'string') || (data.indexOf('<!DOCTYPE') < 0)) {
+		if ((typeof data == 'string') && (data.indexOf('<!DOCTYPE') < 0)) {
 			apijs.dialog.dialogInformation(apijs.i18n.translate(252), data, 'error');
 		}
 		else {
@@ -94,24 +100,15 @@ var apijsRedmine = new (function () {
 		}
 	};
 
-	this.editAttachment = function (id, action, token) {
+	this.editAttachment = function (elem, id, action, token) {
 
 		var desc, text, title = apijs.i18n.translate(255);
-		if (document.getElementById('attachmentId' + id).querySelector('span.description')) {
-			desc = document.getElementById('attachmentId' + id).querySelector('span.description').firstChild.nodeValue.trim();
-		}
-		else {
-			desc = document.createElement('span');
-			desc.setAttribute('class', 'description');
-			desc.appendChild(document.createTextNode(''));
-			document.getElementById('attachmentId' + id).querySelector('dd').appendChild(desc);
-			desc = '';
-		}
 
-		text = '[p][label for="apijsRedText"]' + apijs.i18n.translate(256) + '[/label][/p]' +
-				'[input type="text" name="description" value="' + desc + '" spellcheck="true" id="apijsRedText"]';
+		desc = elem.parentNode.parentNode.querySelector('.description').textContent.trim();
+		text = '[p][label for="apijsinput"]' + apijs.i18n.translate(256) + '[/label][/p]' +
+				'[input type="text" name="description" value="' + desc + '" spellcheck="true" id="apijsinput"]';
 
-		apijs.dialog.dialogFormOptions(title, text, action, apijsRedmine.actionEditAttachment, [id, action, token], 'editattachment');
+		apijs.dialog.dialogFormOptions(title, text, action, apijsRedmine.actionEditAttachment, [id, action, token], 'editattach');
 		apijs.dialog.t1.querySelector('input').select();
 	};
 
@@ -141,19 +138,14 @@ var apijsRedmine = new (function () {
 							id   = xhr.responseText.slice(0, xhr.responseText.indexOf(':'));
 							text = xhr.responseText.slice(xhr.responseText.indexOf(':') + 1);
 
-							// légende
-							elem = document.getElementById(id).querySelector('span.description').firstChild;
-							elem.replaceData(0, elem.length, text);
+							// description
+							elem = document.getElementById(id);
+							elem.querySelector('.description').textContent = text;
 
 							// input type hidden
-							elem = document.getElementById(id).querySelector('input');
+							elem = elem.querySelector('input');
 							if (elem)
 								elem.value = elem.value.slice(0, elem.value.lastIndexOf('|') + 1) + text;
-
-							// image
-							elem = document.getElementById(id).querySelector('img');
-							if (elem)
-								elem.setAttribute('alt', text);
 
 							apijs.dialog.actionClose();
 						}
@@ -167,11 +159,94 @@ var apijsRedmine = new (function () {
 				}
 			};
 
-			xhr.send('description=' + encodeURIComponent(document.getElementById('apijsRedText').value));
+			xhr.send('desc=' + encodeURIComponent(document.getElementById('apijsinput').value));
 		}
 	};
 
-	this.removeAttachment = function (id, action, token) {
+	this.renameAttachment = function (elem, id, action, token) {
+
+		var name, text, title = apijs.i18n.translate(257);
+
+		name = elem.parentNode.parentNode.querySelector('.filename').textContent.trim();
+		text = '[p][label for="apijsinput"]' + apijs.i18n.translate(258) + '[/label][/p]' +
+				'[input type="text" name="name" value="' + name + '" spellcheck="false" id="apijsinput"]';
+
+		apijs.dialog.dialogFormOptions(title, text, action, apijsRedmine.actionRenameAttachment, [id, action, token], 'editattach');
+	};
+
+	this.actionRenameAttachment = function (action, args) {
+
+		// vérification du nouveau nom
+		if (typeof action == 'boolean') {
+			return true;
+		}
+		// sauvegarde du nouveau nom
+		else if (typeof action == 'string') {
+
+			// args = [id, action, token]
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', args[1] + '?id=' + args[0] + '&isAjax=true', true);
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.setRequestHeader('X-CSRF-Token', args[2]);
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState === 4) {
+					if ([0, 200].has(xhr.status)) {
+						if (xhr.responseText.indexOf('attachmentId') === 0) {
+
+							// extrait l'id et le nom du fichier enregistré
+							var elem, id, name, subelem, text;
+							id   = xhr.responseText.slice(0, xhr.responseText.indexOf(':'));
+							name = xhr.responseText.slice(xhr.responseText.indexOf(':') + 1);
+
+							// nom
+							elem = document.getElementById(id);
+							elem.querySelector('.filename').textContent = name;
+
+							// urls sur a/href et input/value et button.download/onclick et button.show/onclick
+							// pas de maj de src et srcset sur img pour éviter un appel réseau inutile
+							subelem = elem.querySelector('input');
+							if (subelem) {
+								text = subelem.getAttribute('value');
+								subelem.setAttribute('value', name + text.substr(text.indexOf('|')));
+							}
+
+							subelem = elem.querySelector('a');
+							if (subelem) {
+								text = subelem.getAttribute('href');
+								subelem.setAttribute('href', text.substr(0, text.lastIndexOf('/') + 1) + name);
+							}
+
+							subelem = elem.querySelector('button.download');
+							if (subelem) {
+								text = subelem.getAttribute('onclick');
+								subelem.setAttribute('onclick', text.substr(0, text.lastIndexOf('/') + 1) + name + "';");
+							}
+
+							subelem = elem.querySelector('button.show');
+							if (subelem) {
+								text = subelem.getAttribute('onclick');
+								subelem.setAttribute('onclick', text.substr(0, text.lastIndexOf('/') + 1) + name + "';");
+							}
+
+							apijs.dialog.actionClose();
+						}
+						else {
+							apijsRedmine.error(xhr.responseText);
+						}
+					}
+					else {
+						apijsRedmine.error(xhr.status);
+					}
+				}
+			};
+
+			xhr.send('name=' + encodeURIComponent(document.getElementById('apijsinput').value));
+		}
+	};
+
+	this.removeAttachment = function (elem, id, action, token) {
 		apijs.dialog.dialogConfirmation(apijs.i18n.translate(250), apijs.i18n.translate(251), apijsRedmine.actionRemoveAttachment, [id, action, token]);
 	};
 
@@ -179,7 +254,7 @@ var apijsRedmine = new (function () {
 
 		// args = [id, action, token]
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', args[1] + '?id=' + args[0] + '&isAjax=true', true);
+		xhr.open('POST', args[1] + '?id=' + args[0] + '&isAjax=true', true);
 		xhr.setRequestHeader('X-CSRF-Token', args[2]);
 
 		xhr.onreadystatechange = function () {
@@ -189,17 +264,17 @@ var apijsRedmine = new (function () {
 					if (xhr.responseText.indexOf('attachmentId') === 0) {
 
 						// supprime le fichier de la page grâce à son id
-						var attachment = document.getElementById(xhr.responseText), album = attachment.parentNode, i = 0;
-						album.removeChild(attachment);
+						var attachment = document.getElementById(xhr.responseText), elems = attachment.parentNode, idx = 0;
+						elems.removeChild(attachment);
 
-						if (album.querySelectorAll('dl, li').length < 1) {
-							// supprime la liste des fichiers
-							album.parentNode.removeChild(album);
+						// supprime la liste des fichiers
+						if (elems.querySelectorAll('dl, li').length < 1) {
+							elems.parentNode.removeChild(elems);
 						}
+						// ou réattribue les ids du diaporama (pas de réinitialisation, on remet juste les ids en place)
 						else {
-							// réattribue les ids du diaporama (pas de réinitialisation, on remet juste les ids en place)
-							album.querySelectorAll('a[id][type]').forEach(function (elem) {
-								elem.setAttribute('id', elem.getAttribute('id').slice(0, elem.getAttribute('id').lastIndexOf('.') + 1) + i++);
+							elems.querySelectorAll('a[id][type]').forEach(function (elem) {
+								elem.setAttribute('id', elem.getAttribute('id').slice(0, elem.getAttribute('id').lastIndexOf('.') + 1) + idx++);
 							});
 						}
 

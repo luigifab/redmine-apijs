@@ -1,20 +1,5 @@
-redmine-plugin-apijs (6.3.0-1) unstable; urgency=low
-
-  * New upstream version
-  * Add svg support with python-scour
-  * Add multi thread image generation
-
- -- Fabrice Creuzot <code@luigifab.fr>  Sat, 08 Aug 2020 12:00:00 +0000
-
-redmine-plugin-apijs (6.2.0-1) unstable; urgency=low
-
-  * New upstream version
-  * Improves image generation with python-pil
-
- -- Fabrice Creuzot <code@luigifab.fr>  Sun, 12 Jul 2020 12:00:00 +0000
-
-redmine-plugin-apijs (6.1.0-4) unstable; urgency=low
+redmine-plugin-apijs (6.4.0-5) unstable; urgency=low
 
   * Initial debian package release (Closes: #959426)
 
- -- Fabrice Creuzot <code@luigifab.fr>  Sat, 02 May 2020 10:33:59 +0000
+ -- Fabrice Creuzot <code@luigifab.fr>  Sat, 10 Oct 2020 12:00:00 +0000

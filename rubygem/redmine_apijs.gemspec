@@ -1,8 +1,7 @@
 # coding: utf-8
 Gem::Specification.new do |s|
   s.name        = 'redmine_apijs'
-  s.version     = '6.3.0'
-  s.date        = '2020-08-08'
+  s.version     = 'x.y.z'
   s.summary     = 'Redmine Apijs plugin'
   s.description = 'Integrate the apijs javascript library into Redmine.'
   s.homepage    = 'https://github.com/luigifab/redmine-apijs'

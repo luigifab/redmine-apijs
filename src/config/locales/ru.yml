@@ -1,4 +1,5 @@
 ru:
+  apijs_check_extension: "The file extension can not be changed."
   apijs_browser_warning: "<strong>Warning:</strong> your browser <strong>%{n} %{v}</strong> is outdated, please <a %{l}>upgrade your browser</a>."
   apijs_title_album: "Фото галлерея"
   apijs_title_download: "Скачать (%{v})"
@@ -15,6 +16,7 @@ ru:
   apijs_config_browser: "Check browser version"
   apijs_config_browser_help: "Firefox 36+, Chrome 31+, Opera 19+, Edge 16+, Safari 9+ (checks even if the apijs is disabled)."
   permission_edit_attachments: "(apijs) Редактировать описание файла"
+  permission_rename_attachments: "(apijs) Rename files"
   permission_delete_attachments: "(apijs) Удалить файлы"
   apijs_config_directories: "Directories size"
   apijs_config_album: "Фото альбомы"

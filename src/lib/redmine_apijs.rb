@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created L/13/07/2020
-# Updated L/13/07/2020
+# Updated D/27/08/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -19,12 +19,30 @@ require 'rails/engine'
 
 module RedmineApijs
 
-  # Gemify redmine plugin (https://github.com/koppen/redmine_github_hook/commit/a82bcccfd0731503509771d3f715d8fb1e6f1bfe)
-  # Run the classic redmine plugin initializer after rails boot
   class Plugin < ::Rails::Engine
     config.after_initialize do
+
+      # Gemify redmine plugin (https://github.com/koppen/redmine_github_hook/commit/a82bcccfd0731503509771d3f715d8fb1e6f1bfe)
+      # run the classic redmine plugin initializer after rails boot
       require File.expand_path('../../init', __FILE__)
       ::ActionController::Base.prepend_view_path(File.expand_path('../../app/views/', __FILE__))
+
+      # and copy plugin assets
+      unless ::Redmine::Configuration['mirror_plugins_assets_on_startup'] == false
+        module ::Redmine
+          class Plugin
+            def assets_directory
+              if directory =~ /redmine_apijs/
+                File.join(File.expand_path('../../', __FILE__), 'assets')
+              else
+                File.join(directory, 'assets')
+              end
+            end
+          end
+        end
+        Redmine::Plugin.mirror_assets('redmine_apijs')
+      end
+
     end
   end
 end

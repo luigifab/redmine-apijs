@@ -6,15 +6,15 @@ Files: *
 Copyright: 2008-2020 Fabrice Creuzot (luigifab) <code@luigifab.fr>
 License: GPL-2+
 
+Files: */assets/fonts/apijs/fontello.woff */assets/fonts/apijs/fontello.woff2
+Copyright: fontello.com
+License: SIL-1.1
+
 Files: lib/useragentparser.rb
 Copyright:
  2013-2020 Jesse G. Donat <donatj@gmail.com>
  2019-2020 Fabrice Creuzot (luigifab) <code@luigifab.fr>
 License: Expat
-
-Files: assets/fonts/apijs/fontello.woff assets/fonts/apijs/fontello.woff2
-Copyright: fontello.com
-License: SIL-1.1
 
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify

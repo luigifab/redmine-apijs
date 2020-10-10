@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated L/18/05/2020
+ * Updated J/20/08/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
@@ -22,7 +22,7 @@
 #apijsBox { font-size:0.8rem; border:0; }
 #apijsBox a { color:blue; }
 
-#apijsBox.options.editattachment input[type="text"] {
+#apijsBox.options.editattach input[type="text"] {
 	display:block; padding:0.3em; width:calc(100% - 4px - 0.6em);
 	border:1px solid #888; background-color:#EEE;
 }
@@ -59,6 +59,7 @@ body button.attachment, body ul.attachments a[id^="slideshow"] {
 body button.attachment.show, body ul.attachments a[id^="slideshow"] { background-image:url("../../../images/magnifier.png"); }
 body button.attachment.download { background-image:url("../../../images/attachment.png"); }
 body button.attachment.delete { background-image:url("../../../images/delete.png"); }
+body button.attachment.rename { background-image:url("../../../images/wiki_edit.png"); }
 body button.attachment.edit { background-image:url("../../../images/edit.png"); }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& configuration &&& */

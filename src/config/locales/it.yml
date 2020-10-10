@@ -1,4 +1,5 @@
 it:
+  apijs_check_extension: "The file extension can not be changed."
   apijs_browser_warning: "<strong>Attenzione:</strong> il vostro browser <strong>%{n} %{v}</strong> è obsoleto, vi preghiamo di <a %{l}>aggiornare il vostro browser</a>."
   apijs_title_album: "Galleria fotografica"
   apijs_title_download: "Scaricare (%{v})"
@@ -15,6 +16,7 @@ it:
   apijs_config_browser: "Verificare la versione del browser"
   apijs_config_browser_help: "Firefox 36+, Chrome 31+, Opera 19+, Edge 16+, Safari 9+ (verificare se l'apijs é disattivato)."
   permission_edit_attachments: "(apijs) Modificare la descrizione dei file"
+  permission_rename_attachments: "(apijs) Rename files"
   permission_delete_attachments: "(apijs) Eliminare i file"
   apijs_config_directories: "Dimensione file"
   apijs_config_album: "Album fotografico"

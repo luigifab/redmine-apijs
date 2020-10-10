@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated D/26/07/2020
+# Updated J/20/08/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -80,11 +80,15 @@ module ApijsAttachment
     end
 
     def getEditButton(token)
-      return "apijsRedmine.editAttachment(" + self.id.to_s + ", '" + self.getUrl('editdesc') + "', '" + token + "');"
+      return "apijsRedmine.editAttachment(this, " + self.id.to_s + ", '" + self.getUrl('editdesc') + "', '" + token + "');"
+    end
+
+    def getRenameButton(token)
+      return "apijsRedmine.renameAttachment(this, " + self.id.to_s + ", '" + self.getUrl('editname') + "', '" + token + "');"
     end
 
     def getDeleteButton(token)
-      return "apijsRedmine.removeAttachment(" + self.id.to_s + ", '" + self.getUrl('delete') + "', '" + token + "');"
+      return "apijsRedmine.removeAttachment(this, " + self.id.to_s + ", '" + self.getUrl('delete') + "', '" + token + "');"
     end
 
     def getShowButton(setting_show_filename, setting_show_exifdate, description)

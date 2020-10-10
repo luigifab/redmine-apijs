@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated J/23/07/2020
+# Updated D/27/09/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -54,7 +54,7 @@ if (pixels[-1][1] > (127,127,127)): # white background, black player
 	dest = Image.new('RGBA', size, (255,255,255,0))
 	dest.paste(source, (offset_x, offset_y))
 	# https://stackoverflow.com/a/59082116 (replace only last lib)
-	# /var/lib/gems/2.7.0/gems/redmine_apijs-6.3.0/lib » /var/lib/gems/2.7.0/gems/redmine_apijs-6.3.0/assets/images...
+	# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib devient /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
 	path = os.path.dirname(__file__)
 	path = ('/assets/images/apijs/player-black-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
 	play = Image.open(path)
@@ -63,7 +63,7 @@ else:
 	dest = Image.new('RGBA', size, (0,0,0,0))
 	dest.paste(source, (offset_x, offset_y))
 	# https://stackoverflow.com/a/59082116 (replace only last lib)
-	# /var/lib/gems/2.7.0/gems/redmine_apijs-6.3.0/lib » /var/lib/gems/2.7.0/gems/redmine_apijs-6.3.0/assets/images...
+	# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib devient /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
 	path = os.path.dirname(__file__)
 	path = ('/assets/images/apijs/player-white-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
 	play = Image.open(path)

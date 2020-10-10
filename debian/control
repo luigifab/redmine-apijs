@@ -28,4 +28,4 @@ Description: Redmine plugin to display gallery from attachments
    * to redefine the date of creation of the photos from the EXIF date
    * to download attachments with the download dialog box of a browser's file
    * to modify the description of attachments
-   * to remove attachments
+   * to rename and remove attachments

@@ -1,6 +1,3 @@
-app     /usr/share/redmine/plugins/redmine_apijs
-assets  /usr/share/redmine/plugins/redmine_apijs
-config  /usr/share/redmine/plugins/redmine_apijs
-lib     /usr/share/redmine/plugins/redmine_apijs
-init.rb /usr/share/redmine/plugins/redmine_apijs
-readme  /usr/share/doc/redmine-plugin-apijs
+src/*/      usr/share/redmine/plugins/redmine_apijs
+src/init.rb usr/share/redmine/plugins/redmine_apijs
+src/readme  usr/share/doc/redmine-plugin-apijs

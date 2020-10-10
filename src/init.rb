@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created L/21/05/2012
-# Updated V/24/07/2020
+# Updated J/20/08/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -26,12 +26,13 @@ Redmine::Plugin.register :redmine_apijs do
   name 'Redmine Apijs plugin'
   author 'Fabrice Creuzot'
   description 'Integrate the apijs javascript library into Redmine.'
-  version '6.3.0'
+  version '6.4.0'
   url 'https://www.luigifab.fr/redmine/apijs'
   author_url 'https://www.luigifab.fr/'
 
   permission :edit_attachments, {apijs: :edit}, {require: :loggedin}
-  permission :delete_attachments, {apijs: :delete}, {require: [:loggedin, :member]}
+  permission :rename_attachments, {apijs: :rename}, {require: :loggedin}
+  permission :delete_attachments, {apijs: :delete}, {require: :loggedin}
   requires_redmine version_or_higher: '1.4.0'
 
   settings({

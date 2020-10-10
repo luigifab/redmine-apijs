@@ -1,6 +1,6 @@
 <%
 # Created J/12/12/2013
-# Updated D/26/07/2020
+# Updated J/20/08/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -120,7 +120,11 @@ end
 	<p>
 		<label><%= raw l(:label_role_and_permissions) %></label>
 		<a href="<%= url_for({controller: 'roles', action: 'permissions'}) %>"><%= raw l(:label_role_and_permissions) %></a>
-		<em class="info"><%= raw l(:permission_edit_attachments) %><br /><%= raw l(:permission_delete_attachments) %></em>
+		<em class="info">
+			<%= raw l(:permission_edit_attachments) %>
+			<br /><%= raw l(:permission_rename_attachments) %>
+			<br /><%= raw l(:permission_delete_attachments) %>
+		</em>
 	</p>
 	<p>
 		<label><%= raw l(:apijs_config_directories) %></label>

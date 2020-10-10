@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated D/26/07/2020
+# Updated D/27/09/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -21,12 +21,12 @@ class ApijsController < AttachmentsController
     before_action :find_project, except: [:upload]
     before_action :authorize_global, only: [:upload]
     before_action :read_authorize, :file_readable, only: [:thumb, :show, :download, :thumbnail]
-    before_action :read_authorize, only: [:editdesc, :delete]
+    before_action :read_authorize, only: [:editdesc, :editname, :delete]
   else
     before_filter :find_project, except: [:upload]
     before_filter :authorize_global, only: [:upload]
     before_filter :read_authorize, :file_readable, only: [:thumb, :show, :download, :thumbnail]
-    before_filter :read_authorize, only: [:editdesc, :delete]
+    before_filter :read_authorize, only: [:editdesc, :editname, :delete]
   end
 
   # n'existe plus avec Redmine 3+ (copie de 2.6.10)
@@ -274,13 +274,13 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Modification d'une description ################################################ #
+  # #### Modification d'une description ou du nom du fichier ########################### #
   # » Vérifie si l'utilisateur a accès au projet et à la modification
   # » Renvoie l'id du fichier suivi de la description en cas de modification réussie
   # » Supprime certains caractères de la description avant son enregistrement
   def editdesc
 
-    @attachment.description = params[:description].gsub(/["\\\x0]/, '')
+    @attachment.description = params[:desc].gsub(/["\\\x0]/, '')
     @attachment.description.strip!
 
     # vérification d'accès
@@ -292,6 +292,39 @@ class ApijsController < AttachmentsController
         render(plain: 'attachmentId' + @attachment.id.to_s + ':' + @attachment.description)
       else
         render(text: 'attachmentId' + @attachment.id.to_s + ':' + @attachment.description)
+      end
+    # en cas d'erreur
+    else
+      render_validation_errors(@attachment)
+    end
+  end
+
+  def editname
+
+    name = params[:name].gsub(/["\\\x0]/, '')
+    name = File.basename(name)
+
+    if File.extname(name).downcase != File.extname(@attachment.filename).downcase
+      if Rails::VERSION::MAJOR >= 5
+        render(plain: l(:apijs_check_extension))
+      else
+        render(text: l(:apijs_check_extension))
+      end
+      return
+    end
+
+    @attachment.filename = name
+    @attachment.filename.strip!
+
+    # vérification d'accès
+    if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project) || !User.current.allowed_to?(:rename_attachments, @project)
+      deny_access
+    # modification
+    elsif @attachment.save
+      if Rails::VERSION::MAJOR >= 5
+        render(plain: 'attachmentId' + @attachment.id.to_s + ':' + @attachment.filename)
+      else
+        render(text: 'attachmentId' + @attachment.id.to_s + ':' + @attachment.filename)
       end
     # en cas d'erreur
     else

@@ -1,6 +1,6 @@
 <%
 # Created L/21/05/2012
-# Updated D/26/07/2020
+# Updated J/20/08/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -25,6 +25,7 @@ setting_show_album_infos = Setting.plugin_redmine_apijs['show_album_infos'] == '
 setting_show_filename    = Setting.plugin_redmine_apijs['show_filename'] == '1'
 setting_show_exifdate    = Setting.plugin_redmine_apijs['show_exifdate'] == '1'
 permission_delete        = User.current.allowed_to?(:delete_attachments, @project)
+permission_rename        = User.current.allowed_to?(:rename_attachments, @project)
 permission_edit          = User.current.allowed_to?(:edit_attachments, @project)
 
 @slideshowi = 0 unless defined? @slideshowi
@@ -54,7 +55,7 @@ end
 					<dl id="attachmentId<%= attachment.id %>">
 						<dt>
 							<a href="<%= (attachment.isVideo?) ? attachment.getDownloadUrl + '?stream=1' : attachment.getShowUrl %>" type="<%= attachment.content_type %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
-								<img src="<%= attachment.getThumbUrl %>" srcset="<%= attachment.getSrcsetUrl %> 2x" width="200" height="150" alt="<%= h(description).strip! %>"/>
+								<img src="<%= attachment.getThumbUrl %>" srcset="<%= attachment.getSrcsetUrl %> 2x" width="200" height="150" alt=""/>
 								<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>"/>
 							</a>
 						</dt>
@@ -65,6 +66,9 @@ end
 								<% end %>
 								<% if permission_edit %>
 									<button type="button" class="attachment edit" title="<%= l(:button_edit) %>" onclick="<%= raw attachment.getEditButton(form_authenticity_token) %>"></button>
+								<% end %>
+								<% if permission_rename %>
+									<button type="button" class="attachment rename" title="<%= l(:button_rename) %>" onclick="<%= raw attachment.getRenameButton(form_authenticity_token) %>"></button>
 								<% end %>
 								<% if permission_delete %>
 									<button type="button" class="attachment delete" title="<%= l(:button_delete) %>" onclick="<%= raw attachment.getDeleteButton(form_authenticity_token) %>"></button>
@@ -93,26 +97,31 @@ end
 				<% if !setting_show_album || (!attachment.isPhoto? && !attachment.isVideo?) || attachment.isExcluded? %>
 					<% description = (attachment.description.blank?) ? ' ' : attachment.description.gsub(/["\\\x0]/, ' ') %>
 					<li id="attachmentId<%= attachment.id %>">
-						<% if permission_delete %>
-							<button type="button" class="attachment delete" title="<%= l(:button_delete) %>" onclick="<%= raw attachment.getDeleteButton(form_authenticity_token) %>"></button>
-						<% end %>
-						<% if permission_edit %>
-							<button type="button" class="attachment edit" title="<%= l(:button_edit) %>" onclick="<%= raw attachment.getEditButton(form_authenticity_token) %>"></button>
-						<% end %>
-						<% if attachment.readable? %>
-							<button type="button" class="attachment download" title="<%= l(:button_download) %>" onclick="<%= raw attachment.getDownloadButton %>"></button>
-						<% end %>
-						<% if attachment.is_text? || attachment.isImage? || attachment.isVideo? %>
-							<% if attachment.isImage? || attachment.isVideo? %>
-								<a href="<%= attachment.getDownloadUrl.gsub('download', 'show') %>" type="<%= attachment.content_type %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
-									<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>" />
-								</a>
-								<% slideshowj += 1 %>
-							<% else %>
-								<button type="button" class="attachment show" title="<%= l(:button_show) %>" onclick="<%= raw attachment.getShowButton(setting_show_filename, setting_show_exifdate, description) %>"></button>
+						<span class="action">
+							<% if attachment.is_text? || attachment.isImage? || attachment.isVideo? %>
+								<% if attachment.isImage? || attachment.isVideo? %>
+									<a href="<%= attachment.getDownloadUrl.gsub('download', 'show') %>" type="<%= attachment.content_type %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
+										<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>" />
+									</a>
+									<% slideshowj += 1 %>
+								<% else %>
+									<button type="button" class="attachment show" title="<%= l(:button_show) %>" onclick="<%= raw attachment.getShowButton(setting_show_filename, setting_show_exifdate, description) %>"></button>
+								<% end %>
 							<% end %>
-						<% end %>
-						<strong><%= attachment.filename %></strong>
+							<% if attachment.readable? %>
+								<button type="button" class="attachment download" title="<%= l(:apijs_title_download, v: number_to_human_size(attachment.filesize)) %>" onclick="<%= raw attachment.getDownloadButton %>"></button>
+							<% end %>
+							<% if permission_edit %>
+								<button type="button" class="attachment edit" title="<%= l(:button_edit) %>" onclick="<%= raw attachment.getEditButton(form_authenticity_token) %>"></button>
+							<% end %>
+							<% if permission_rename %>
+								<button type="button" class="attachment rename" title="<%= l(:button_rename) %>" onclick="<%= raw attachment.getRenameButton(form_authenticity_token) %>"></button>
+							<% end %>
+							<% if permission_delete %>
+								<button type="button" class="attachment delete" title="<%= l(:button_delete) %>" onclick="<%= raw attachment.getDeleteButton(form_authenticity_token) %>"></button>
+							<% end %>
+						</span>
+						<strong class="filename"><%= attachment.filename %></strong>
 						<span class="description"><%= h(description) %></span>
 						<span class="size">(<%= number_to_human_size(attachment.filesize) %>)</span>
 						<span class="author"><%= h(attachment.author) %></span>
@@ -134,9 +143,7 @@ end
 					<%= link_to(image_tag('magnifier.png'), controller: 'attachments', action: 'show', id: attachment, filename: attachment.filename) %>
 				<% end %>
 				<%= link_to_attachment(attachment, class: 'icon icon-attachment', download: true) %>
-				<% unless attachment.description.blank? %>
-					<span class="description"><%= h(attachment.description) %></span>
-				<% end %>
+				<span class="description"><%= h(attachment.description) %></span>
 				<span class="size">(<%= number_to_human_size(attachment.filesize) %>)</span>
 				<span class="author"><%= h(attachment.author) %></span>
 				<span class="date">(<%= format_time(attachment.created_on) %>)</span>
