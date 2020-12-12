@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated D/27/09/2020
+# Updated S/07/11/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -17,7 +17,6 @@
 # GNU General Public License (GPL) for more details.
 
 import os
-import re
 import sys
 from PIL import Image
 
@@ -35,6 +34,7 @@ except:
 if not os.path.exists(os.path.dirname(fileout)):
 	os.makedirs(os.path.dirname(fileout))
 
+# Video to image
 os.system('ffmpegthumbnailer -i ' + filein + ' -o ' + fileout + ' -q 10 -s ' + str(size[0]))
 if os.path.isfile(fileout):
 	filein = fileout

@@ -13,7 +13,7 @@ Copyright : 2008-2020 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 
 
 IF YOU FOUND A MISTAKE OR A BUG, PLEASE, CONTACT ME (IN FRENCH OR IN ENGLISH) AT code~luigifab~fr
-CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/UglifyJS2).
+CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/UglifyJS).
 ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2+ LICENSE.
 THAT BEING SAID SOME FILES COME FROM OTHER PROJECTS AND ARE UNDER OTHER LICENSES (SEE AT THE END OF THIS FILE).
 
@@ -26,7 +26,7 @@ Depends
 - python-scour
 - libimage-exiftool-perl (optional)
 - ffmpegthumbnailer (optional)
-- also used: command -v, python3 or python or python2, nproc, du -hs, cut -f1
+- also used: command -v, python3, nproc, du -hs, cut -f1
 Notes
 - For the app, read: https://www.luigifab.fr/apijs
 - For the Redmine plugin, read: https://www.luigifab.fr/redmine/apijs

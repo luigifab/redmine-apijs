@@ -7,4 +7,3 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 override_dh_update_autotools_config:
 	sed -i "s/ version '[0-9].[0-9].[0-9]/&-deb/g" src/init.rb
-	sed -i 's/\#\!\/usr\/bin\/env python/\#\!\/usr\/bin\/python3/g' src/lib/*py

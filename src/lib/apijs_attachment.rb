@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated J/20/08/2020
+# Updated S/07/11/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -23,12 +23,9 @@ module ApijsAttachment
       unloadable
       if Rails::VERSION::MAJOR >= 3
         include Rails.application.routes.url_helpers
-      else
-        include ActionController::UrlWriter
-      end
-      if Rails::VERSION::MAJOR >= 4
         before_create :update_date
       else
+        include ActionController::UrlWriter
         before_save :update_date
       end
       after_destroy :delete_cache
@@ -154,13 +151,36 @@ module ApijsAttachment
     end
 
     # commande python
-    def getCmd(source, target, width, height, fixed=false)
+    def getPython
 
       if Redmine::Platform.mswin?
-        cmd = 'python.exe'
+        cmd = `python.exe --version`
+        if $? == 0
+          cmd = 'python.exe'
+        else
+          cmd = `python --version`
+          if $? == 0
+            cmd = 'python'
+          else
+            cmd = nil
+          end
+        end
       else
-        cmd = `command -v python3 || command -v python || command -v python2`.to_s.strip!
+        cmd = `python3 --version`
+        if $? == 0
+          cmd = 'python3'
+        else
+          cmd = nil
+        end
       end
+
+      return cmd
+    end
+
+    def getCmd(source, target, width, height, fixed=false)
+
+      cmd = getPython
+      cmd = 'notfound' if not cmd or cmd.length == 0
 
       script = File.join(File.dirname(__FILE__), (self.isPhoto? ? 'image.py' : 'video.py'))
       return cmd + ' ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' ' +
@@ -248,6 +268,36 @@ module ApijsAttachment
 
       update_column :disk_directory, self.disk_directory unless new_record?
       logger.info 'APIJS::ApijsAttachment#update_filedir: moving file from ' + src + ' to ' + dest
+    end
+
+    # informations
+    def getProgramVersions(helpPil, helpSco)
+
+      cmd = getPython
+
+      if not cmd or cmd.length == 0
+        pyt = 'not found'
+        pil = pyt
+        sco = pyt
+      else
+        pyt = `#{cmd} --version 2>&1`.gsub('Python ', '').strip!
+
+        pil = `#{cmd} -c "from PIL import Image; print(Image.__version__)" 2>&1`.strip!
+        if pil.include? "o module named"
+          pil = 'not available'
+        elsif pil.include? "__version__"
+          pil = 'available'
+        end
+
+        sco = `#{cmd} -c "import scour; print(scour.__version__)" 2>&1`.strip!
+        if sco.include? "o module named"
+          sco = 'not available'
+        elsif sco.include? "__version__"
+          sco = 'available'
+        end
+      end
+
+      return sprintf('%s / %s %s / %s %s', pyt, pil, helpPil, sco, helpSco)
     end
 
   end

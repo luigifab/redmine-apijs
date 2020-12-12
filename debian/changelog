@@ -1,4 +1,4 @@
-redmine-plugin-apijs (6.4.0-5) unstable; urgency=low
+redmine-plugin-apijs (6.5.0-1) unstable; urgency=low
 
   * Initial debian package release (Closes: #959426)
 

@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated D/26/07/2020
+# Updated S/07/11/2020
 #
 # Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/openmage/apijs
@@ -17,7 +17,6 @@
 # GNU General Public License (GPL) for more details.
 
 import os
-import re
 import sys
 from PIL import Image, ImageSequence
 
