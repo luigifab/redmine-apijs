@@ -29,13 +29,20 @@ Gem::Specification.new do |s|
     assets/images/apijs/tv.gif
     assets/javascripts/apijs-redmine.min.js
     assets/javascripts/apijs.min.js
+    assets/javascripts/apijs.min.js.map
     assets/javascripts/app.js
+    assets/javascripts/app.min.js.map
     assets/stylesheets/apijs-print.min.css
+    assets/stylesheets/apijs-print.min.css.map
     assets/stylesheets/apijs-redmine-rtl.min.css
     assets/stylesheets/apijs-redmine.min.css
     assets/stylesheets/apijs-screen-rtl.min.css
+    assets/stylesheets/apijs-screen-rtl.min.css.map
     assets/stylesheets/apijs-screen.min.css
+    assets/stylesheets/apijs-screen.min.css.map
+    assets/stylesheets/styles-rtl.min.css.map
     assets/stylesheets/styles.css
+    assets/stylesheets/styles.min.css.map
     config/locales/cs.yml
     config/locales/de.yml
     config/locales/en.yml
@@ -50,6 +57,7 @@ Gem::Specification.new do |s|
     config/locales/ru.yml
     config/locales/sk.yml
     config/locales/tr.yml
+    config/locales/uk.yml
     config/locales/zh.yml
     config/routes.rb
     Gemfile

@@ -1,8 +1,8 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated D/27/09/2020
+# Updated S/16/01/2021
 #
-# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -18,13 +18,13 @@
 class ApijsController < AttachmentsController
 
   if Redmine::VERSION::MAJOR >= 4
-    before_action :find_project, except: [:upload]
-    before_action :authorize_global, only: [:upload]
+    before_action :find_project, except: [:upload, :clearcache]
+    before_action :authorize_global, only: [:upload, :clearcache]
     before_action :read_authorize, :file_readable, only: [:thumb, :show, :download, :thumbnail]
     before_action :read_authorize, only: [:editdesc, :editname, :delete]
   else
-    before_filter :find_project, except: [:upload]
-    before_filter :authorize_global, only: [:upload]
+    before_filter :find_project, except: [:upload, :clearcache]
+    before_filter :authorize_global, only: [:upload, :clearcache]
     before_filter :read_authorize, :file_readable, only: [:thumb, :show, :download, :thumbnail]
     before_filter :read_authorize, only: [:editdesc, :editname, :delete]
   end
@@ -356,4 +356,23 @@ class ApijsController < AttachmentsController
       render_validation_errors(@attachment)
     end
   end
+
+
+  # #### Vide le cache ################################################################# #
+  # » Si l'utilisateur est admin
+  def clearcache
+
+    # vérification d'accès
+    if !User.current.admin?
+      deny_access
+    # suppression
+    else
+      if APIJS_ROOT.length > 5 && File.directory?(APIJS_ROOT)
+        FileUtils.rm_rf(APIJS_ROOT)
+        flash[:notice] = l(:apijs_clearcache_done)
+      end
+      redirect_to controller: 'settings', action: 'plugin', id: 'redmine_apijs'
+    end
+  end
+
 end

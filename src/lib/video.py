@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated S/07/11/2020
+# Updated W/16/12/2020
 #
-# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -44,13 +44,14 @@ else:
 
 # Standard resizing
 source.thumbnail(size, Image.ANTIALIAS)
-offset_x = int(max((size[0] - source.size[0]) / 2, 0))
-offset_y = int(max((size[1] - source.size[1]) / 2, 0))
+offset_x = max(int((size[0] - source.size[0]) / 2), 0)
+offset_y = max(int((size[1] - source.size[1]) / 2), 0)
 
 # Color detection
+# white background black player OR black background white player
 pixels = source.getcolors(size[0] * size[1])
 pixels = sorted(pixels, key=lambda t: t[0])
-if (pixels[-1][1] > (127,127,127)): # white background, black player
+if (pixels[-1][1] > (127,127,127)):
 	dest = Image.new('RGBA', size, (255,255,255,0))
 	dest.paste(source, (offset_x, offset_y))
 	# https://stackoverflow.com/a/59082116 (replace only last lib)
@@ -75,4 +76,5 @@ if quality < 1:
 	quality = 75
 elif quality > 95:
 	quality = 95
-dest.convert('RGB').save(fileout, 'JPEG', optimize=True, quality=quality)
+
+dest.convert('RGB').save(fileout, 'JPEG', optimize=True, subsampling=0, quality=quality)

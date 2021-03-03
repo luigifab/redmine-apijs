@@ -1,8 +1,8 @@
 <%
 # Created J/12/12/2013
-# Updated S/07/11/2020
+# Updated D/17/01/2021
 #
-# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -69,8 +69,8 @@ end
 			<option value="1" <%= raw 'selected="selected"' if settings['enabled'] == '1' %>><%= raw l(:general_text_Yes) %></option>
 		</select>
 		<% if settings['enabled'] == '1' %>
-			/ <button type="button" style="vertical-align:middle;" onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_example1_title) %>','<%= raw l(:apijs_example1_text).gsub(/['"\\\x0]/,'\\\\\0') %>');"><%= l(:apijs_example, v: 1) %></button>
-			<button type="button" style="vertical-align:middle;" onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_example2_title) %>','[p]<%= raw l(:apijs_example2_text).gsub(/['"\\\x0]/,'\\\\\0') %>[/p][p]<%= raw l(:apijs_example2_link, v: '[a href=\'https://www.luigifab.fr/\' class=\'popup\']www.luigifab.fr[/a]').gsub(/['"\\\x0]/,'\\\\\0') %>[/p]');"><%= l(:apijs_example, v: 2) %></button>
+			/ <button type="button" onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_example1_title) %>','<%= raw l(:apijs_example1_text).gsub(/['"\\\x0]/,'\\\\\0') %>');"><%= l(:apijs_example, v: 1) %></button>
+			<button type="button" onclick="apijs.dialog.dialogInformation('<%= raw l(:apijs_example2_title) %>','[p]<%= raw l(:apijs_example2_text).gsub(/['"\\\x0]/,'\\\\\0') %>[/p][p]<%= raw l(:apijs_example2_link, v: '[a href=\'https://www.luigifab.fr/\' class=\'popup\']www.luigifab.fr[/a]').gsub(/['"\\\x0]/,'\\\\\0') %>[/p]');"><%= l(:apijs_example, v: 2) %></button>
 		<% end %>
 	</p>
 	<p>
@@ -103,6 +103,9 @@ end
 		<br /><%= APIJS_ROOT %>/thumb/ <b><%= size_thumb %></b> (200x150)
 		<br /><%= APIJS_ROOT %>/srcset/ <b><%= size_srcset %></b> (400x300)
 		<br /><%= APIJS_ROOT %>/show/ <b><%= size_show %></b> (1200x900)
+		<% if settings['enabled'] == '1' %>
+			<br /><button type="button" onclick="apijsRedmine.clearCache('<%= url_for({controller: 'apijs', action: 'clearcache'}) %>');"><%= raw l(:apijs_config_clearcache) %></button>
+		<% end %>
 	</p>
 </fieldset>
 
