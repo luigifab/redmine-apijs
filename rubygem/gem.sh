@@ -4,7 +4,7 @@
 
 
 cd "$(dirname "$0")"
-version="6.5.0"
+version="6.6.0"
 rm -rf builder/
 
 

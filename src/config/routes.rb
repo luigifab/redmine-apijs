@@ -1,8 +1,8 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated J/20/08/2020
+# Updated S/16/01/2021
 #
-# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -44,6 +44,9 @@ if Redmine::VERSION::MAJOR >= 2
 
     match 'apijs/delete', to: 'apijs#delete',
       via: :post
+
+    match 'apijs/clearcache', to: 'apijs#clearcache',
+      via: :get
   end
 else
   ActionController::Routing::Routes.draw do |map|
@@ -89,5 +92,9 @@ else
     map.connect 'apijs/delete',
       controller: 'apijs', action: 'delete',
       conditions: {method: :post}
+
+    map.connect 'apijs/clearcache',
+      controller: 'apijs', action: 'clearcache',
+      conditions: {method: :get}
   end
 end

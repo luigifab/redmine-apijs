@@ -1,8 +1,8 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated S/07/11/2020
+# Updated J/18/02/2021
 #
-# Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -90,9 +90,9 @@ module ApijsAttachment
 
     def getShowButton(setting_show_filename, setting_show_exifdate, description)
       if self.isImage?
-        return "apijs.dialog.dialogPhoto('" + self.getShowUrl + "', '" + ((setting_show_filename) ? self.filename : 'false') + "', '" + ((setting_show_exifdate) ? format_time(self.created_on) : 'false') + "', '" + description + "');"
+        return "apijs.dialog.dialogPhoto('" + self.getShowUrl + "', '" + (setting_show_filename ? self.filename : 'false') + "', '" + (setting_show_exifdate ? format_time(self.created_on) : 'false') + "', '" + description + "');"
       elsif self.isVideo?
-        return "apijs.dialog.dialogVideo('" + self.getDownloadUrl + "', '" + ((setting_show_filename) ? self.filename : 'false') + "', '" + ((setting_show_exifdate) ? format_time(self.created_on) : 'false') + "', '" + description + "');"
+        return "apijs.dialog.dialogVideo('" + self.getDownloadUrl + "', '" + (setting_show_filename ? self.filename : 'false') + "', '" + (setting_show_exifdate ? format_time(self.created_on) : 'false') + "', '" + description + "');"
       elsif self.is_text?
         return "self.location.href = '" + self.getUrl('redmineshow', false) + "';"
       end
@@ -280,13 +280,16 @@ module ApijsAttachment
         pil = pyt
         sco = pyt
       else
-        pyt = `#{cmd} --version 2>&1`.gsub('Python ', '').strip!
+        pyt = `#{cmd} --version 2>&1`.gsub('Python', '').strip!
+        pyt = pyt.split(/\D/).slice(0, 3).join('.')
 
         pil = `#{cmd} -c "from PIL import Image; print(Image.__version__)" 2>&1`.strip!
         if pil.include? "o module named"
           pil = 'not available'
         elsif pil.include? "__version__"
           pil = 'available'
+        else
+          pil = pil.split(/\D/).slice(0, 3).join('.')
         end
 
         sco = `#{cmd} -c "import scour; print(scour.__version__)" 2>&1`.strip!
@@ -294,6 +297,8 @@ module ApijsAttachment
           sco = 'not available'
         elsif sco.include? "__version__"
           sco = 'available'
+        else
+          sco = sco.split(/\D/).slice(0, 3).join('.')
         end
       end
 

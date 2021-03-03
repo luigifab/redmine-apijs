@@ -1,10 +1,10 @@
 # encoding: utf-8
 #
-# Copyright 2013-2020 | Jesse G. Donat <donatj~gmail~com>
+# Copyright 2013-2021 | Jesse G. Donat <donatj~gmail~com>
 # https://github.com/donatj/PhpUserAgent
 #
-# Copyright 2019-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
-# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.1.0-fork1)
+# Copyright 2019-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.3.0-fork1)
 #
 # Parses a user agent string into its important parts
 # Licensed under the MIT License
@@ -20,13 +20,13 @@ class Useragentparser
 		browser  = nil
 		version  = nil
 		empty    = {'platform' => platform, 'browser' => browser, 'version' => version}
-		priority = ['Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'X11']
+		priority = ['Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'X11', 'Sailfish']
 
 		return empty unless userAgent
 
 		if (parentMatches = userAgent.match(/\((.*?)\)/m))
 			result = parentMatches[1].scan(
-				/(?<platform>BB\d+;|Android|CrOS|Tizen|iPhone|iPad|iPod|Linux|(Open|Net|Free)BSD|Macintosh|Windows(\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(New\ )?Nintendo\ (WiiU?|3?DS|Switch)|Xbox(\ One)?) (?:\ [^;]*)? (?:;|$)/imx
+				/(?<platform>BB\d+;|Android|Adr|Symbian|Sailfish|CrOS|Tizen|iPhone|iPad|iPod|Linux|(Open|Net|Free)BSD|Macintosh|Windows(\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(New\ )?Nintendo\ (WiiU?|3?DS|Switch)|Xbox(\ One)?) (?:\ [^;]*)? (?:;|$)/imx
 			).map(&:join)
 			result.uniq!
 			if result.length > 1
@@ -44,10 +44,12 @@ class Useragentparser
 			platform = 'Linux'
 		elsif platform == 'CrOS'
 			platform = 'Chrome OS'
+		elsif platform == 'Adr'
+			platform = 'Android'
 		end
 
 		result = userAgent.to_enum(:scan, # ["browser" => ["Firefox"...], "version" => ["45.0"...]]
-			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|Baiduspider|Applebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+) (?:\)?;?) (?:(?:[:\/ ])(?<version>[0-9A-Z.]+)|\/(?:[A-Z]*))/ix
+			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|Baiduspider|Applebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+) (?:\)?;?) (?:(?:[:\/ ])(?<version>[0-9A-Z.]+)|\/(?:[A-Z]*))/ix
 		).map { Regexp.last_match.names.collect{ |x| {x => $~[x]} }.reduce({}, :merge) }
 		 .reduce({}) { |h,pairs| pairs.each {|k,v| (h[k] ||= []) << v}; h }
 
@@ -78,7 +80,7 @@ class Useragentparser
 		refpla = [platform]
 		refval = ['']
 
-		if findt(lowerBrowser, {'OPR' => 'Opera', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge'}, refkey, refbro)
+		if findt(lowerBrowser, {'OPR' => 'Opera', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge', 'XiaoMi/MiuiBrowser' => 'MiuiBrowser'}, refkey, refbro)
 			browser = refbro[0]
 			version = result['version'][refkey[0]]
 		elsif find(lowerBrowser, 'Playstation Vita', refkey, platform)
@@ -114,7 +116,7 @@ class Useragentparser
 					end
 				end
 			end
-		elsif find(lowerBrowser, ['Applebot', 'IEMobile', 'Edge', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome'], refkey, refbro)
+		elsif find(lowerBrowser, ['Applebot', 'IEMobile', 'Edge', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome', 'SailfishBrowser'], refkey, refbro)
 			version = result['version'][refkey[0]]
 			browser = refbro[0]
 		elsif rv_result && find(lowerBrowser, 'Trident')

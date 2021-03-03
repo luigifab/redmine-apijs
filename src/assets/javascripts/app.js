@@ -1,8 +1,8 @@
 /**
  * Created D/15/12/2013
- * Updated D/27/09/2020
+ * Updated S/16/01/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -45,12 +45,16 @@ var apijsRedmine = new (function () {
 		d.en[256] = "Enter below the new description for the file. To remove the description, leave the field empty.";
 		d.en[257] = "Rename file";
 		d.en[258] = "Enter below the new name for the file.";
+		d.en[259] = "Clear cache";
+		d.en[260] = "Are you sure you want to clear the cache?[br]Be careful, you can't cancel this operation.";
 		d.es[250] = "Borrar un archivo";
 		d.es[251] = "¿Está usted seguro(a) de que desea eliminar este archivo?[br]Atención, pues no podrá cancelar esta operación.";
 		d.es[253] = "No está autorizado-a para llevar a cabo esta operación, por favor [a §]actualice la página[/a].";
 		d.es[254] = "Disculpe, pero el archivo ya no existe, por favor [a §]actualice la página[/a].";
 		d.es[255] = "Editar una descripción";
 		d.es[256] = "Introduzca a continuación la nueva descripción para el archivo. Para eliminar la descripción, deje el campo en blanco.";
+		d.es[259] = "Vaciar la caché";
+		d.es[260] = "¿Está usted seguro(a) de querer vaciar la caché?[br]Cuidado, esta operación no puede ser cancelada.";
 		d.fr[250] = "Supprimer le fichier";
 		d.fr[251] = "Êtes-vous sûr(e) de vouloir supprimer ce fichier ?[br]Attention, cette opération n'est pas annulable.";
 		d.fr[252] = "Erreur";
@@ -60,6 +64,8 @@ var apijsRedmine = new (function () {
 		d.fr[256] = "Saisissez ci-dessous la nouvelle description pour ce fichier. Pour supprimer la description, laissez le champ vide.";
 		d.fr[257] = "Renommer le fichier";
 		d.fr[258] = "Saisissez ci-dessous le nouveau nom pour ce fichier.";
+		d.fr[259] = "Vider le cache";
+		d.fr[260] = "Êtes-vous certain(e) de vouloir vider le cache ?[br]Attention, cette opération n'est pas annulable.";
 		d.it[250] = "Cancella i file";
 		d.it[251] = "Sei sicura di voler eliminare il file?[br]Attenzione, questa operazione non può essere annullata.";
 		d.it[252] = "Errore";
@@ -89,6 +95,7 @@ var apijsRedmine = new (function () {
 		d.ru[256] = "Ниже введите новое описание файла. Оставьте поле пустым, чтобы удалить описание.";
 		d.sk[252] = "Chyba";
 		d.tr[252] = "Hata";
+		d.uk[252] = "Помилка";
 		d.zh[252] = "错误信息";
 		// auto end
 	};
@@ -295,6 +302,15 @@ var apijsRedmine = new (function () {
 		};
 
 		xhr.send();
+	};
+
+	this.clearCache = function (action) {
+		apijs.dialog.dialogConfirmation(apijs.i18n.translate(259), apijs.i18n.translate(260), apijsRedmine.actionClearCache, action);
+	};
+
+	this.actionClearCache = function (args) {
+		apijs.dialog.remove('waiting', 'lock'); // obligatoire sinon demande de confirmation de quitter la page
+		self.location.href = args;
 	};
 
 })();
