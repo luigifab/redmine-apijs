@@ -1,5 +1,5 @@
-redmine-plugin-apijs (6.6.0-1) unstable; urgency=low
+redmine-plugin-apijs (6.7.0-1) unstable; urgency=low
 
   * Initial debian package release (Closes: #959426)
 
- -- Fabrice Creuzot <code@luigifab.fr>  Wed, 03 Mar 2021 12:00:00 +0000
+ -- Fabrice Creuzot <code@luigifab.fr>  Wed, 07 Jul 2021 20:00:00 +0000

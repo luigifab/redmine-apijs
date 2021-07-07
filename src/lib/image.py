@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated J/18/02/2021
+# Updated M/11/05/2021
 #
 # Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # Copyright 2020-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -35,11 +35,14 @@ except:
 if not os.path.exists(os.path.dirname(fileout)):
 	os.makedirs(os.path.dirname(fileout))
 
+fileout = fileout + '.save'
 
-def versiontuple(v):
+
+# tools
+def versionTuple(v):
 	return tuple(map(int, (v.split('.'))))
 
-def calcsize(source, size):
+def calcSize(source, size):
 
 	if size[1] == 0 and size[0] == 0:
 		return source.size
@@ -50,12 +53,12 @@ def calcsize(source, size):
 
 	return size
 
-def createthumb(source, size, fixed, new=False):
+def createThumb(source, size, fixed, new=False):
 
 	# https://pillow.readthedocs.io/en/latest/reference/Image.html#PIL.Image.Image.thumbnail
 	# https://pillow.readthedocs.io/en/latest/handbook/concepts.html#filters-comparison-table
 	# https://pillow.readthedocs.io/en/latest/reference/Image.html#PIL.Image.Image.paste
-	if hasattr(Image, '__version__') and versiontuple(Image.__version__) > (7,0,0):
+	if hasattr(Image, '__version__') and versionTuple(Image.__version__) > (7,0,0):
 		source.thumbnail(size, Image.LANCZOS, 4)
 	else:
 		source.thumbnail(size, Image.ANTIALIAS)
@@ -96,7 +99,7 @@ def resizeAnimatedGif(source, size, fixed):
 
 			frame = Image.new('RGBA', source.size, (255,255,255,1))
 			frame.paste(source, (0,0), source.convert('RGBA'))
-			dest.append(createthumb(frame, size, fixed))
+			dest.append(createThumb(frame, size, fixed))
 
 			idx = source.tell()
 			source.seek(idx + 1)
@@ -117,7 +120,7 @@ def resizeAnimatedPng(source, size, fixed):
 		while True:
 			frame = Image.new('RGBA', source.size, (255,255,255,1))
 			frame.paste(source, (0,0), source.convert('RGBA'))
-			dest.append(createthumb(frame, size, fixed))
+			dest.append(createThumb(frame, size, fixed))
 
 			idx = source.tell()
 			source.seek(idx + 1)
@@ -138,7 +141,7 @@ def resizeAnimatedWebp(source, size, fixed):
 		while True:
 			frame = Image.new('RGBA', source.size, (255,255,255,1))
 			frame.paste(source, (0,0), source.convert('RGBA'))
-			dest.append(createthumb(frame, size, fixed))
+			dest.append(createThumb(frame, size, fixed))
 
 			idx = source.tell()
 			source.seek(idx + 1)
@@ -213,7 +216,7 @@ def saveJpg(dest, fileout, quality):
 
 # python-scour
 if ".svg" in fileout:
-	from scour.scour import (sanitizeOptions, start)
+	from scour.scour import sanitizeOptions, start
 	options = sanitizeOptions()
 	options.strip_xml_prolog = True # --strip-xml-prolog
 	options.remove_metadata = True  # --remove-metadata
@@ -225,7 +228,7 @@ if ".svg" in fileout:
 else:
 	from PIL import Image, ImageSequence
 	source = Image.open(filein)
-	size   = calcsize(source, size)
+	size   = calcSize(source, size)
 
 	if   source.format == 'GIF'  and ".gif"  in fileout:
 		dest = resizeAnimatedGif(source, size, fixed)
@@ -237,7 +240,10 @@ else:
 		dest = resizeAnimatedWeb(source, size, fixed)
 		saveWebp(dest, fileout, quality)
 	else:
-		dest = createthumb(source, size, fixed, True)
+		dest = createThumb(source, size, fixed, True)
 		saveJpg(dest, fileout, quality)
+
+if os.path.isfile(fileout):
+	os.rename(fileout, fileout.replace('.save', ''))
 
 exit(0)
