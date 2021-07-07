@@ -2,9 +2,8 @@
 # debian: sudo apt install ruby
 
 
-
 cd "$(dirname "$0")"
-version="6.6.0"
+version="6.7.0"
 rm -rf builder/
 
 
@@ -31,8 +30,7 @@ find builder/redmine_apijs-${version}/ -type f | xargs chmod +r
 
 
 
-# create package
-# https://guides.rubygems.org/make-your-own-gem/
+# create package (https://guides.rubygems.org/make-your-own-gem/)
 cd builder/redmine_apijs-${version}/
 gem build redmine_apijs.gemspec
 cd ../..

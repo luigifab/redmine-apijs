@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated S/16/01/2021
+ * Updated D/09/05/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
@@ -276,11 +276,11 @@ var apijsRedmine = new (function () {
 
 						// supprime le fichier de la page grâce à son id
 						var attachment = document.getElementById(xhr.responseText), elems = attachment.parentNode, idx = 0;
-						elems.removeChild(attachment);
+						attachment.remove();
 
 						// supprime la liste des fichiers
 						if (elems.querySelectorAll('dl, li').length < 1) {
-							elems.parentNode.removeChild(elems);
+							elems.remove();
 						}
 						// ou réattribue les ids du diaporama (pas de réinitialisation, on remet juste les ids en place)
 						else {

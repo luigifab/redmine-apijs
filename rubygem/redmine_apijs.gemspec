@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
   s.name        = 'redmine_apijs'
   s.version     = 'x.y.z'
   s.summary     = 'Redmine Apijs plugin'
-  s.description = 'Integrate the apijs javascript library into Redmine.'
+  s.description = 'Integrate the apijs JavaScript library into Redmine. Provides a gallery for image and video attachments.'
   s.homepage    = 'https://github.com/luigifab/redmine-apijs'
   s.license     = 'GPL-2.0-or-later'
   s.authors     = ['Fabrice Creuzot']

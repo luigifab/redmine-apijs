@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Fabrice Creuzot <code@luigifab.fr>
 Build-Depends: debhelper-compat (= 13)
 Rules-Requires-Root: no
-Standards-Version: 4.5.0
+Standards-Version: 4.5.1
 Homepage: https://github.com/luigifab/redmine-apijs
 Vcs-Browser: https://github.com/luigifab/redmine-apijs
 Vcs-Git: https://github.com/luigifab/redmine-apijs.git
@@ -23,9 +23,7 @@ Description: Redmine plugin to display gallery from attachments
    * to sort out attachments in alphabetical order
    * to display a photo/video gallery from attachments
    * to display videos in streaming (HTTP 206 Partial Content)
-   * to cache displayed images (browser cache)
-   * to keep the animation of GIF/PNG/WEBP images thanks to python-pil
+   * to keep the animation of GIF/PNG/WEBP images thanks to Pillow
    * to redefine the date of creation of the photos from the EXIF date
-   * to download attachments with the download dialog box of a browser's file
    * to modify the description of attachments
    * to rename and remove attachments

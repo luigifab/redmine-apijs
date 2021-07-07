@@ -13,7 +13,7 @@ Copyright : 2008-2021 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 
 
 IF YOU FOUND A MISTAKE OR A BUG, PLEASE, CONTACT ME (IN FRENCH OR IN ENGLISH) AT code~luigifab~fr
-CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/UglifyJS).
+CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/uglifyjs).
 ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2+ LICENSE.
 THAT BEING SAID SOME FILES COME FROM OTHER PROJECTS AND ARE UNDER OTHER LICENSES (SEE AT THE END OF THIS FILE).
 
@@ -63,7 +63,7 @@ If you like, take some of your time to improve the translations, go to https://b
 
 
 File: /lib/useragentparser.rb
-Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.3.0-fork1)
+Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.4.0-fork1)
 Copyright: 2013-2021 Jesse G. Donat <donatj~gmail~com>
 Copyright: 2019-2021 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 License: MIT (https://opensource.org/licenses/mit)

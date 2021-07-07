@@ -4,7 +4,7 @@
 # https://github.com/donatj/PhpUserAgent
 #
 # Copyright 2019-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
-# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.3.0-fork1)
+# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.4.0-fork1)
 #
 # Parses a user agent string into its important parts
 # Licensed under the MIT License
@@ -49,7 +49,7 @@ class Useragentparser
 		end
 
 		result = userAgent.to_enum(:scan, # ["browser" => ["Firefox"...], "version" => ["45.0"...]]
-			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|Baiduspider|Applebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+) (?:\)?;?) (?:(?:[:\/ ])(?<version>[0-9A-Z.]+)|\/(?:[A-Z]*))/ix
+			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+) (?:\)?;?) (?:(?:[:\/ ])(?<version>[0-9A-Z.]+)|\/(?:[A-Z]*))/ix
 		).map { Regexp.last_match.names.collect{ |x| {x => $~[x]} }.reduce({}, :merge) }
 		 .reduce({}) { |h,pairs| pairs.each {|k,v| (h[k] ||= []) << v}; h }
 
@@ -80,9 +80,9 @@ class Useragentparser
 		refpla = [platform]
 		refval = ['']
 
-		if findt(lowerBrowser, {'OPR' => 'Opera', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge', 'XiaoMi/MiuiBrowser' => 'MiuiBrowser'}, refkey, refbro)
+		if findt(lowerBrowser, {'OPR' => 'Opera', 'Facebot' => 'iMessageBot', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge', 'XiaoMi/MiuiBrowser' => 'MiuiBrowser'}, refkey, refbro)
 			browser = refbro[0]
-			version = result['version'][refkey[0]]
+			version = result['version'][refkey[0]][0] =~ /[0-9]/ ? result['version'][refkey[0]] : nil
 		elsif find(lowerBrowser, 'Playstation Vita', refkey, platform)
 			platform = 'PlayStation Vita'
 			browser  = 'Browser'
