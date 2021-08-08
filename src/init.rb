@@ -26,7 +26,7 @@ Redmine::Plugin.register :redmine_apijs do
   name 'Redmine Apijs plugin'
   author 'Fabrice Creuzot'
   description 'Integrate the apijs JavaScript library into Redmine. Provides a gallery for image and video attachments.'
-  version '6.7.0'
+  version '6.8.0'
   url 'https://www.luigifab.fr/redmine/apijs'
   author_url 'https://www.luigifab.fr/'
 

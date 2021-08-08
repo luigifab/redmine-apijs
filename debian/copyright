@@ -8,6 +8,8 @@ License: GPL-2+
 
 Files: */assets/fonts/apijs/fontello.woff */assets/fonts/apijs/fontello.woff2
 Copyright: fontello.com
+ Font Awesome 2016 Dave Gandy
+ Iconic       2012 P.J. Onori
 License: SIL-1.1
 
 Files: */lib/useragentparser.rb

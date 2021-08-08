@@ -3,14 +3,14 @@
 
 
 cd "$(dirname "$0")"
-version="6.7.0"
+version="6.8.0"
 
 
 rm -rf builder/
 mkdir builder
 
 # copy to a tmp directory
-if [ true ]; then
+if [ ! true ]; then
 	cd builder
 	wget https://github.com/luigifab/redmine-apijs/archive/v$version/redmine-apijs-$version.tar.gz
 	tar xzf redmine-apijs-$version.tar.gz
@@ -31,7 +31,7 @@ fi
 
 
 # create packages for debian and ubuntu
-for serie in unstable impish hirsute groovy focal bionic xenial trusty precise; do
+for serie in unstable impish hirsute groovy focal bionic xenial trusty; do
 
 	if [ $serie = "unstable" ]; then
 		# for ubuntu
@@ -56,7 +56,7 @@ for serie in unstable impish hirsute groovy focal bionic xenial trusty precise; 
 	if [ $serie = "unstable" ]; then
 		dpkg-buildpackage -us -uc
 	else
-		# debhelper: unstable:13 hirsute:13 groovy:13 focal:12 bionic:9 xenial:9 trusty:9 precise:9
+		# debhelper: unstable:13 hirsute:13 groovy:13 focal:12 bionic:9 xenial:9 trusty:9
 		if [ $serie = "focal" ]; then
 			sed -i 's/debhelper-compat (= 13)/debhelper-compat (= 12)/g' debian/control
 		fi
@@ -69,11 +69,6 @@ for serie in unstable impish hirsute groovy focal bionic xenial trusty precise; 
 			echo 9 > debian/compat
 		fi
 		if [ $serie = "trusty" ]; then
-			sed -i 's/debhelper-compat (= 13)/debhelper (>= 9)/g' debian/control
-			sed -i ':a;N;$!ba;s/Rules-Requires-Root: no\n//g' debian/control
-			echo 9 > debian/compat
-		fi
-		if [ $serie = "precise" ]; then
 			sed -i 's/debhelper-compat (= 13)/debhelper (>= 9)/g' debian/control
 			sed -i ':a;N;$!ba;s/Rules-Requires-Root: no\n//g' debian/control
 			echo 9 > debian/compat

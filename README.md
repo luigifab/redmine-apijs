@@ -6,12 +6,10 @@ For more information, go to https://www.luigifab.fr/apijs and https://www.luigif
 
 This repository is a releases mirror. To install the plugin, please read the documentation.
 
-- Current version: 6.7.0 (07/07/2021)
-- Compatibility: Redmine 1.4 / 2.x / 3.x / 4.0 / 4.1 / 4.2, Python 3.3 / 3.4 / 3.5 / 3.6 / 3.7 / 3.8 / 3.9
+- Current version: 6.8.0 (08/08/2021)
+- Compatibility: Redmine 1.4 / 2.x / 3.x / 4.x, Python 3.3 - 3.10
 - Client compatibility: Firefox 36+, Chrome 32+, Opera 19+, Edge 16+, Safari 9+
-- Translations: English (en), French (fr-FR/fr-CA), German (de), Italian (it), Portuguese (pt-PT/pt-BR), Spanish (es)
-- Other translations: Czech (cs), Dutch (nl), Japanese (ja), Polish (pl), Slovak (sk)
-- Other translations: Chinese (zh), Russian (ru), Turkish (tr), Ukrainian (uk)
+- Translations: English (en), French (fr-FR/fr-CA), German (de), Italian (it), Portuguese (pt-PT/pt-BR), Spanish (es) / Chinese (zh), Czech (cs), Dutch (nl), Greek (el), Hungarian (hu), Japanese (ja), Polish (pl), Romanian (ro), Russian (ru), Slovak (sk), Turkish (tr), Ukrainian (uk)
 - License: GNU GPL 2+
 
 If you like, take some of your time to improve the translations, go to https://bit.ly/2HyCCEc.

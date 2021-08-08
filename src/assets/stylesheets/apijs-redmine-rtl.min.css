@@ -1,6 +1,6 @@
 /*!
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/redmine/apijs - 6.7.0
+ * https://www.luigifab.fr/redmine/apijs
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL).
  */
