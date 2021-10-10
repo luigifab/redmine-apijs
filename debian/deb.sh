@@ -3,14 +3,14 @@
 
 
 cd "$(dirname "$0")"
-version="6.8.0"
+version="6.8.1"
 
 
 rm -rf builder/
 mkdir builder
 
 # copy to a tmp directory
-if [ ! true ]; then
+if [ true ]; then
 	cd builder
 	wget https://github.com/luigifab/redmine-apijs/archive/v$version/redmine-apijs-$version.tar.gz
 	tar xzf redmine-apijs-$version.tar.gz
@@ -31,7 +31,7 @@ fi
 
 
 # create packages for debian and ubuntu
-for serie in unstable impish hirsute groovy focal bionic xenial trusty; do
+for serie in unstable impish hirsute focal bionic xenial trusty; do
 
 	if [ $serie = "unstable" ]; then
 		# for ubuntu
@@ -46,7 +46,7 @@ for serie in unstable impish hirsute groovy focal bionic xenial trusty; do
 
 	dh_make -a -s -y -f ../redmine-apijs-$version.tar.gz -p redmine-plugin-apijs
 
-	rm -f debian/*ex debian/*EX debian/README* debian/*doc*
+	rm -f debian/*ex debian/*EX debian/README* debian/*doc* debian/deb.sh
 	mkdir debian/upstream
 	mv debian/metadata debian/upstream/metadata
 	mv debian/lintian  debian/redmine-plugin-apijs.lintian-overrides
@@ -56,7 +56,7 @@ for serie in unstable impish hirsute groovy focal bionic xenial trusty; do
 	if [ $serie = "unstable" ]; then
 		dpkg-buildpackage -us -uc
 	else
-		# debhelper: unstable:13 hirsute:13 groovy:13 focal:12 bionic:9 xenial:9 trusty:9
+		# debhelper: unstable:13 hirsute:13 focal:12 bionic:9 xenial:9 trusty:9
 		if [ $serie = "focal" ]; then
 			sed -i 's/debhelper-compat (= 13)/debhelper-compat (= 12)/g' debian/control
 		fi

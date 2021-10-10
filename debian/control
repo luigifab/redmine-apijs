@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Fabrice Creuzot <code@luigifab.fr>
 Build-Depends: debhelper-compat (= 13)
 Rules-Requires-Root: no
-Standards-Version: 4.5.1
+Standards-Version: 4.6.0.1
 Homepage: https://github.com/luigifab/redmine-apijs
 Vcs-Browser: https://github.com/luigifab/redmine-apijs
 Vcs-Git: https://github.com/luigifab/redmine-apijs.git
@@ -15,7 +15,7 @@ Pre-Depends: redmine
 Depends: redmine (>= 2.0.0), ruby (>= 1.9), python3-pil, python3-scour, libimage-exiftool-perl, ${misc:Depends}
 Recommends: ffmpegthumbnailer
 Enhances: redmine
-Description: Redmine plugin to display gallery from attachments
+Description: plugin for Redmine to display a gallery from attachments
  This plugin integrates apijs JavaScript library into Redmine.
  For more information about the library, go to luigifab.fr/apijs.
  .

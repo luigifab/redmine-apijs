@@ -63,7 +63,7 @@ If you like, take some of your time to improve the translations, go to https://b
 
 
 File: /lib/useragentparser.rb
-Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.4.0-fork1)
+Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.5.0-fork1)
 Copyright: 2013-2021 Jesse G. Donat <donatj~gmail~com>
 Copyright: 2019-2021 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 License: MIT (https://opensource.org/licenses/mit)

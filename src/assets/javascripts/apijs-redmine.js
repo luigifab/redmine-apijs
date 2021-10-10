@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated D/09/05/2021
+ * Updated D/05/09/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
@@ -20,7 +20,7 @@ var apijsRedmine = new (function () {
 
 	"use strict";
 
-	this.start = function () {
+	this.init = function () {
 
 		var d = apijs.i18n.data;
 		if (!d.frca) d.frca = {};
@@ -316,4 +316,4 @@ var apijsRedmine = new (function () {
 })();
 
 if (typeof self.addEventListener == 'function')
-	self.addEventListener('apijsload', apijsRedmine.start.bind(apijsRedmine));
+	self.addEventListener('apijsload', apijsRedmine.init.bind(apijsRedmine));
