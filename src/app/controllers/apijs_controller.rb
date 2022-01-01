@@ -1,8 +1,8 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated S/16/01/2021
+# Updated V/15/10/2021
 #
-# Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -246,11 +246,11 @@ class ApijsController < AttachmentsController
         if !request.headers['Range']
           send_file(@attachment.diskfile,
             filename: filename_for_content_disposition(@attachment.filename),
-            type: @attachment.content_type, disposition: 'inline')
+            type: detect_content_type(@attachment), disposition: 'inline')
         else
           send_data(File.binread(@attachment.diskfile, file_end - file_begin + 1, file_begin),
             filename: filename_for_content_disposition(@attachment.filename),
-            type: @attachment.content_type, disposition: 'inline', status: '206 Partial Content')
+            type: detect_content_type(@attachment), disposition: 'inline', status: '206 Partial Content')
         end
 
         response.close
@@ -258,18 +258,18 @@ class ApijsController < AttachmentsController
       elsif @attachment.isImage?
         if stale?(etag: @attachment.diskfile)
           send_file(@attachment.diskfile, filename: filename_for_content_disposition(@attachment.filename),
-            type: @attachment.content_type, disposition: 'inline')
+            type: detect_content_type(@attachment), disposition: 'inline')
         end
       # fichier
       else
         send_file(@attachment.diskfile, filename: filename_for_content_disposition(@attachment.filename),
-          type: @attachment.content_type, disposition: 'attachment')
+          type: detect_content_type(@attachment), disposition: 'attachment')
       end
     # téléchargement d'un fichier
     else
       @attachment.increment_download if @attachment.container.is_a?(Version) || @attachment.container.is_a?(Project)
       send_file(@attachment.diskfile, filename: filename_for_content_disposition(@attachment.filename),
-        type: @attachment.content_type, disposition: 'attachment')
+        type: detect_content_type(@attachment), disposition: 'attachment')
     end
   end
 

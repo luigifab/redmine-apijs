@@ -3,7 +3,7 @@
 
 
 cd "$(dirname "$0")"
-version="6.8.1"
+version="6.8.2"
 
 
 rm -rf builder/
@@ -31,7 +31,7 @@ fi
 
 
 # create packages for debian and ubuntu
-for serie in unstable impish hirsute focal bionic xenial trusty; do
+for serie in unstable jammy impish hirsute focal bionic xenial trusty; do
 
 	if [ $serie = "unstable" ]; then
 		# for ubuntu

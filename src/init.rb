@@ -1,8 +1,8 @@
 # encoding: utf-8
 # Created L/21/05/2012
-# Updated J/23/09/2021
+# Updated V/22/10/2021
 #
-# Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -26,7 +26,7 @@ Redmine::Plugin.register :redmine_apijs do
   name 'Redmine Apijs plugin'
   author 'Fabrice Creuzot'
   description 'Integrate the apijs JavaScript library into Redmine. Provides a gallery for image and video attachments.'
-  version '6.8.1'
+  version '6.8.2'
   url 'https://www.luigifab.fr/redmine/apijs'
   author_url 'https://www.luigifab.fr/'
 

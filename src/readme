@@ -3,16 +3,13 @@ Tracker   : https://github.com/luigifab/redmine-apijs
 Rubygems  : https://rubygems.org/gems/redmine_apijs
 Plugin    : Luigifab/Apijs
 License   : GNU GPL 2+ (https://opensource.org/licenses/gpl-2.0)
-Copyright : 2008-2021 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+Copyright : 2008-2022 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 
 
 
 
 
-
-
-
-IF YOU FOUND A MISTAKE OR A BUG, PLEASE, CONTACT ME (IN FRENCH OR IN ENGLISH) AT code~luigifab~fr
+IF YOU FOUND A MISTAKE OR A BUG, PLEASE CONTACT ME (IN FRENCH OR IN ENGLISH).
 CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/uglifyjs).
 ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2+ LICENSE.
 THAT BEING SAID SOME FILES COME FROM OTHER PROJECTS AND ARE UNDER OTHER LICENSES (SEE AT THE END OF THIS FILE).
@@ -37,7 +34,7 @@ Translations in de-DE (deutsch/Deutschland) by:
 - Philip Junietz <info~label-park~com> 2016
 - Pamela Steinborn <st.pamela~laposte~net> 2016
 Translations in en-US (english/United-States) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2021
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2022
 - Brian Legrand <mrbibi1987~gmail~com> 2012
 - Pascale Scellier <scellier.pascale~orange~fr> 2016
 Translations in es-ES (español/España) by:
@@ -47,7 +44,7 @@ Translations in es-ES (español/España) by:
 - Hélène Vergine <vergineh~gmail~com> 2017, 2020
 - Guillaume Genetet <genetet.incorporated~gmail~com> 2018 https://fr.tipeee.com/william-broome
 Translations in fr-FR (français/France) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2021
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2022
 - Pascale Scellier <scellier.pascale~orange~fr> 2016
 Translations in it-IT (italiano/Italia) by:
 - Maria Grasso <mgrasso~outlook~fr> 2016-2017

@@ -2,7 +2,7 @@
  * Created D/15/12/2013
  * Updated D/05/09/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -36,6 +36,7 @@ var apijsRedmine = new (function () {
 		d.de[254] = "Es tut uns leid, diese Datei existiert nicht mehr, bitte [a §]aktualisieren Sie die Seite[/a].";
 		d.de[255] = "Eine Beschreibung bearbeiten";
 		d.de[256] = "Bitte geben Sie weiter unten die neue Beschreibung für diese Datei an. Um die Beschreibung zu löschen lassen Sie das Feld leer.";
+		d.el[252] = "Σφάλμα";
 		d.en[250] = "Remove file";
 		d.en[251] = "Are you sure you want to remove this file?[br]Be careful, you can't cancel this operation.";
 		d.en[252] = "Error";
@@ -66,6 +67,7 @@ var apijsRedmine = new (function () {
 		d.fr[258] = "Saisissez ci-dessous le nouveau nom pour ce fichier.";
 		d.fr[259] = "Vider le cache";
 		d.fr[260] = "Êtes-vous certain(e) de vouloir vider le cache ?[br]Attention, cette opération n'est pas annulable.";
+		d.hu[252] = "Hiba";
 		d.it[250] = "Cancella i file";
 		d.it[251] = "Sei sicura di voler eliminare il file?[br]Attenzione, questa operazione non può essere annullata.";
 		d.it[252] = "Errore";
@@ -86,6 +88,7 @@ var apijsRedmine = new (function () {
 		d.pt[254] = "Lamento, o ficheiro já não existe, por favor [a §]atualize a página[/a].";
 		d.pt[255] = "Modificar uma descrição";
 		d.pt[256] = "Digite abaixo a nova descrição para este ficheiro. Para suprimir a descrição, deixe o campo vazio.";
+		d.ro[252] = "Eroare";
 		d.ru[250] = "Удалить файл";
 		d.ru[251] = "Вы уверены, что хотите удалить этот файл?[br]Осторожно, вы не сможете отменить эту операцию.";
 		d.ru[252] = "Ошибка";

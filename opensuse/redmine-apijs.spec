@@ -1,7 +1,7 @@
 %define basedir  /srv/www/vhosts/redmine/
 %define plugin_name redmine_apijs
 Name:          redmine-apijs
-Version:       6.8.1
+Version:       6.8.2
 Release:       0
 Summary:       Plugin for Redmine to display a gallery from attachments
 Summary(fr):   Extension pour Redmine pour afficher une galerie à partir des pièces jointes
@@ -66,6 +66,9 @@ chmod +x           %{buildroot}%{basedir}/plugins/%{plugin_name}/lib/*.py
 
 
 %changelog
+* Sat Jan 01 2022 Fabrice Creuzot <code@luigifab.fr> - 6.8.2-1
+- New upstream release
+
 * Sun Oct 10 2021 Fabrice Creuzot <code@luigifab.fr> - 6.8.1-1
 - New upstream release
 
