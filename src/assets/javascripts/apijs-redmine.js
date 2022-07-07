@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated D/05/09/2021
+ * Updated M/22/03/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
@@ -98,6 +98,7 @@ var apijsRedmine = new (function () {
 		d.ru[256] = "Ниже введите новое описание файла. Оставьте поле пустым, чтобы удалить описание.";
 		d.sk[252] = "Chyba";
 		d.tr[252] = "Hata";
+		d.tr[259] = "Önbelleği temizle";
 		d.uk[252] = "Помилка";
 		d.zh[252] = "错误信息";
 		// auto end
@@ -223,25 +224,25 @@ var apijsRedmine = new (function () {
 							subelem = elem.querySelector('input');
 							if (subelem) {
 								text = subelem.getAttribute('value');
-								subelem.setAttribute('value', name + text.substr(text.indexOf('|')));
+								subelem.setAttribute('value', name + text.substring(text.indexOf('|')));
 							}
 
 							subelem = elem.querySelector('a');
 							if (subelem) {
 								text = subelem.getAttribute('href');
-								subelem.setAttribute('href', text.substr(0, text.lastIndexOf('/') + 1) + name);
+								subelem.setAttribute('href', text.substring(0, text.lastIndexOf('/') + 1) + name);
 							}
 
 							subelem = elem.querySelector('button.download');
 							if (subelem) {
 								text = subelem.getAttribute('onclick');
-								subelem.setAttribute('onclick', text.substr(0, text.lastIndexOf('/') + 1) + name + "';");
+								subelem.setAttribute('onclick', text.substring(0, text.lastIndexOf('/') + 1) + name + "';");
 							}
 
 							subelem = elem.querySelector('button.show');
 							if (subelem) {
 								text = subelem.getAttribute('onclick');
-								subelem.setAttribute('onclick', text.substr(0, text.lastIndexOf('/') + 1) + name + "';");
+								subelem.setAttribute('onclick', text.substring(0, text.lastIndexOf('/') + 1) + name + "';");
 							}
 
 							apijs.dialog.actionClose();

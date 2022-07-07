@@ -14,8 +14,8 @@ License: SIL-1.1
 
 Files: */lib/useragentparser.rb
 Copyright:
- 2013-2021 Jesse G. Donat <donatj@gmail.com>
- 2019-2021 Fabrice Creuzot (luigifab) <code@luigifab.fr>
+ 2013-2022 Jesse G. Donat <donatj@gmail.com>
+ 2019-2022 Fabrice Creuzot (luigifab) <code@luigifab.fr>
 License: Expat
 
 License: GPL-2+

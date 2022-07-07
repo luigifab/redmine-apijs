@@ -3,14 +3,14 @@
 
 
 cd "$(dirname "$0")"
-version="6.8.2"
+version="6.9.0"
 
 
-rm -rf builder/ ~/rpmbuild/
+rm -rf builder/
 mkdir -p builder ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 
 # copy to a tmp directory
-if [ true ]; then
+if [ ! true ]; then
 	chmod 644 redmine-apijs.spec
 	spectool -g -R redmine-apijs.spec
 else
@@ -41,8 +41,8 @@ rpm --checksig builder/*.rpm
 echo "==========================="
 rpmlint redmine-apijs.spec builder/*.rpm
 echo "==========================="
-ls -dltrh builder/*.rpm
+ls -dlth "$PWD/"builder/*.rpm
 echo "==========================="
 
 # cleanup
-rm -rf builder/*/ ~/rpmbuild/
+rm -rf builder/*/

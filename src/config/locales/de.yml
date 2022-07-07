@@ -1,6 +1,6 @@
 de:
   apijs_check_extension: "The file extension can not be changed."
-  apijs_clearcache_done: "Der Bilder-Cache wurde gesäubert."
+  apijs_clearcache_done: "Bildcache wurde geleert."
   apijs_browser_warning: "<strong>Achtung:</strong> Ihr Browser <strong>%{n} %{v}</strong> ist veraltet. Bitte <a %{l}>laden Sie eine neue Version Ihres Browser runter</a>."
   apijs_title_album: "Fotogalerie"
   apijs_title_download: "Download (%{v})"

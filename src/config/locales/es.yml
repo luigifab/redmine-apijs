@@ -1,6 +1,6 @@
 es:
   apijs_check_extension: "The file extension can not be changed."
-  apijs_clearcache_done: "Se borró la memoria caché de la imagen."
+  apijs_clearcache_done: "Se ha limpiado el caché de la imagen."
   apijs_browser_warning: "<strong>Atención:</strong> su navegador <strong>%{n} %{v}</strong> es obsoleto, por favor <a %{l}>actualice su navegador</a>."
   apijs_title_album: "Galería de fotográfias"
   apijs_title_download: "Descargar (%{v})"

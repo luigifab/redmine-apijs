@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated V/15/10/2021
+# Updated M/05/07/2022
 #
 # Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -41,13 +41,13 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Gestion de l'image miniature (photo ou vidéo) ################################# #
-  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de la miniature
-  # » Utilise un script python pour générer l'image thumb (taille 200x150)
-  # » Utilise un script python pour générer l'image srcset (taille 400x300)
-  # » Utilise un script python pour générer l'image show (taille 1200x900)
-  # » Enregistre les commandes et leurs résultats dans le log
-  # » Téléchargement d'une image avec mise en cache (inline/stale)
+  ## Gestion de l'image miniature (photo ou vidéo)
+  # Vérifie si l'utilisateur a accès au projet avant l'envoi de la miniature
+  # Utilise un script python pour générer l'image thumb (taille 200x150)
+  # Utilise un script python pour générer l'image srcset (taille 400x300)
+  # Utilise un script python pour générer l'image show (taille 1200x900)
+  # Enregistre les commandes et leurs résultats dans le log
+  # Téléchargement d'une image avec mise en cache (inline/stale)
   def thumb
 
     source    = @attachment.diskfile
@@ -101,7 +101,7 @@ class ApijsController < AttachmentsController
       end
     end
 
-    # vérification d'accès
+    # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
       deny_access
     # envoie de l'image avec mise en cache
@@ -112,13 +112,13 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Gestion de l'image miniature 2x (photo ou vidéo) ############################## #
-  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
-  # » Utilise un script python pour générer l'image srcset (taille 400x300)
-  # » Utilise un script python pour générer l'image thumb (taille 200x150)
-  # » Utilise un script python pour générer l'image show (taille 1200x900)
-  # » Enregistre les commandes et leurs résultats dans le log
-  # » Téléchargement d'une image avec mise en cache (inline/stale)
+  ## Gestion de l'image miniature 2x (photo ou vidéo)
+  # Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
+  # Utilise un script python pour générer l'image srcset (taille 400x300)
+  # Utilise un script python pour générer l'image thumb (taille 200x150)
+  # Utilise un script python pour générer l'image show (taille 1200x900)
+  # Enregistre les commandes et leurs résultats dans le log
+  # Téléchargement d'une image avec mise en cache (inline/stale)
   def srcset
 
     source     = @attachment.diskfile
@@ -172,7 +172,7 @@ class ApijsController < AttachmentsController
       end
     end
 
-    # vérification d'accès
+    # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
       deny_access
     # envoie de l'image avec mise en cache
@@ -183,11 +183,11 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Gestion de l'image aperçu (photo) ############################################# #
-  # » Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
-  # » Utilise un script python pour générer l'image show (taille 1200x900)
-  # » Enregistre les commandes et leurs résultats dans le log
-  # » Téléchargement d'une image avec mise en cache (inline/stale)
+  ## Gestion de l'image aperçu (photo)
+  # Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
+  # Utilise un script python pour générer l'image show (taille 1200x900)
+  # Enregistre les commandes et leurs résultats dans le log
+  # Téléchargement d'une image avec mise en cache (inline/stale)
   def show
 
     source   = @attachment.diskfile
@@ -199,7 +199,7 @@ class ApijsController < AttachmentsController
       logger.info 'APIJS::ApijsController#show: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
     end
 
-    # vérification d'accès
+    # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
       deny_access
     # envoie de l'image avec mise en cache
@@ -210,13 +210,13 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Gestion du téléchargement des fichiers ######################################## #
-  # » Vérifie si l'utilisateur a accès au projet avant
-  # » Téléchargement d'une vidéo en 206 Partial Content (inline)
-  # » Téléchargement d'une image avec mise en cache (inline/stale) ou téléchargement d'un fichier (attachment)
+  ## Gestion du téléchargement des fichiers
+  # Vérifie si l'utilisateur a accès au projet avant
+  # Téléchargement d'une vidéo en 206 Partial Content (inline)
+  # Téléchargement d'une image avec mise en cache (inline/stale) ou téléchargement d'un fichier (attachment)
   def download
 
-    # vérification d'accès
+    # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
       deny_access
     # télachargement d'une vidéo en 206 Partial Content (https://stackoverflow.com/a/7604330 + https://stackoverflow.com/a/16593030)
@@ -274,16 +274,16 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Modification d'une description ou du nom du fichier ########################### #
-  # » Vérifie si l'utilisateur a accès au projet et à la modification
-  # » Renvoie l'id du fichier suivi de la description en cas de modification réussie
-  # » Supprime certains caractères de la description avant son enregistrement
+  ## Modification d'une description ou du nom du fichier
+  # Vérifie si l'utilisateur a accès au projet et à la modification
+  # Renvoie l'id du fichier suivi de la description en cas de modification réussie
+  # Supprime certains caractères de la description avant son enregistrement
   def editdesc
 
     @attachment.description = params[:desc].gsub(/["\\\x0]/, '')
     @attachment.description.strip!
 
-    # vérification d'accès
+    # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project) || !User.current.allowed_to?(:edit_attachments, @project)
       deny_access
     # modification
@@ -316,7 +316,7 @@ class ApijsController < AttachmentsController
     @attachment.filename = name
     @attachment.filename.strip!
 
-    # vérification d'accès
+    # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project) || !User.current.allowed_to?(:rename_attachments, @project)
       deny_access
     # modification
@@ -333,12 +333,12 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Suppression d'un fichier ###################################################### #
-  # » Vérifie si l'utilisateur a accès au projet et à la suppresion
-  # » Renvoie l'id du fichier suivi en cas de suppression réussie
+  ## Suppression d'un fichier
+  # Vérifie si l'utilisateur a accès au projet et à la suppresion
+  # Renvoie l'id du fichier suivi en cas de suppression réussie
   def delete
 
-    # vérification d'accès
+    # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project) || !User.current.allowed_to?(:delete_attachments, @project)
       deny_access
     # suppression
@@ -358,11 +358,11 @@ class ApijsController < AttachmentsController
   end
 
 
-  # #### Vide le cache ################################################################# #
-  # » Si l'utilisateur est admin
+  ## Vide le cache
+  # Si l'utilisateur est admin
   def clearcache
 
-    # vérification d'accès
+    # acl
     if !User.current.admin?
       deny_access
     # suppression

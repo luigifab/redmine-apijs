@@ -1,7 +1,7 @@
 tr:
   apijs_check_extension: "Dosya uzantısı değiştirilemez."
-  apijs_clearcache_done: "Görüntü önbelleği temizlendi."
-  apijs_browser_warning: "<strong>UYARI:</strong> tarayıcınız <strong>%{n} %{v}</strong> eski, lütfen <a %{l}>güncelleyiniz</a>."
+  apijs_clearcache_done: "Resim ön belleği temizlendi."
+  apijs_browser_warning: "<strong>UYARI :</strong> tarayıcınız <strong>%{n} %{v}</strong> eski, lütfen <a %{l}>güncelleyiniz</a>."
   apijs_title_album: "Fotoğraf Galerisi"
   apijs_title_download: "İndir (%{v})"
   apijs_title_files: "Eklenti listesi"

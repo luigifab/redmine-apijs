@@ -1,6 +1,6 @@
 uk:
   apijs_check_extension: "The file extension can not be changed."
-  apijs_clearcache_done: "The image cache was cleaned."
+  apijs_clearcache_done: "Кеш зображення було очищено."
   apijs_browser_warning: "<strong>Warning:</strong> your browser <strong>%{n} %{v}</strong> is outdated, please <a %{l}>upgrade your browser</a>."
   apijs_title_album: "Photo gallery"
   apijs_title_download: "Завантажити (%{v})"

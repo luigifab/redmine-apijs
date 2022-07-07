@@ -1,6 +1,6 @@
 <%
 # Created J/12/12/2013
-# Updated D/17/01/2021
+# Updated M/05/07/2022
 #
 # Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -54,6 +54,8 @@ if File.directory?(File.join(APIJS_ROOT, 'show'))
   size_show = number_to_human_size(size * 1024) if size_show =~ /K/i
 end
 %>
+
+<input type="text" style="position:absolute; width:5px; opacity:0.01;" onfocus="document.querySelector('.apijs select').focus(); this.remove();" />
 
 <p style="margin:0.5em 1em; padding:0.5em;">
 	Luigifab/Apijs <%= Redmine::Plugin.find(:redmine_apijs).version %>
@@ -218,10 +220,10 @@ end
 	<p dir="ltr">
 		<label>python / python-pil / python-scour</label>
 		<span class="cmd"><%= raw Attachment.new.getProgramVersions(
-			'(jpg jpeg gif png..., <a href="https://pillow.readthedocs.io/en/latest/">docs</a>)',
+			'(jpg jpeg gif png webp..., <a href="https://pillow.readthedocs.io/en/latest/">docs</a>)',
 			'(svg, <a href="https://github.com/scour-project/scour/wiki/Documentation">docs</a>)') %></span>
 		<em class="info">python3 .../redmine_apijs/lib/image.py .../xyz.jpg .../xyz.jpg 200 150 90 2&gt;&amp;1</em>
-		<em class="info">python3 .../redmine_apijs/lib/video.py .../xyz.ogv .../xyz.jpg 200 150 90 2&gt;&amp;1</em>
+		<em class="info">python3 .../redmine_apijs/lib/image.py .../xyz.ogv .../xyz.jpg 200 150 90 2&gt;&amp;1</em>
 	</p>
 	<p dir="ltr">
 		<label>libimage-exiftool-perl</label>

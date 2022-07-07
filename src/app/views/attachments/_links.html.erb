@@ -1,6 +1,6 @@
 <%
 # Created L/21/05/2012
-# Updated J/20/08/2020
+# Updated J/26/05/2022
 #
 # Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -55,8 +55,8 @@ end
 					<dl id="attachmentId<%= attachment.id %>">
 						<dt>
 							<a href="<%= (attachment.isVideo?) ? attachment.getDownloadUrl + '?stream=1' : attachment.getShowUrl %>" type="<%= attachment.content_type %>" onclick="return false" id="slideshow.<%= @slideshowi %>.<%= slideshowj %>">
-								<img src="<%= attachment.getThumbUrl %>" srcset="<%= attachment.getSrcsetUrl %> 2x" width="200" height="150" alt=""/>
-								<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>"/>
+								<img src="<%= attachment.getThumbUrl %>" srcset="<%= attachment.getSrcsetUrl %> 2x" width="200" height="150" alt="" />
+								<input type="hidden" value="<%= (setting_show_filename) ? attachment.filename : 'false' %>|<%= (setting_show_exifdate) ? format_time(attachment.created_on) : 'false' %>|<%= h(description) %>" />
 							</a>
 						</dt>
 						<dd class="<%= (setting_show_album_infos) ? 'big' : 'one' %>">

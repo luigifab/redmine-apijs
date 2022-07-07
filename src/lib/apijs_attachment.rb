@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated J/18/02/2021
+# Updated J/21/04/2022
 #
 # Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -182,7 +182,7 @@ module ApijsAttachment
       cmd = getPython
       cmd = 'notfound' if not cmd or cmd.length == 0
 
-      script = File.join(File.dirname(__FILE__), (self.isPhoto? ? 'image.py' : 'video.py'))
+      script = File.join(File.dirname(__FILE__), 'image.py')
       return cmd + ' ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' ' +
         width.to_s + ' ' + height.to_s + (fixed ? ' 90 fixed' : ' 90') + ' 2>&1'
     end
@@ -232,7 +232,7 @@ module ApijsAttachment
         logger.info 'APIJS::ApijsAttachment#update_date: ' + cmd + ' (' + result + ')'
 
         # 2014:06:14 16:43:53 (utilise le fuseau horaire de l'utilisateur)
-        if result =~ /^[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}.[0-9]{2}.[0-9]{2}/
+        if result =~ /^\d{4}.\d{2}.\d{2} \d{2}.\d{2}.\d{2}/
 
           date = result[0..9].gsub(':', '-') + ' ' + result[11..18]
           zone = User.current.time_zone

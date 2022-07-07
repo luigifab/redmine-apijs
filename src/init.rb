@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created L/21/05/2012
-# Updated V/22/10/2021
+# Updated M/05/07/2022
 #
 # Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -15,18 +15,38 @@
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
 
-require 'redmine'
-require 'apijs_const'
-require 'apijs_files'
-require 'apijs_attachment'
-require 'useragentparser'
+if Rails::VERSION::MAJOR < 6 or ENV['redmine_apijs_gem']
+  require 'redmine'
+  require 'apijs_files'
+  require 'apijs_attachment'
+  require 'useragentparser'
+end
+
+if Redmine::VERSION::MAJOR >= 3
+  if defined? Redmine.root
+    ALL_FILES  = Redmine::Configuration['attachments_storage_path'] || File.join(Redmine.root, 'files')
+    APIJS_ROOT = File.join(Redmine.root, 'tmp', 'apijs')
+  else
+    ALL_FILES  = Redmine::Configuration['attachments_storage_path'] || File.join(Rails.root, 'files')
+    APIJS_ROOT = File.join(Rails.root, 'tmp', 'apijs')
+  end
+elsif ENV['RAILS_TMP']
+  ALL_FILES  = Redmine::Configuration['attachments_storage_path'] || File.join(ENV['RAILS_VAR'], 'files')
+  APIJS_ROOT = File.join(ENV['RAILS_TMP'], 'tmp', 'apijs')
+elsif ENV['RAILS_CACHE']
+  ALL_FILES  = Redmine::Configuration['attachments_storage_path'] || File.join(ENV['RAILS_VAR'], 'files')
+  APIJS_ROOT = File.join(ENV['RAILS_CACHE'], 'tmp', 'apijs')
+else
+  ALL_FILES  = Redmine::Configuration['attachments_storage_path'] || File.join(Rails.root, 'files')
+  APIJS_ROOT = File.join(Rails.root, 'tmp', 'apijs')
+end
 
 Redmine::Plugin.register :redmine_apijs do
 
   name 'Redmine Apijs plugin'
   author 'Fabrice Creuzot'
   description 'Integrate the apijs JavaScript library into Redmine. Provides a gallery for image and video attachments.'
-  version '6.8.2'
+  version '6.9.0'
   url 'https://www.luigifab.fr/redmine/apijs'
   author_url 'https://www.luigifab.fr/'
 

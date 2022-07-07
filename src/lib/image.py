@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated M/11/05/2021
+# Updated M/05/07/2022
 #
 # Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # Copyright 2020-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -17,25 +17,31 @@
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
 
-import os
-import sys
+import os, sys
 
 try:
 	filein  = str(sys.argv[1])
 	fileout = str(sys.argv[2])
 	size    = (int(sys.argv[3]), int(sys.argv[4]))
-	quality = int(sys.argv[5])
-	fixed   = len(sys.argv) == 7 and sys.argv[6] == 'fixed'
+	quality = int(sys.argv[5]) if len(sys.argv) >= 6 else 0
+	fixed   = len(sys.argv) >= 7 and sys.argv[6] == 'fixed'
 except:
 	print("Usage: image.py source destination width height [quality=0=auto] [fixed]")
-	print("source: all supported format by python-pil (including animated gif/png/webp) or svg")
-	print("destination: jpg,png,gif,webp or svg")
+	print("source: all supported format by python-pil (including animated gif/png/webp),")
+	print("     or all supported format by ffmpegthumbnailer,")
+	print("     or svg")
+	print("destination: jpg,gif,png,webp or svg")
 	exit(-1)
 
+# https://stackoverflow.com/a/273227/2980105
 if not os.path.exists(os.path.dirname(fileout)):
-	os.makedirs(os.path.dirname(fileout))
+	os.makedirs(os.path.dirname(fileout), exist_ok=True)
 
+same    = filein == fileout
 fileout = fileout + '.save'
+if os.path.isfile(fileout):
+	exit(0)
+os.close(os.open(fileout, os.O_CREAT))
 
 
 # tools
@@ -55,10 +61,13 @@ def calcSize(source, size):
 
 def createThumb(source, size, fixed, new=False):
 
+	# https://pillow.readthedocs.io/en/latest/releasenotes/7.0.0.html?highlight=thumbnail (reducing_gap)
 	# https://pillow.readthedocs.io/en/latest/reference/Image.html#PIL.Image.Image.thumbnail
 	# https://pillow.readthedocs.io/en/latest/handbook/concepts.html#filters-comparison-table
 	# https://pillow.readthedocs.io/en/latest/reference/Image.html#PIL.Image.Image.paste
-	if hasattr(Image, '__version__') and versionTuple(Image.__version__) > (7,0,0):
+	if hasattr(Image, '__version__') and versionTuple(Image.__version__) >= (9,1,0):
+		source.thumbnail(size, Image.Resampling.LANCZOS, 4)
+	elif hasattr(Image, '__version__') and versionTuple(Image.__version__) >= (7,0,0):
 		source.thumbnail(size, Image.LANCZOS, 4)
 	else:
 		source.thumbnail(size, Image.ANTIALIAS)
@@ -80,6 +89,31 @@ def createThumb(source, size, fixed, new=False):
 
 	return dest
 
+def videoToImage(filein, fileout, size):
+
+	os.system('ffmpegthumbnailer -i ' + filein + ' -o ' + fileout + ' -q 10 -s ' + str(size[0]))
+	if os.path.isfile(fileout) and os.path.getsize(fileout) > 0:
+		img = Image.open(fileout)
+	else:
+		img = Image.new('RGBA', size, (0,0,0,0))
+
+	return img
+
+def hasTransparency(img):
+
+	# https://stackoverflow.com/a/58567453/2980105
+	if img.mode == 'P':
+		transparent = img.info.get('transparency', -1)
+		for _, index in img.getcolors():
+			if index == transparent:
+				return True
+	elif img.mode == 'RGBA':
+		extrema = img.getextrema()
+		if extrema[3][0] < 255:
+			return True
+
+	return False
+
 
 # Animated resizing
 # based on https://stackoverflow.com/a/41827681/2980105
@@ -94,8 +128,12 @@ def resizeAnimatedGif(source, size, fixed):
 		while True:
 			# If the GIF uses local colour tables, each frame will have its own palette.
 			# If not, we need to apply the global palette to the new frame.
-			if not source.getpalette():
-				source.putpalette(colors)
+			# Ignore ValueError (illegal image mode)
+			try:
+				if not source.getpalette():
+					source.putpalette(colors)
+			except ValueError:
+				pass
 
 			frame = Image.new('RGBA', source.size, (255,255,255,1))
 			frame.paste(source, (0,0), source.convert('RGBA'))
@@ -211,6 +249,14 @@ def saveJpg(dest, fileout, quality):
 	elif quality > 95:
 		quality = 95
 
+	# https://github.com/wanadev/pyguetzli
+	# warning: extremely slow performance (https://github.com/google/guetzli/issues/50)
+	#try:
+	#	import pyguetzli
+	#	filefinal = pyguetzli.process_pil_image(dest.convert('RGB'), quality)
+	#	output = open(fileout, "wb")
+	#	output.write(filefinal)
+	#except ImportError:
 	dest.convert('RGB').save(fileout, 'JPEG', optimize=True, subsampling=0, quality=quality)
 
 
@@ -227,21 +273,75 @@ if ".svg" in fileout:
 # python-pil
 else:
 	from PIL import Image, ImageSequence
-	source = Image.open(filein)
-	size   = calcSize(source, size)
 
-	if   source.format == 'GIF'  and ".gif"  in fileout:
+	if ".ogv" in filein or ".webm" in filein or ".mp4" in filein:
+		# from video
+		source = videoToImage(filein, fileout, size)
+		imgext = 'VIDEO'
+	else:
+		# from image
+		source = Image.open(filein)
+		imgext = source.format
+		size   = calcSize(source, size)
+
+	# filein = fileout = /tmp/phpA5kbkc  when replace tmp image with re-sampled copy to exclude images with malicious data
+	if   imgext == 'GIF'  and (same or ".gif"  in fileout):
 		dest = resizeAnimatedGif(source, size, fixed)
 		saveGif(dest, fileout, quality)
-	elif source.format == 'PNG'  and ".png"  in fileout:
+	elif imgext == 'PNG'  and (same or ".png"  in fileout):
 		dest = resizeAnimatedPng(source, size, fixed)
 		savePng(dest, fileout, quality)
-	elif source.format == 'WEBP' and ".webp" in fileout:
-		dest = resizeAnimatedWeb(source, size, fixed)
+	elif imgext == 'WEBP' and (same or ".webp" in fileout):
+		dest = resizeAnimatedWebp(source, size, fixed)
 		saveWebp(dest, fileout, quality)
 	else:
-		dest = createThumb(source, size, fixed, True)
-		saveJpg(dest, fileout, quality)
+		if imgext == 'VIDEO':
+			# from video
+			offset_x = max(int((size[0] - source.size[0]) / 2), 0)
+			offset_y = max(int((size[1] - source.size[1]) / 2), 0)
+			# Color detection
+			# white background black player OR black background white player
+			pixels = source.getcolors(size[0] * size[1])
+			pixels = sorted(pixels, key=lambda t: t[0])
+			if (pixels[-1][1] > (127,127,127)):
+				dest = Image.new('RGBA', size, (255,255,255,0))
+				dest.paste(source, (offset_x, offset_y))
+				# https://stackoverflow.com/a/59082116 (replace only last lib)
+				# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib » /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
+				path = os.path.dirname(__file__)
+				path = ('/assets/images/apijs/player-black-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
+				play = Image.open(path)
+				dest.paste(play, (0, 0), play)
+			else:
+				dest = Image.new('RGBA', size, (0,0,0,0))
+				dest.paste(source, (offset_x, offset_y))
+				# https://stackoverflow.com/a/59082116 (replace only last lib)
+				# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib » /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
+				path = os.path.dirname(__file__)
+				path = ('/assets/images/apijs/player-white-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
+				play = Image.open(path)
+				dest.paste(play, (0, 0), play)
+		else:
+			# from image
+			# Auto rotate image
+			# https://github.com/python-pillow/Pillow/commit/1ba774ae7faf93355b85c7b005fbaf0b0e66d426
+			if hasattr(Image, '__version__') and versionTuple(Image.__version__) >= (6,0,0) and source.getexif().get(0x0112):
+				from PIL import ImageOps
+				source = ImageOps.exif_transpose(source)
+			# create thumbnail
+			dest = createThumb(source, size, fixed, True)
+
+		if hasTransparency(source) is False:
+			dest = dest.convert('RGB')
+
+		if ".gif"    in fileout or (same and imgext == 'GIF'):
+			saveGif(dest, fileout, quality)
+		elif ".png"  in fileout or (same and imgext == 'PNG'):
+			savePng(dest, fileout, quality)
+		elif ".webp" in fileout or (same and imgext == 'WEBP'):
+			saveWebp(dest, fileout, quality)
+		else:
+			saveJpg(dest, fileout, quality)
 
 if os.path.isfile(fileout):
 	os.rename(fileout, fileout.replace('.save', ''))
