@@ -3,7 +3,7 @@
 
 
 cd "$(dirname "$0")"
-version="6.9.0"
+version="6.9.1"
 
 
 rm -rf builder/
@@ -31,7 +31,7 @@ fi
 
 
 # create packages for Debian and Ubuntu
-for serie in experimental kinetic jammy impish focal bionic xenial trusty; do
+for serie in experimental kinetic jammy focal bionic xenial trusty; do
 
 	if [ $serie = "experimental" ]; then
 		# for Ubuntu

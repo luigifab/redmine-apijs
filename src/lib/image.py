@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated M/05/07/2022
+# Updated S/30/07/2022
 #
 # Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # Copyright 2020-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -26,7 +26,7 @@ try:
 	quality = int(sys.argv[5]) if len(sys.argv) >= 6 else 0
 	fixed   = len(sys.argv) >= 7 and sys.argv[6] == 'fixed'
 except:
-	print("Usage: image.py source destination width height [quality=0=auto] [fixed]")
+	print("Usage: image.py source_file destination_file width_px height_px [quality=0:auto..100] [fixed]")
 	print("source: all supported format by python-pil (including animated gif/png/webp),")
 	print("     or all supported format by ffmpegthumbnailer,")
 	print("     or svg")
@@ -288,9 +288,15 @@ else:
 	if   imgext == 'GIF'  and (same or ".gif"  in fileout):
 		dest = resizeAnimatedGif(source, size, fixed)
 		saveGif(dest, fileout, quality)
+	elif imgext == 'GIF'  and (same or ".webp" in fileout):
+		dest = resizeAnimatedGif(source, size, fixed)
+		saveWebp(dest, fileout, quality)
 	elif imgext == 'PNG'  and (same or ".png"  in fileout):
 		dest = resizeAnimatedPng(source, size, fixed)
 		savePng(dest, fileout, quality)
+	elif imgext == 'PNG'  and (same or ".webp" in fileout):
+		dest = resizeAnimatedPng(source, size, fixed)
+		saveWebp(dest, fileout, quality)
 	elif imgext == 'WEBP' and (same or ".webp" in fileout):
 		dest = resizeAnimatedWebp(source, size, fixed)
 		saveWebp(dest, fileout, quality)
