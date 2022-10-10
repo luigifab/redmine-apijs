@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated J/21/04/2022
+# Updated V/02/09/2022
 #
 # Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://www.luigifab.fr/redmine/apijs
@@ -153,6 +153,8 @@ module ApijsAttachment
     # commande python
     def getPython
 
+      return @cmd if defined? @cmd
+
       if Redmine::Platform.mswin?
         cmd = `python.exe --version`
         if $? == 0
@@ -174,6 +176,7 @@ module ApijsAttachment
         end
       end
 
+      @cmd = cmd
       return cmd
     end
 

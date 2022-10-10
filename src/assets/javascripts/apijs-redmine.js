@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated M/22/03/2022
+ * Updated J/11/08/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/redmine/apijs
@@ -219,7 +219,7 @@ var apijsRedmine = new (function () {
 							elem = document.getElementById(id);
 							elem.querySelector('.filename').textContent = name;
 
-							// urls sur a/href et input/value et button.download/onclick et button.show/onclick
+							// URLs sur a/href et input/value et button.download/onclick et button.show/onclick
 							// pas de maj de src et srcset sur img pour éviter un appel réseau inutile
 							subelem = elem.querySelector('input');
 							if (subelem) {

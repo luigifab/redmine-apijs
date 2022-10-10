@@ -4,7 +4,7 @@
 # https://github.com/donatj/PhpUserAgent
 #
 # Copyright 2019-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
-# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.6.1-fork1)
+# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.7.0-fork1)
 #
 # Parses a user agent string into its important parts
 # Licensed under the MIT License
@@ -26,7 +26,7 @@ class Useragentparser
 
 		if (parentMatches = userAgent.match(/\((.*?)\)/m))
 			result = parentMatches[1].scan(
-				/(?<platform>BB\d+;|Android|Adr|Symbian|Sailfish|CrOS|Tizen|iPhone|iPad|iPod|Linux|(Open|Net|Free)BSD|Macintosh|Windows(\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(New\ )?Nintendo\ (WiiU?|3?DS|Switch)|Xbox(\ One)?) (?:\ [^;]*)? (?:;|$)/imx
+				/(?<platform>BB\d+;|Android|Adr|Symbian|Sailfish|CrOS|Tizen|iPhone|iPad|iPod|Linux|(?:Open|Net|Free)BSD|Macintosh|Windows(?:\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(?:New\ )?Nintendo\ (?:WiiU?|3?DS|Switch)|Xbox(?:\ One)?) (?:\ [^;]*)? (?:;|$)/imx
 			).map(&:join)
 			result.uniq!
 			if result.length > 1
@@ -46,10 +46,18 @@ class Useragentparser
 			platform = 'Chrome OS'
 		elsif platform == 'Adr'
 			platform = 'Android'
+		elsif !platform
+			result = userAgent.to_enum(:scan,
+				/(?<platform>Android)[:\/ ]/ix
+			).map { Regexp.last_match.names.collect{ |x| {x => $~[x]} }.reduce({}, :merge) }
+			 .reduce({}) { |h,pairs| pairs.each {|k,v| (h[k] ||= []) << v}; h }
+			if result.length > 0
+				platform = result['platform'].shift
+			end
 		end
 
 		result = userAgent.to_enum(:scan, # ["browser" => ["Firefox"...], "version" => ["45.0"...]]
-			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+)\)?;?(?:[:\/ ](?<version>[\dA-Z.]+)|\/[A-Z]*)/ix
+			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (?:\d|Vita)+)\)?;?(?:[:\/ ](?<version>[\dA-Z.]+)|\/[A-Z]*)/ix
 		).map { Regexp.last_match.names.collect{ |x| {x => $~[x]} }.reduce({}, :merge) }
 		 .reduce({}) { |h,pairs| pairs.each {|k,v| (h[k] ||= []) << v}; h }
 

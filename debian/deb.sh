@@ -3,14 +3,14 @@
 
 
 cd "$(dirname "$0")"
-version="6.9.1"
+version="6.9.2"
 
 
 rm -rf builder/
 mkdir builder
 
 # copy to a tmp directory
-if [ ! true ]; then
+if [ true ]; then
 	cd builder
 	wget https://github.com/luigifab/redmine-apijs/archive/v$version/redmine-apijs-$version.tar.gz
 	tar xzf redmine-apijs-$version.tar.gz
