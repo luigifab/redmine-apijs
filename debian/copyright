@@ -3,7 +3,7 @@ Source: https://github.com/luigifab/redmine-apijs
 Upstream-Contact: Fabrice Creuzot <code@luigifab.fr>
 
 Files: *
-Copyright: 2008-2022 Fabrice Creuzot (luigifab) <code@luigifab.fr>
+Copyright: 2008-2023 Fabrice Creuzot (luigifab) <code@luigifab.fr>
 License: GPL-2+
 
 Files: */assets/fonts/apijs/fontello.woff */assets/fonts/apijs/fontello.woff2
