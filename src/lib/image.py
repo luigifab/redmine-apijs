@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated S/30/07/2022
+# Updated M/23/05/2023
 #
 # Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # Copyright 2020-2023 | Fabrice Creuzot <fabrice~cellublue~com>
-# https://github.com/luigifab/openmage-apijs
+# https://github.com/luigifab/redmine-apijs https://github.com/luigifab/openmage-apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -26,7 +26,7 @@ try:
 	quality = int(sys.argv[5]) if len(sys.argv) >= 6 else 0
 	fixed   = len(sys.argv) >= 7 and sys.argv[6] == 'fixed'
 except:
-	print("Usage: image.py source_file destination_file width_px height_px [quality=0:auto..100] [fixed]")
+	print("Usage: image.py source_file destination_file width_px height_px [quality=0:auto..100 or 0:auto..9 for png] [fixed]")
 	print("source: all supported format by python-pil (including animated gif/png/webp),")
 	print("     or all supported format by ffmpegthumbnailer,")
 	print("     or svg")
@@ -61,6 +61,7 @@ def calcSize(source, size):
 
 def createThumb(source, size, fixed, new=False):
 
+	# https://pillow.readthedocs.io/en/latest/releasenotes/9.1.0.html
 	# https://pillow.readthedocs.io/en/latest/releasenotes/7.0.0.html?highlight=thumbnail (reducing_gap)
 	# https://pillow.readthedocs.io/en/latest/reference/Image.html#PIL.Image.Image.thumbnail
 	# https://pillow.readthedocs.io/en/latest/handbook/concepts.html#filters-comparison-table
@@ -116,7 +117,7 @@ def hasTransparency(img):
 
 
 # Animated resizing
-# based on https://stackoverflow.com/a/41827681/2980105
+# https://stackoverflow.com/a/41827681/2980105
 def resizeAnimatedGif(source, size, fixed):
 
 	# Animated GIF resizing
@@ -193,7 +194,6 @@ def resizeAnimatedWebp(source, size, fixed):
 
 # File saving
 # https://pillow.readthedocs.io/en/latest/handbook/image-file-formats.html
-# todo: source.info.get('loop')=None
 def saveGif(dest, fileout, quality):
 
 	try:
@@ -216,12 +216,12 @@ def savePng(dest, fileout, quality):
 
 	try:
 		if len(dest) == 1:
-			dest[0].save(fileout, 'PNG', optimize=True, compress_level=9)
+			dest[0].save(fileout, 'PNG', optimize=True, compress_level=quality)
 		else:
-			dest[0].save(fileout, 'PNG', optimize=True, compress_level=9, save_all=True, append_images=dest[1:],
+			dest[0].save(fileout, 'PNG', optimize=True, compress_level=quality, save_all=True, append_images=dest[1:],
 				loop=0, duration=source.info.get('duration'))
 	except:
-		dest.save(fileout, 'PNG', optimize=True, compress_level=9)
+		dest.save(fileout, 'PNG', optimize=True, compress_level=quality)
 
 def saveWebp(dest, fileout, quality):
 
