@@ -1,8 +1,8 @@
 /*!
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://github.com/luigifab/apijs - 6.9.4
+ * https://github.com/luigifab/apijs - 6.9.5
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL).
  */
-div.album,div.gallery{font-size:.85em}div.album img,div.gallery img{display:block;margin:auto;overflow:hidden;color:transparent}div.album a:after,div.album a:before,div.gallery a:after,div.gallery a:before{display:none}div.gallery{display:inline-block}div.gallery a{display:inline-block;text-decoration:none}div.gallery ul{margin:0;padding:0;list-style:none}div.gallery li{display:inline-block;margin:0;padding:0;vertical-align:middle}div.gallery li a{display:block;margin:.2em}div.gallery li a.current{border-color:gray}div.album{text-align:center}div.album dl{display:inline-block;margin:.5em .4em;vertical-align:top}div.album dt a{display:block;text-decoration:none}div.album dd{margin:.4em 0 0}#apijsDialog{display:none}
+div.album,div.gallery{font-size:.85em}div.album img,div.gallery img{display:block;margin:auto;overflow:hidden;color:transparent}div.album a:after,div.album a:before,div.gallery a:after,div.gallery a:before{display:none}div.gallery{display:inline-block}div.gallery a{display:inline-block;text-decoration:none}div.gallery ul{margin:0;padding:0;list-style:none}div.gallery li{display:inline-block;margin:0;padding:0;vertical-align:middle}div.gallery li a{display:block;margin:.2em}div.gallery li a.current{border-color:grey}div.album{text-align:center}div.album dl{display:inline-block;margin:.5em .4em;vertical-align:top}div.album dt a{display:block;text-decoration:none}div.album dd{margin:.4em 0 0}#apijsDialog{display:none}
 /*# sourceMappingURL=apijs-print.min.css.map */

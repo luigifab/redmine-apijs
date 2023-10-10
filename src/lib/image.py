@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated M/23/05/2023
+# Updated J/05/10/2023
 #
 # Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # Copyright 2020-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -26,11 +26,11 @@ try:
 	quality = int(sys.argv[5]) if len(sys.argv) >= 6 else 0
 	fixed   = len(sys.argv) >= 7 and sys.argv[6] == 'fixed'
 except:
-	print("Usage: image.py source_file destination_file width_px height_px [quality=0:auto..100 or 0:auto..9 for png] [fixed]")
-	print("source: all supported format by python-pil (including animated gif/png/webp),")
-	print("     or all supported format by ffmpegthumbnailer,")
-	print("     or svg")
-	print("destination: jpg,gif,png,webp or svg")
+	print('Usage: image.py source_file destination_file width_px height_px [quality=0:auto..100 or 0:auto..9 for png] [fixed]')
+	print('source: all supported format by python-pil (including animated gif/png/webp),')
+	print('     or all supported format by ffmpegthumbnailer,')
+	print('     or svg')
+	print('destination: jpg,gif,png,webp or svg')
 	exit(-1)
 
 # https://stackoverflow.com/a/273227/2980105
@@ -254,14 +254,14 @@ def saveJpg(dest, fileout, quality):
 	#try:
 	#	import pyguetzli
 	#	filefinal = pyguetzli.process_pil_image(dest.convert('RGB'), quality)
-	#	output = open(fileout, "wb")
+	#	output = open(fileout, 'wb')
 	#	output.write(filefinal)
 	#except ImportError:
 	dest.convert('RGB').save(fileout, 'JPEG', optimize=True, subsampling=0, quality=quality)
 
 
 # python-scour
-if ".svg" in fileout:
+if '.svg' in fileout:
 	from scour.scour import sanitizeOptions, start
 	options = sanitizeOptions()
 	options.strip_xml_prolog = True # --strip-xml-prolog
@@ -274,7 +274,7 @@ if ".svg" in fileout:
 else:
 	from PIL import Image, ImageSequence
 
-	if ".ogv" in filein or ".webm" in filein or ".mp4" in filein:
+	if '.ogv' in filein or '.webm' in filein or '.mp4' in filein:
 		# from video
 		source = videoToImage(filein, fileout, size)
 		imgext = 'VIDEO'
@@ -285,19 +285,27 @@ else:
 		size   = calcSize(source, size)
 
 	# filein = fileout = /tmp/phpA5kbkc  when replace tmp image with re-sampled copy to exclude images with malicious data
-	if   imgext == 'GIF'  and (same or ".gif"  in fileout):
+	# @todo for animated GIF to animated GIF (or PNG), sadly, result file is not optimized, the idea is to reprocess the file to not replace each frames by another one
+	# for my test image, https://github.com/kohler/gifsicle, don't do it, but https://kraken.io/web-interface do it
+	if   imgext == 'GIF'  and (same or '.gif'  in fileout):
 		dest = resizeAnimatedGif(source, size, fixed)
 		saveGif(dest, fileout, quality)
-	elif imgext == 'GIF'  and (same or ".webp" in fileout):
+	elif imgext == 'GIF'  and (        '.png'  in fileout): # @todo
+		dest = resizeAnimatedGif(source, size, fixed)
+		savePng(dest, fileout, quality)
+	elif imgext == 'GIF'  and (        '.webp' in fileout):
 		dest = resizeAnimatedGif(source, size, fixed)
 		saveWebp(dest, fileout, quality)
-	elif imgext == 'PNG'  and (same or ".png"  in fileout):
+	elif imgext == 'PNG'  and (same or '.png'  in fileout):
 		dest = resizeAnimatedPng(source, size, fixed)
 		savePng(dest, fileout, quality)
-	elif imgext == 'PNG'  and (same or ".webp" in fileout):
+	elif imgext == 'PNG'  and (        '.gif'  in fileout):
+		dest = resizeAnimatedPng(source, size, fixed)
+		saveGif(dest, fileout, quality)
+	elif imgext == 'PNG'  and (        '.webp' in fileout):
 		dest = resizeAnimatedPng(source, size, fixed)
 		saveWebp(dest, fileout, quality)
-	elif imgext == 'WEBP' and (same or ".webp" in fileout):
+	elif imgext == 'WEBP' and (same or '.webp' in fileout):
 		dest = resizeAnimatedWebp(source, size, fixed)
 		saveWebp(dest, fileout, quality)
 	else:
@@ -340,11 +348,11 @@ else:
 		if hasTransparency(source) is False:
 			dest = dest.convert('RGB')
 
-		if ".gif"    in fileout or (same and imgext == 'GIF'):
+		if   '.gif'  in fileout or (same and imgext == 'GIF'):
 			saveGif(dest, fileout, quality)
-		elif ".png"  in fileout or (same and imgext == 'PNG'):
+		elif '.png'  in fileout or (same and imgext == 'PNG'):
 			savePng(dest, fileout, quality)
-		elif ".webp" in fileout or (same and imgext == 'WEBP'):
+		elif '.webp' in fileout or (same and imgext == 'WEBP'):
 			saveWebp(dest, fileout, quality)
 		else:
 			saveJpg(dest, fileout, quality)
