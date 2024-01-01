@@ -1,8 +1,8 @@
 <%
 # Created J/12/12/2013
-# Updated V/05/08/2022
+# Updated V/22/12/2023
 #
-# Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -25,33 +25,49 @@ size_show   = 0
 if File.directory?(ALL_FILES)
   size_files = `du -hs #{ALL_FILES} | cut -f1`.strip!
   size       = size_files.to_f
-  size_files = number_to_human_size(size * 1024 * 1024 * 1024) if size_files =~ /G/
-  size_files = number_to_human_size(size * 1024 * 1024) if size_files =~ /M/
-  size_files = number_to_human_size(size * 1024) if size_files =~ /K/
+  if size_files =~ /G/
+    size_files = number_to_human_size(size * 1024 * 1024 * 1024)
+  elsif size_files =~ /M/
+    size_files = number_to_human_size(size * 1024 * 1024)
+  elsif size_files =~ /K/
+    size_files = number_to_human_size(size * 1024)
+  end
 end
 
 if File.directory?(File.join(APIJS_ROOT, 'thumb'))
   size_thumb = `du -hs #{APIJS_ROOT}/thumb/ | cut -f1`.strip!
   size       = size_thumb.to_f
-  size_thumb = number_to_human_size(size * 1024 * 1024 * 1024) if size_thumb =~ /G/i
-  size_thumb = number_to_human_size(size * 1024 * 1024) if size_thumb =~ /M/i
-  size_thumb = number_to_human_size(size * 1024) if size_thumb =~ /K/i
+  if size_thumb =~ /G/i
+    size_thumb = number_to_human_size(size * 1024 * 1024 * 1024)
+  elsif size_thumb =~ /M/i
+    size_thumb = number_to_human_size(size * 1024 * 1024)
+  elsif size_thumb =~ /K/i
+    size_thumb = number_to_human_size(size * 1024)
+  end
 end
 
 if File.directory?(File.join(APIJS_ROOT, 'srcset'))
   size_srcset = `du -hs #{APIJS_ROOT}/srcset/ | cut -f1`.strip!
   size        = size_srcset.to_f
-  size_srcset = number_to_human_size(size * 1024 * 1024 * 1024) if size_srcset =~ /G/i
-  size_srcset = number_to_human_size(size * 1024 * 1024) if size_srcset =~ /M/i
-  size_srcset = number_to_human_size(size * 1024) if size_srcset =~ /K/i
+  if size_srcset =~ /G/i
+    size_srcset = number_to_human_size(size * 1024 * 1024 * 1024)
+  elsif size_srcset =~ /M/i
+    size_srcset = number_to_human_size(size * 1024 * 1024)
+  elsif size_srcset =~ /K/i
+    size_srcset = number_to_human_size(size * 1024)
+  end
 end
 
 if File.directory?(File.join(APIJS_ROOT, 'show'))
   size_show = `du -hs #{APIJS_ROOT}/show/ | cut -f1`.strip!
   size      = size_show.to_f
-  size_show = number_to_human_size(size * 1024 * 1024 * 1024) if size_show =~ /G/i
-  size_show = number_to_human_size(size * 1024 * 1024) if size_show =~ /M/i
-  size_show = number_to_human_size(size * 1024) if size_show =~ /K/i
+  if size_show =~ /G/i
+    size_show = number_to_human_size(size * 1024 * 1024 * 1024)
+  elsif size_show =~ /M/i
+    size_show = number_to_human_size(size * 1024 * 1024)
+  elsif size_show =~ /K/i
+    size_show = number_to_human_size(size * 1024)
+  end
 end
 %>
 
@@ -59,13 +75,15 @@ end
 
 <p style="margin:0.5em 1em; padding:0.5em;">
 	Luigifab/Apijs <%= Redmine::Plugin.find(:redmine_apijs).version %>
-	<span style="float:<%= l(:direction) == 'rtl' ? 'left' : 'right' %>; font-size:11px;">Stop russian war. <b>🇺🇦 Free Ukraine!</b> | <a href="https://www.redmine.org/plugins/apijs">redmine.org/plugins/apijs</a> | <a href="https://www.luigifab.fr/redmine/apijs">luigifab.fr/redmine/apijs</a> | <a href="https://www.luigifab.fr/apijs">luigifab.fr/apijs</a> | ⚠ IPv6</span>
+	<span style="float:<%= l(:direction) == 'rtl' ? 'left' : 'right' %>; font-size:11px;">
+		Stop russian war. <b>🇺🇦 Free Ukraine!</b> | <a href="https://www.redmine.org/plugins/apijs">redmine.org</a> | <a href="https://github.com/luigifab/redmine-apijs">github.com</a> | <a href="https://www.luigifab.fr/redmine/apijs">luigifab.fr/redmine/apijs</a> - <a href="https://www.luigifab.fr/apijs">luigifab.fr/apijs</a> - ⚠ IPv6
+	</span>
 </p>
 
 <fieldset class="box apijs tabular settings">
 	<legend><%= raw l(:apijs_config_apijs) %></legend>
 	<p>
-		<label for="apijsEnabled"><%= raw l(:apijs_config_enable) %></label>
+		<label for="apijsEnabled"><%= raw l(:button_activate) %></label>
 		<select name="settings[enabled]" id="apijsEnabled">
 			<option value="0" <%= raw 'selected="selected"' if settings['enabled'] != '1' %>><%= raw l(:general_text_No) %></option>
 			<option value="1" <%= raw 'selected="selected"' if settings['enabled'] == '1' %>><%= raw l(:general_text_Yes) %></option>
@@ -88,7 +106,7 @@ end
 			<option value="0" <%= raw 'selected="selected"' if settings['browser'] != '1' %>><%= raw l(:general_text_No) %></option>
 			<option value="1" <%= raw 'selected="selected"' if settings['browser'] == '1' %>><%= raw l(:general_text_Yes) %></option>
 		</select>
-		<em class="info"><%= raw l(:apijs_config_browser_help) %></em>
+		<em class="info">Firefox 36+, Chrome 32+, Opera 19+, Edge 16+, Safari 9+</em>
 	</p>
 	<p>
 		<label><%= raw l(:label_role_and_permissions) %></label>
@@ -220,7 +238,7 @@ end
 	<p dir="ltr">
 		<label>python / python-pil / python-scour</label>
 		<span class="cmd"><%= raw Attachment.new.getProgramVersions(
-			'(jpg jpeg gif png webp..., <a href="https://pillow.readthedocs.io/en/latest/">docs</a>)',
+			'(jpg png gif webp..., <a href="https://pillow.readthedocs.io/en/latest/">docs</a>)',
 			'(svg, <a href="https://github.com/scour-project/scour/wiki/Documentation">docs</a>)') %></span>
 		<em class="info">python3 .../redmine_apijs/lib/image.py .../xyz.jpg .../xyz.jpg 200 150 90 2&gt;&amp;1</em>
 		<em class="info">python3 .../redmine_apijs/lib/image.py .../xyz.ogv .../xyz.jpg 200 150 90 2&gt;&amp;1</em>

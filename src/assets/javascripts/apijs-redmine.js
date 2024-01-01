@@ -1,8 +1,8 @@
 /**
  * Created D/15/12/2013
- * Updated J/11/08/2022
+ * Updated D/03/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/redmine-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -24,7 +24,7 @@ var apijsRedmine = new (function () {
 
 		var d = apijs.i18n.data;
 		if (!d.frca) d.frca = {};
-		// https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
+		// @see https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
 		// auto start
 		d.cs[250] = "Smazat soubor";
 		d.cs[251] = "Opravdu chcete tento soubor smazat?[br]Pozor, tuto operaci nelze vrátit zpět.";

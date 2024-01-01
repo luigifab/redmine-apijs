@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated J/05/10/2023
+# Updated J/19/10/2023
 #
-# Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # Copyright 2020-2023 | Fabrice Creuzot <fabrice~cellublue~com>
 # https://github.com/luigifab/redmine-apijs https://github.com/luigifab/openmage-apijs
 #
@@ -30,7 +30,7 @@ except:
 	print('source: all supported format by python-pil (including animated gif/png/webp),')
 	print('     or all supported format by ffmpegthumbnailer,')
 	print('     or svg')
-	print('destination: jpg,gif,png,webp or svg')
+	print('destination: jpg,png,gif,webp or svg')
 	exit(-1)
 
 # https://stackoverflow.com/a/273227/2980105
@@ -44,7 +44,7 @@ if os.path.isfile(fileout):
 os.close(os.open(fileout, os.O_CREAT))
 
 
-# tools
+# Tools
 def versionTuple(v):
 	return tuple(map(int, (v.split('.'))))
 
@@ -260,104 +260,113 @@ def saveJpg(dest, fileout, quality):
 	dest.convert('RGB').save(fileout, 'JPEG', optimize=True, subsampling=0, quality=quality)
 
 
-# python-scour
-if '.svg' in fileout:
-	from scour.scour import sanitizeOptions, start
-	options = sanitizeOptions()
-	options.strip_xml_prolog = True # --strip-xml-prolog
-	options.remove_metadata = True  # --remove-metadata
-	options.strip_comments = True   # --enable-comment-stripping
-	options.strip_ids = True        # --enable-id-stripping
-	options.indent_type = None      # --indent=none
-	start(options, open(filein, 'rb'), open(fileout, 'wb'))
-# python-pil
-else:
-	from PIL import Image, ImageSequence
-
-	if '.ogv' in filein or '.webm' in filein or '.mp4' in filein:
-		# from video
-		source = videoToImage(filein, fileout, size)
-		imgext = 'VIDEO'
+# action
+# drop fileout on error (and filein if same)
+try:
+	# python-scour
+	if '.svg' in fileout:
+		from scour.scour import sanitizeOptions, start
+		options = sanitizeOptions()
+		options.strip_xml_prolog = True # --strip-xml-prolog
+		options.remove_metadata = True  # --remove-metadata
+		options.strip_comments = True   # --enable-comment-stripping
+		options.strip_ids = True        # --enable-id-stripping
+		options.indent_type = None      # --indent=none
+		start(options, open(filein, 'rb'), open(fileout, 'wb'))
+	# python-pil
 	else:
-		# from image
-		source = Image.open(filein)
-		imgext = source.format
-		size   = calcSize(source, size)
+		from PIL import Image, ImageSequence
 
-	# filein = fileout = /tmp/phpA5kbkc  when replace tmp image with re-sampled copy to exclude images with malicious data
-	# @todo for animated GIF to animated GIF (or PNG), sadly, result file is not optimized, the idea is to reprocess the file to not replace each frames by another one
-	# for my test image, https://github.com/kohler/gifsicle, don't do it, but https://kraken.io/web-interface do it
-	if   imgext == 'GIF'  and (same or '.gif'  in fileout):
-		dest = resizeAnimatedGif(source, size, fixed)
-		saveGif(dest, fileout, quality)
-	elif imgext == 'GIF'  and (        '.png'  in fileout): # @todo
-		dest = resizeAnimatedGif(source, size, fixed)
-		savePng(dest, fileout, quality)
-	elif imgext == 'GIF'  and (        '.webp' in fileout):
-		dest = resizeAnimatedGif(source, size, fixed)
-		saveWebp(dest, fileout, quality)
-	elif imgext == 'PNG'  and (same or '.png'  in fileout):
-		dest = resizeAnimatedPng(source, size, fixed)
-		savePng(dest, fileout, quality)
-	elif imgext == 'PNG'  and (        '.gif'  in fileout):
-		dest = resizeAnimatedPng(source, size, fixed)
-		saveGif(dest, fileout, quality)
-	elif imgext == 'PNG'  and (        '.webp' in fileout):
-		dest = resizeAnimatedPng(source, size, fixed)
-		saveWebp(dest, fileout, quality)
-	elif imgext == 'WEBP' and (same or '.webp' in fileout):
-		dest = resizeAnimatedWebp(source, size, fixed)
-		saveWebp(dest, fileout, quality)
-	else:
-		if imgext == 'VIDEO':
-			# from video
-			offset_x = max(int((size[0] - source.size[0]) / 2), 0)
-			offset_y = max(int((size[1] - source.size[1]) / 2), 0)
-			# Color detection
-			# white background black player OR black background white player
-			pixels = source.getcolors(size[0] * size[1])
-			pixels = sorted(pixels, key=lambda t: t[0])
-			if (pixels[-1][1] > (127,127,127)):
-				dest = Image.new('RGBA', size, (255,255,255,0))
-				dest.paste(source, (offset_x, offset_y))
-				# https://stackoverflow.com/a/59082116 (replace only last lib)
-				# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib » /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
-				path = os.path.dirname(__file__)
-				path = ('/assets/images/apijs/player-black-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
-				play = Image.open(path)
-				dest.paste(play, (0, 0), play)
-			else:
-				dest = Image.new('RGBA', size, (0,0,0,0))
-				dest.paste(source, (offset_x, offset_y))
-				# https://stackoverflow.com/a/59082116 (replace only last lib)
-				# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib » /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
-				path = os.path.dirname(__file__)
-				path = ('/assets/images/apijs/player-white-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
-				play = Image.open(path)
-				dest.paste(play, (0, 0), play)
+		# from video or image
+		if '.ogv' in filein or '.webm' in filein or '.mp4' in filein:
+			source = videoToImage(filein, fileout, size)
+			imgext = 'VIDEO'
 		else:
-			# from image
-			# Auto rotate image
-			# https://github.com/python-pillow/Pillow/commit/1ba774ae7faf93355b85c7b005fbaf0b0e66d426
-			if hasattr(Image, '__version__') and versionTuple(Image.__version__) >= (6,0,0) and source.getexif().get(0x0112):
-				from PIL import ImageOps
-				source = ImageOps.exif_transpose(source)
-			# create thumbnail
-			dest = createThumb(source, size, fixed, True)
+			source = Image.open(filein)
+			imgext = source.format
+			size   = calcSize(source, size)
 
-		if hasTransparency(source) is False:
-			dest = dest.convert('RGB')
-
-		if   '.gif'  in fileout or (same and imgext == 'GIF'):
+		# filein = fileout = /tmp/phpA5kbkc  when replace tmp image with re-sampled copy to exclude images with malicious data
+		# @todo for animated GIF to animated GIF (or PNG), sadly, result file is not optimized, the idea is to reprocess the file to not replace each frames by another one
+		# for my test image, https://github.com/kohler/gifsicle, don't do it, but https://kraken.io/web-interface do it
+		if   imgext == 'GIF'  and (same or '.gif'  in fileout):
+			dest = resizeAnimatedGif(source, size, fixed)
 			saveGif(dest, fileout, quality)
-		elif '.png'  in fileout or (same and imgext == 'PNG'):
+		elif imgext == 'GIF'  and (        '.png'  in fileout): # @todo
+			dest = resizeAnimatedGif(source, size, fixed)
 			savePng(dest, fileout, quality)
-		elif '.webp' in fileout or (same and imgext == 'WEBP'):
+		elif imgext == 'GIF'  and (        '.webp' in fileout):
+			dest = resizeAnimatedGif(source, size, fixed)
+			saveWebp(dest, fileout, quality)
+		elif imgext == 'PNG'  and (same or '.png'  in fileout):
+			dest = resizeAnimatedPng(source, size, fixed)
+			savePng(dest, fileout, quality)
+		elif imgext == 'PNG'  and (        '.gif'  in fileout):
+			dest = resizeAnimatedPng(source, size, fixed)
+			saveGif(dest, fileout, quality)
+		elif imgext == 'PNG'  and (        '.webp' in fileout):
+			dest = resizeAnimatedPng(source, size, fixed)
+			saveWebp(dest, fileout, quality)
+		elif imgext == 'WEBP' and (same or '.webp' in fileout):
+			dest = resizeAnimatedWebp(source, size, fixed)
 			saveWebp(dest, fileout, quality)
 		else:
-			saveJpg(dest, fileout, quality)
+			if imgext == 'VIDEO':
+				# from video
+				offset_x = max(int((size[0] - source.size[0]) / 2), 0)
+				offset_y = max(int((size[1] - source.size[1]) / 2), 0)
+				# Color detection
+				# white background black player OR black background white player
+				pixels = source.getcolors(size[0] * size[1])
+				pixels = sorted(pixels, key=lambda t: t[0])
+				if (pixels[-1][1] > (127,127,127)):
+					dest = Image.new('RGBA', size, (255,255,255,0))
+					dest.paste(source, (offset_x, offset_y))
+					# https://stackoverflow.com/a/59082116 (replace only last lib)
+					# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib » /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
+					path = os.path.dirname(__file__)
+					path = ('/assets/images/apijs/player-black-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
+					play = Image.open(path)
+					dest.paste(play, (0, 0), play)
+				else:
+					dest = Image.new('RGBA', size, (0,0,0,0))
+					dest.paste(source, (offset_x, offset_y))
+					# https://stackoverflow.com/a/59082116 (replace only last lib)
+					# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib » /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
+					path = os.path.dirname(__file__)
+					path = ('/assets/images/apijs/player-white-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
+					play = Image.open(path)
+					dest.paste(play, (0, 0), play)
+			else:
+				# from image
+				# Auto rotate image
+				# https://github.com/python-pillow/Pillow/commit/1ba774ae7faf93355b85c7b005fbaf0b0e66d426
+				if hasattr(Image, '__version__') and versionTuple(Image.__version__) >= (6,0,0) and source.getexif().get(0x0112):
+					from PIL import ImageOps
+					source = ImageOps.exif_transpose(source)
+				# create thumbnail
+				dest = createThumb(source, size, fixed, True)
 
-if os.path.isfile(fileout):
-	os.rename(fileout, fileout.replace('.save', ''))
+			if hasTransparency(source) is False:
+				dest = dest.convert('RGB')
 
-exit(0)
+			if   '.gif'  in fileout or (same and imgext == 'GIF'):
+				saveGif(dest, fileout, quality)
+			elif '.png'  in fileout or (same and imgext == 'PNG'):
+				savePng(dest, fileout, quality)
+			elif '.webp' in fileout or (same and imgext == 'WEBP'):
+				saveWebp(dest, fileout, quality)
+			else:
+				saveJpg(dest, fileout, quality)
+
+	if os.path.isfile(fileout):
+		os.rename(fileout, fileout.replace('.save', ''))
+
+	exit(0)
+except Exception as e:
+	if same and os.path.isfile(filein):
+		os.remove(filein)
+	if os.path.isfile(fileout):
+		os.remove(fileout)
+	raise e
+

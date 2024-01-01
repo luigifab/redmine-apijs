@@ -2,7 +2,7 @@
 # Created V/27/12/2013
 # Updated V/02/09/2022
 #
-# Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
 #
 # This program is free software, you can redistribute it or modify

@@ -1,40 +1,44 @@
 Docs      : https://www.luigifab.fr/redmine/apijs
 Tracker   : https://github.com/luigifab/redmine-apijs
-Rubygems  : https://rubygems.org/gems/redmine_apijs
-Plugin    : Luigifab/Apijs
-License   : GNU GPL 2+ (https://opensource.org/licenses/gpl-2.0)
-Copyright : 2008-2023 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+RubyGems  : https://rubygems.org/gems/redmine_apijs
+Plugin    : Luigifab/Apijs (original)
+License   : GNU GPL 2.0+ (https://opensource.org/licenses/gpl-2.0)
+Copyright : 2008-2024 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 
 
 
 
 
-IF YOU FOUND A MISTAKE OR A BUG, PLEASE CONTACT ME (IN FRENCH OR IN ENGLISH).
-CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/uglifyjs).
-ALL FILES (INCLUDING DOCUMENTATION AND TRANSLATIONS) ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2+ LICENSE.
-THAT BEING SAID SOME FILES COME FROM OTHER PROJECTS AND ARE UNDER OTHER LICENSES (SEE AT THE END OF THIS FILE).
+CSS AND JS FILES ARE MINIFIED WITH clean-css (github.com/jakubpawlowicz/clean-css) AND uglify-js (github.com/mishoo/uglifyjs)
+YML LOCALES FILES ARE GENERATED WITH translator (https://github.com/luigifab/translator)
+ALL FILES ARE LICENSED UNDER THE TERMS OF THE GNU GPL 2.0+ LICENSE
+THAT BEING SAID SOME FILES COME FROM OTHER PROJECTS AND ARE UNDER OTHER LICENSES (SEE AT THE END OF THIS FILE)
 
 
 Rewrite
 - app/views/attachments/_links.html.erb
 - lib/apijs_attachment.rb
 Depends
+- python3
 - python-pil
 - python-scour
 - libimage-exiftool-perl (optional)
 - ffmpegthumbnailer (optional)
-- also used: command -v, python3, nproc, du -hs, cut -f1
+- nproc
+- du -hs | cut -f1
 Notes
 - For the app, read: https://www.luigifab.fr/apijs
 - For the Redmine plugin, read: https://www.luigifab.fr/redmine/apijs
 - For the OpenMage module, read: https://www.luigifab.fr/openmage/apijs
+- For the Dolibarr module, read install: https://www.luigifab.fr/apijs
+- For the Symfony bundle, read install: https://www.luigifab.fr/apijs
 
 
 Translations in de-DE (deutsch/Deutschland) by:
 - Philip Junietz <info~label-park~com> 2016
 - Pamela Steinborn <st.pamela~laposte~net> 2016
 Translations in en-US (english/United-States) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2023
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2024
 - Brian Legrand <mrbibi1987~gmail~com> 2012
 - Pascale Scellier <scellier.pascale~orange~fr> 2016
 Translations in es-ES (español/España) by:
@@ -44,7 +48,7 @@ Translations in es-ES (español/España) by:
 - Hélène Vergine <vergineh~gmail~com> 2017, 2020
 - Guillaume Genetet <genetet.incorporated~gmail~com> 2018 https://fr.tipeee.com/william-broome
 Translations in fr-FR (français/France) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2023
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2024
 - Pascale Scellier <scellier.pascale~orange~fr> 2016
 Translations in it-IT (italiano/Italia) by:
 - Maria Grasso <mgrasso~outlook~fr> 2016-2017
@@ -60,9 +64,9 @@ If you like, take some of your time to improve the translations, go to https://b
 
 
 File: /lib/useragentparser.rb
-Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.7.0-fork1)
-Copyright: 2013-2022 Jesse G. Donat <donatj~gmail~com>
-Copyright: 2019-2022 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.8.0-fork2)
+Copyright: 2013-2023 Jesse G. Donat <donatj~gmail~com>
+Copyright: 2019-2023 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 License: MIT (https://opensource.org/licenses/mit)
 
 Files: /assets/fonts/apijs/fontello.woff /assets/fonts/apijs/fontello.woff2

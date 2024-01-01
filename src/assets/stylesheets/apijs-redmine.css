@@ -1,8 +1,8 @@
 /**
  * Created D/15/12/2013
- * Updated L/02/10/2023
+ * Updated V/17/10/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/redmine-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -16,10 +16,8 @@
  * GNU General Public License (GPL) for more details.
  */
 
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogues &&& */
-#apijsDialog { margin:0; }
-
-#apijsBox { font-size:0.8rem; border:0; }
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogs &&& */
+#apijsBox { font-size:0.8rem; }
 #apijsBox a { color:blue; }
 #apijsBox button { height:auto; }
 
@@ -28,7 +26,7 @@
 	border:1px solid #888; background-color:#EEE;
 }
 
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& albums et listes &&& */
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& attachments &&& */
 body div.attachments.album { margin:1em 0; text-align:left; }
 body div.attachments.album dd { position:relative; margin:0.5em 0 0 0; width:202px; min-height:1.8em; }
 body div.attachments.album dd.big { min-height:5em; }
@@ -52,7 +50,7 @@ body ul.attachments li span { padding:0 0.1em; }
 body ul.attachments li span.size { color:#808080; }
 body ul.attachments li span.date { color:#808080; }
 
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& boutons &&& */
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& buttons &&& */
 body button.attachment, body ul.attachments a[id^="slideshow"] {
 	display:inline-block; margin:0; padding:0; width:16px; height:16px; vertical-align:middle;
 	text-decoration:none !important; border:0; background-color:transparent; cursor:pointer; opacity:0.75;
@@ -64,7 +62,7 @@ body button.attachment.delete { background-image:url("../../../images/delete.png
 body button.attachment.rename { background-image:url("../../../images/wiki_edit.png"); }
 body button.attachment.edit { background-image:url("../../../images/edit.png"); }
 
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& configuration &&& */
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& config &&& */
 body fieldset.apijs.tabular.settings { margin:1em; padding:0.5em; border:1px solid #CCC; }
 body fieldset.apijs.tabular.settings p span.cmd { white-space:pre-wrap; }
 body fieldset.apijs.tabular.settings p em.info { margin:0.2em 0; line-height:140%; }
@@ -72,5 +70,5 @@ body fieldset.apijs.tabular.settings p a + em.info { margin:0; }
 body fieldset.apijs.tabular.settings p label.bis { margin-left:1px; margin-right:0.7em; width:auto; min-width:5.5em; text-align:left; }
 body fieldset.apijs.tabular.settings p label.bis input { margin:0; }
 
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& navigateur &&& */
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& browser &&& */
 body .flash.error.apijs { margin:0; border:0; border-radius:0; font-size:11px; }

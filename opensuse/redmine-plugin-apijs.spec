@@ -1,7 +1,7 @@
 %define basedir /srv/redmine/
 %define plugin_name redmine_apijs
-Name:          redmine-apijs
-Version:       6.9.5
+Name:          redmine-plugin-apijs
+Version:       6.9.6
 Release:       0
 Summary:       Plugin for Redmine to display a gallery from attachments
 Summary(fr):   Extension pour Redmine pour afficher une galerie à partir des pièces jointes
@@ -49,23 +49,23 @@ Cette extension permet :
 %setup -q -n redmine-apijs-%{version}
 sed -i "s/ version '[0-9].[0-9].[0-9]/&-rpm/g" src/init.rb
 
-%build
-
 %install
-install -d -m 0750 %{buildroot}%{basedir}/plugins/%{plugin_name}/
-cp -a src/*        %{buildroot}%{basedir}/plugins/%{plugin_name}/
-chmod -R o=        %{buildroot}%{basedir}/plugins/%{plugin_name}/
-chmod +x           %{buildroot}%{basedir}/plugins/%{plugin_name}/lib/*.py
+install -dm 0755 %{buildroot}%{basedir}/plugins/%{plugin_name}/
+cp -a src/*      %{buildroot}%{basedir}/plugins/%{plugin_name}/
+chmod -R o=      %{buildroot}%{basedir}/plugins/%{plugin_name}/
+chmod +x         %{buildroot}%{basedir}/plugins/%{plugin_name}/lib/*.py
 
 %files
 %license LICENSE
 %doc README.md
-# the entire source code is GPL-2.0-or-later, except lib/useragentparser.rb which is MIT
-#  and assets/fonts/apijs/fontello.woff(2) which is OFL-1.1
+# the entire source code is GPL-2.0-or-later, except lib/useragentparser.rb which is MIT and assets/fonts/apijs/fontello.woff(2) which is OFL-1.1
 %attr(-,root,redmine) %{basedir}/plugins/%{plugin_name}/
 
 
 %changelog
+* Mon Jan 01 2024 Fabrice Creuzot <code@luigifab.fr> - 6.9.6-1
+- New upstream release
+
 * Tue Oct 10 2023 Fabrice Creuzot <code@luigifab.fr> - 6.9.5-1
 - New upstream release
 

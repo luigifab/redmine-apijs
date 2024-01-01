@@ -1,10 +1,10 @@
 # encoding: utf-8
 #
-# Copyright 2013-2022 | Jesse G. Donat <donatj~gmail~com>
+# Copyright 2013-2023 | Jesse G. Donat <donatj~gmail~com>
 # https://github.com/donatj/PhpUserAgent
 #
-# Copyright 2019-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
-# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.7.0-fork1)
+# Copyright 2019-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.8.0-fork2)
 #
 # Parses a user agent string into its important parts
 # Licensed under the MIT License
@@ -57,13 +57,13 @@ class Useragentparser
 		end
 
 		result = userAgent.to_enum(:scan, # ["browser" => ["Firefox"...], "version" => ["45.0"...]]
-			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (?:\d|Vita)+)\)?;?(?:[:\/ ](?<version>[\dA-Z.]+)|\/[A-Z]*)/ix
+			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Thunderbird|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|YaApp_Android|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (?:\d|Vita)+)\)?;?(?:[\/ :](?<version>[\dA-Z.]+)|\/[A-Z]*)/ix
 		).map { Regexp.last_match.names.collect{ |x| {x => $~[x]} }.reduce({}, :merge) }
 		 .reduce({}) { |h,pairs| pairs.each {|k,v| (h[k] ||= []) << v}; h }
 
 		# If nothing matched, return nil (to avoid undefined index errors)
 		if !result['browser'] || !result['browser'][0] || !result['version'] || !result['version'][0]
-			result = userAgent.match(/^(?!Mozilla)(?<browser>[A-Z\d\-]+)(\/(?<version>[\dA-Z.]+))?/ix)
+			result = userAgent.match(/^(?!Mozilla)(?<browser>[A-Z\d\-]+)([\/ :](?<version>[\dA-Z.]+))?/ix)
 			if result
 				return {
 					'platform' => platform ? platform : nil,
@@ -88,7 +88,7 @@ class Useragentparser
 		refpla = [platform]
 		refval = ['']
 
-		if findt(lowerBrowser, {'OPR' => 'Opera', 'Facebot' => 'iMessageBot', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge', 'EdgA' => 'Edge', 'XiaoMi/MiuiBrowser' => 'MiuiBrowser'}, refkey, refbro)
+		if findt(lowerBrowser, {'OPR' => 'Opera', 'Facebot' => 'iMessageBot', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'YaApp_Android' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge', 'EdgA' => 'Edge', 'XiaoMi/MiuiBrowser' => 'MiuiBrowser'}, refkey, refbro)
 			browser = refbro[0]
 			version = result['version'][refkey[0]][0] =~ /\d/ ? result['version'][refkey[0]] : nil
 		elsif find(lowerBrowser, 'Playstation Vita', refkey, platform)
