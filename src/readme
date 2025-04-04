@@ -3,7 +3,7 @@ Tracker   : https://github.com/luigifab/redmine-apijs
 RubyGems  : https://rubygems.org/gems/redmine_apijs
 Plugin    : Luigifab/Apijs (original)
 License   : GNU GPL 2.0+ (https://opensource.org/licenses/gpl-2.0)
-Copyright : 2008-2024 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+Copyright : 2008-2025 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 
 
 
@@ -22,13 +22,14 @@ Depends
 - python3
 - python-pil
 - python-scour
-- libimage-exiftool-perl (optional)
+- libimage-exiftool-perl
 - ffmpegthumbnailer (optional)
 - nproc
 - du -hs | cut -f1
 Notes
 - For the app, read: https://www.luigifab.fr/apijs
 - For the Redmine plugin, read: https://www.luigifab.fr/redmine/apijs
+- For the Maho module, read: https://www.luigifab.fr/maho/apijs
 - For the OpenMage module, read: https://www.luigifab.fr/openmage/apijs
 - For the Dolibarr module, read install: https://www.luigifab.fr/apijs
 - For the Symfony bundle, read install: https://www.luigifab.fr/apijs
@@ -38,7 +39,7 @@ Translations in de-DE (deutsch/Deutschland) by:
 - Philip Junietz <info~label-park~com> 2016
 - Pamela Steinborn <st.pamela~laposte~net> 2016
 Translations in en-US (english/United-States) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2024
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2025
 - Brian Legrand <mrbibi1987~gmail~com> 2012
 - Pascale Scellier <scellier.pascale~orange~fr> 2016
 Translations in es-ES (español/España) by:
@@ -48,7 +49,7 @@ Translations in es-ES (español/España) by:
 - Hélène Vergine <vergineh~gmail~com> 2017, 2020
 - Guillaume Genetet <genetet.incorporated~gmail~com> 2018 https://fr.tipeee.com/william-broome
 Translations in fr-FR (français/France) by:
-- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2024
+- Fabrice Creuzot (luigifab) <code~luigifab~fr> 2008-2025
 - Pascale Scellier <scellier.pascale~orange~fr> 2016
 Translations in it-IT (italiano/Italia) by:
 - Maria Grasso <mgrasso~outlook~fr> 2016-2017
@@ -64,9 +65,9 @@ If you like, take some of your time to improve the translations, go to https://b
 
 
 File: /lib/useragentparser.rb
-Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.8.0-fork2)
-Copyright: 2013-2023 Jesse G. Donat <donatj~gmail~com>
-Copyright: 2019-2023 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.10.0-fork1)
+Copyright: 2013-2024 Jesse G. Donat <donatj~gmail~com>
+Copyright: 2019-2025 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 License: MIT (https://opensource.org/licenses/mit)
 
 Files: /assets/fonts/apijs/fontello.woff /assets/fonts/apijs/fontello.woff2

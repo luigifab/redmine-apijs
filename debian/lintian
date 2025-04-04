@@ -1,5 +1,0 @@
-# fonts assets, not true fonts
-redmine-plugin-apijs: font-in-non-font-package usr/share/redmine/plugins/redmine_apijs/assets/fonts/apijs/fontello.woff2
-redmine-plugin-apijs: font-in-non-font-package usr/share/redmine/plugins/redmine_apijs/assets/fonts/apijs/fontello.woff
-redmine-plugin-apijs: font-outside-font-dir usr/share/redmine/plugins/redmine_apijs/assets/fonts/apijs/fontello.woff2
-redmine-plugin-apijs: font-outside-font-dir usr/share/redmine/plugins/redmine_apijs/assets/fonts/apijs/fontello.woff

@@ -1,8 +1,8 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated V/02/09/2022
+# Updated M/11/03/2025
 #
-# Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -20,7 +20,9 @@ module ApijsAttachment
   def self.included(base)
     base.send(:include, InstanceMethods)
     base.class_eval do
-      unloadable
+      if Rails::VERSION::MAJOR < 7
+        unloadable
+      end
       if Rails::VERSION::MAJOR >= 3
         include Rails.application.routes.url_helpers
         before_create :update_date

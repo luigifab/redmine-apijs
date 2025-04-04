@@ -1,9 +1,9 @@
 #!/bin/bash
-# openSUSE: sudo zypper install rpmdevtools rpmlint rpm-build redmine aspell-fr
+# openSUSE: sudo zypper install rpmdevtools rpm-build redmine aspell-fr
 
 
 cd "$(dirname "$0")"
-version="6.9.6"
+version="6.9.7"
 
 
 mkdir -p builder ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
@@ -16,8 +16,8 @@ if [ true ]; then
 else
 	temp=redmine-apijs-$version
 	mkdir /tmp/$temp
-	cp -r ../* /tmp/$temp/
-	rm -rf /tmp/$temp/*/builder/
+	cp -r ../../* /tmp/$temp/
+	rm -rf /tmp/$temp/scripts/*/builder/
 
 	mv /tmp/$temp builder/
 	cp /usr/share/licenses/*-firmware/GPL-2 builder/$temp/LICENSE # * = kernel

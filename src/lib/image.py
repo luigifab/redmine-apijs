@@ -3,7 +3,7 @@
 # Created J/26/12/2013
 # Updated J/19/10/2023
 #
-# Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # Copyright 2020-2023 | Fabrice Creuzot <fabrice~cellublue~com>
 # https://github.com/luigifab/redmine-apijs https://github.com/luigifab/openmage-apijs
 #

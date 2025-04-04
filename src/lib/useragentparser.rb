@@ -1,10 +1,10 @@
 # encoding: utf-8
 #
-# Copyright 2013-2023 | Jesse G. Donat <donatj~gmail~com>
+# Copyright 2013-2024 | Jesse G. Donat <donatj~gmail~com>
 # https://github.com/donatj/PhpUserAgent
 #
-# Copyright 2019-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
-# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.8.0-fork2)
+# Copyright 2019-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.10.0-fork1)
 #
 # Parses a user agent string into its important parts
 # Licensed under the MIT License
@@ -20,13 +20,13 @@ class Useragentparser
 		browser  = nil
 		version  = nil
 		empty    = {'platform' => platform, 'browser' => browser, 'version' => version}
-		priority = ['Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'X11', 'Sailfish']
+		priority = ['Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'Fuchsia', 'X11', 'Sailfish']
 
 		return empty unless userAgent
 
 		if (parentMatches = userAgent.match(/\((.*?)\)/m))
 			result = parentMatches[1].scan(
-				/(?<platform>BB\d+;|Android|Adr|Symbian|Sailfish|CrOS|Tizen|iPhone|iPad|iPod|Linux|(?:Open|Net|Free)BSD|Macintosh|Windows(?:\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(?:New\ )?Nintendo\ (?:WiiU?|3?DS|Switch)|Xbox(?:\ One)?) (?:\ [^;]*)? (?:;|$)/imx
+				/(?<platform>BB\d+;|Android|Adr|Symbian|Sailfish|CrOS|Fuchsia|Tizen|iPhone|iPad|iPod|Linux|(?:Open|Net|Free)BSD|Macintosh|Windows(?:\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(?:New\ )?Nintendo\ (?:WiiU?|3?DS|Switch)|Xbox(?:\ One)?) (?:\ [^;]*)? (?:;|$)/imx
 			).map(&:join)
 			result.uniq!
 			if result.length > 1
@@ -57,7 +57,7 @@ class Useragentparser
 		end
 
 		result = userAgent.to_enum(:scan, # ["browser" => ["Firefox"...], "version" => ["45.0"...]]
-			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Thunderbird|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|YaApp_Android|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (?:\d|Vita)+)\)?;?(?:[\/ :](?<version>[\dA-Z.]+)|\/[A-Z]*)/ix
+			/(?<browser>Camino|Kindle(\ Fire)?|Firefox|Thunderbird|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|YaApp_Android|Whale|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|ChatGPT-User|GPTBot|OAI-SearchBot|Valve\ Steam\ Tenfoot|Mastodon|NintendoBrowser|PLAYSTATION\ (?:\d|Vita)+)\)?;?(?:[\/ :](?<version>[\dA-Z.]+)|\/[A-Z]*)/ix
 		).map { Regexp.last_match.names.collect{ |x| {x => $~[x]} }.reduce({}, :merge) }
 		 .reduce({}) { |h,pairs| pairs.each {|k,v| (h[k] ||= []) << v}; h }
 
@@ -124,7 +124,7 @@ class Useragentparser
 					end
 				end
 			end
-		elsif find(lowerBrowser, ['Applebot', 'IEMobile', 'Edge', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome', 'SailfishBrowser'], refkey, refbro)
+		elsif find(lowerBrowser, ['Googlebot', 'Applebot', 'IEMobile', 'Edge', 'Midori', 'Whale', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome', 'SailfishBrowser'], refkey, refbro)
 			version = result['version'][refkey[0]]
 			browser = refbro[0]
 		elsif rv_result && find(lowerBrowser, 'Trident')
@@ -140,9 +140,15 @@ class Useragentparser
 				browser = 'BlackBerry Browser'
 			elsif find(lowerBrowser, 'Safari', refkey, refbro) || find(lowerBrowser, 'TizenBrowser', refkey, refbro)
 				browser = refbro[0]
+				version = result['version'][refkey[0]]
+			elsif result['browser'].length > 0
+				key     = result['browser'].length - 1;
+				browser = result['browser'][key];
+				version = result['version'][key];
 			end
-			find(lowerBrowser, 'Version', refkey)
-			version = result['version'][refkey[0]]
+			if find(lowerBrowser, 'Version', refkey)
+				version = result['version'][refkey[0]]
+			end
 		else
 			pKey = result['browser'].grep(/playstation \d/i)
 			if pKey.length > 0
