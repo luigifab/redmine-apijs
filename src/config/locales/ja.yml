@@ -8,7 +8,7 @@ ja:
   apijs_config_apijs: "全般"
   apijs_example1_title: "PHP マニュアル"
   apijs_example1_text: "メールの配送が受け入れられたかどうかが基準であることに注意しましょう。メールが実際にあて先に届いたかどうかでは「ありません」。"
-  apijs_example: "例%{v}"
+  apijs_example: "例 %{v}"
   apijs_example2_title: "Surprise!"
   apijs_example2_text: "You are watching this video without proprietary extension thanks to the new [em]video[/em] tag included in the [strong]HTML 5[/strong] language."
   apijs_example2_link: "ウェブサイト：%{v}"

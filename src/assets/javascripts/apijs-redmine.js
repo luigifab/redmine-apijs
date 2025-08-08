@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated D/03/12/2023
+ * Updated L/28/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/redmine-apijs
@@ -110,7 +110,7 @@ var apijsRedmine = new (function () {
 			apijs.dialog.dialogInformation(apijs.i18n.translate(252), data, 'error');
 		}
 		else {
-			apijs.dialog.remove('lock'); // obligatoire sinon demande de confirmation de quitter la page
+			apijs.dialog.remove('lock');
 			self.location.reload();
 		}
 	};
@@ -313,7 +313,7 @@ var apijsRedmine = new (function () {
 	};
 
 	this.actionClearCache = function (args) {
-		apijs.dialog.remove('waiting', 'lock'); // obligatoire sinon demande de confirmation de quitter la page
+		apijs.dialog.remove('waiting', 'lock');
 		self.location.href = args;
 	};
 

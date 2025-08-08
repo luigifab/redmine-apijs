@@ -1,5 +1,5 @@
 pkgname=redmine-plugin-apijs
-pkgver=6.9.7
+pkgver=6.9.8
 pkgrel=1
 pkgdesc="Plugin for Redmine to display a gallery from attachments"
 arch=('any')

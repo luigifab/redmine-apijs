@@ -1,5 +1,5 @@
-redmine-plugin-apijs (6.9.7-1) experimental; urgency=low
+redmine-plugin-apijs (6.9.8-1) experimental; urgency=low
 
   * Initial Debian package release (Closes: #959426)
 
- -- Fabrice Creuzot <code@luigifab.fr>  Fri, 04 Apr 2025 20:00:00 +0000
+ -- Fabrice Creuzot <code@luigifab.fr>  Fri, 08 Aug 2025 20:00:00 +0000

@@ -1,16 +1,19 @@
 #!/bin/bash
-# openSUSE: sudo zypper install rpmdevtools rpm-build redmine aspell-fr abb
+
 
 
 cd "$(dirname "$0")"
-version="6.9.7"
+version="6.9.8"
 
 
 mkdir -p builder builder/{BUILD,RPMS,SRPMS}
 find builder/* ! -name "*$version*.rpm" ! -name "*$version*.gz" -exec rm -rf {} + 2>/dev/null
 
+
 # copy to a tmp directory
 if [ true ]; then
+	rm redmine-plugin-apijs.spec
+	wget https://raw.githubusercontent.com/luigifab/redmine-apijs/refs/tags/v$version/scripts/openmandriva/redmine-plugin-apijs.spec
 	chmod 644 redmine-plugin-apijs.spec
 	spectool -g -R redmine-plugin-apijs.spec
 else
@@ -48,4 +51,4 @@ echo "==========================="
 cd ..
 
 # cleanup
-rm -rf builder/*/ builder/*buildlog builder/*spec
+rm -rf builder/*/ builder/*buildlog builder/*spec redmine-plugin-apijs-$version.tar.gz

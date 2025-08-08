@@ -3,14 +3,17 @@
 
 
 cd "$(dirname "$0")"
-version="6.9.7"
+version="6.9.8"
 
 
 mkdir -p builder ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 find builder/* ! -name "*$version*.rpm" ! -name "*$version*.gz" -exec rm -rf {} + 2>/dev/null
+rm -f ~/rpmbuild/SOURCES/redmine-apijs-$version.tar.gz
 
 # copy to a tmp directory
 if [ true ]; then
+	rm redmine-plugin-apijs.spec
+	wget https://raw.githubusercontent.com/luigifab/redmine-apijs/refs/tags/v$version/scripts/opensuse/redmine-plugin-apijs.spec
 	chmod 644 redmine-plugin-apijs.spec
 	spectool -g -R redmine-plugin-apijs.spec
 else
