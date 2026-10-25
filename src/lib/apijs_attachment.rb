@@ -1,8 +1,8 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated M/11/03/2025
+# Updated S/24/10/2026
 #
-# Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -14,6 +14,8 @@
 # but without any warranty, without even the implied warranty of
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
+
+require 'open3'
 
 module ApijsAttachment
 
@@ -57,7 +59,7 @@ module ApijsAttachment
       return url
     end
 
-    # liens
+    # links
     def getShowUrl
       return self.getUrl('show', true)
     end
@@ -100,7 +102,7 @@ module ApijsAttachment
       end
     end
 
-    # chemin
+    # paths
     def getImgThumb
         return File.join(APIJS_ROOT, 'thumb', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + self.getExt)
     end
@@ -113,7 +115,7 @@ module ApijsAttachment
       return File.join(APIJS_ROOT, 'show', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + self.getExt)
     end
 
-    # image, photo, vidéo
+    # image, photo, video
     def isImage?
       return self.filename =~ /\.(jpg|jpeg|gif|png|webp|svg)$/i
     end
@@ -142,7 +144,7 @@ module ApijsAttachment
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
-    # extension des images générées
+    # extension of the generated images
     def getExt
         ext = File.extname(self.filename).downcase
         return ext if ext == '.gif'
@@ -152,7 +154,7 @@ module ApijsAttachment
         return '.jpg'
     end
 
-    # commande python
+    # python command
     def getPython
 
       return @cmd if defined? @cmd
@@ -188,8 +190,14 @@ module ApijsAttachment
       cmd = 'notfound' if not cmd or cmd.length == 0
 
       script = File.join(File.dirname(__FILE__), 'image.py')
-      return cmd + ' ' + script.to_s + ' ' + source.to_s + ' ' + target.to_s + ' ' +
-        width.to_s + ' ' + height.to_s + (fixed ? ' 90 fixed' : ' 90') + ' 2>&1'
+      return [cmd, script.to_s, source.to_s, target.to_s, width.to_s, height.to_s, '90'] + (fixed ? ['fixed'] : [])
+    end
+
+    # run without a shell, output and errors together
+    def runCmd(cmd)
+      return Open3.capture2e(*cmd)[0].gsub(/^\s+|\s+$/, '')
+    rescue SystemCallError => e
+      return e.message
     end
 
     # exclusion
@@ -213,7 +221,7 @@ module ApijsAttachment
       return false
     end
 
-    # supprime les images en cache
+    # remove the cached images
     def delete_cache
 
       img_thumb = self.getImgThumb
@@ -226,17 +234,17 @@ module ApijsAttachment
       File.delete(img_show) if File.file?(img_show)
     end
 
-    # lecture de la date exif et maj de la date de création avec exiftool (libimage-exiftool)
+    # read the exif date and update the creation date with exiftool (libimage-exiftool)
     def update_date
 
       if new_record? && (self.isPhoto? || self.isVideo?) && self.readable?
 
-        cmd    = 'exiftool -FastScan -IgnoreMinorErrors -DateTimeOriginal -S3 ' + self.diskfile + ' 2>&1'
-        result = `#{cmd}`.gsub(/^\s+|\s+$/, '')
+        cmd    = ['exiftool', '-FastScan', '-IgnoreMinorErrors', '-DateTimeOriginal', '-S3', self.diskfile]
+        result = runCmd(cmd)
 
-        logger.info 'APIJS::ApijsAttachment#update_date: ' + cmd + ' (' + result + ')'
+        logger.info 'APIJS::ApijsAttachment#update_date: ' + cmd.join(' ') + ' (' + result + ')'
 
-        # 2014:06:14 16:43:53 (utilise le fuseau horaire de l'utilisateur)
+        # 2014:06:14 16:43:53 (uses the user's time zone)
         if result =~ /^\d{4}.\d{2}.\d{2} \d{2}.\d{2}.\d{2}/
 
           date = result[0..9].gsub(':', '-') + ' ' + result[11..18]
@@ -249,7 +257,7 @@ module ApijsAttachment
       end
     end
 
-    # déplace le nouveau fichier s'il n'est pas dans le bon dossier
+    # move the new file if it is not in the right directory
     def update_filedir!
 
       return unless defined? self.disk_directory
@@ -275,7 +283,7 @@ module ApijsAttachment
       logger.info 'APIJS::ApijsAttachment#update_filedir: moving file from ' + src + ' to ' + dest
     end
 
-    # informations
+    # information
     def getProgramVersions(helpPil, helpSco)
 
       cmd = getPython

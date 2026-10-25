@@ -2,12 +2,11 @@
 # Debian: sudo apt install ruby
 
 
-cd "$(dirname "$0")"
-version="6.9.8"
-rm -rf builder/
+cd "$(dirname "$0")" || exit 1
+version="6.9.9"
 
-mkdir builder
-mkdir builder/redmine_apijs-${version}
+rm -rf builder/
+mkdir -p builder/redmine_apijs-${version}
 
 # copy to a tmp directory
 cp -r ../../src/app    builder/redmine_apijs-${version}/

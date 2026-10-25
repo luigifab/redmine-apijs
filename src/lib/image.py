@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated J/19/10/2023
+# Updated S/24/10/2026
 #
-# Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # Copyright 2020-2023 | Fabrice Creuzot <fabrice~cellublue~com>
 # https://github.com/luigifab/redmine-apijs https://github.com/luigifab/openmage-apijs
 #
@@ -17,7 +17,7 @@
 # merchantability or fitness for a particular purpose. See the
 # GNU General Public License (GPL) for more details.
 
-import os, sys
+import os, sys, subprocess
 
 try:
 	filein  = str(sys.argv[1])
@@ -92,7 +92,10 @@ def createThumb(source, size, fixed, new=False):
 
 def videoToImage(filein, fileout, size):
 
-	os.system('ffmpegthumbnailer -i ' + filein + ' -o ' + fileout + ' -q 10 -s ' + str(size[0]))
+	try:
+		subprocess.call(['ffmpegthumbnailer', '-i', filein, '-o', fileout, '-q', '10', '-s', str(size[0])])
+	except OSError:
+		pass
 	if os.path.isfile(fileout) and os.path.getsize(fileout) > 0:
 		img = Image.open(fileout)
 	else:
@@ -127,7 +130,7 @@ def resizeAnimatedGif(source, size, fixed):
 
 	try:
 		while True:
-			# If the GIF uses local colour tables, each frame will have its own palette.
+			# If the GIF uses local color tables, each frame will have its own palette.
 			# If not, we need to apply the global palette to the new frame.
 			# Ignore ValueError (illegal image mode)
 			try:
@@ -208,7 +211,7 @@ def saveGif(dest, fileout, quality):
 def savePng(dest, fileout, quality):
 
 	# The image quality, on a scale from 0 (best-speed) to 9 (best-compression), the default is 6
-	# but when optimize option is True compress_level has no effect
+	# but when the optimize option is True, compress_level has no effect
 	if quality < 1:
 		quality = 6
 	elif quality > 9:
@@ -226,7 +229,7 @@ def savePng(dest, fileout, quality):
 def saveWebp(dest, fileout, quality):
 
 	# The image quality, on a scale from 0 (worst) to 100 (best), the default is 80 (lossy, 0 gives the smallest size and 100 the largest)
-	# The method, on a scale from 0 (fast) to 6 (slower-better), the default is 0
+	# The method, on a scale from 0 (fast) to 6 (slower-better), the default is 4 (0 for animated images)
 	if quality < 1:
 		quality = 80
 	elif quality > 100:
@@ -286,9 +289,9 @@ try:
 			imgext = source.format
 			size   = calcSize(source, size)
 
-		# filein = fileout = /tmp/phpA5kbkc  when replace tmp image with re-sampled copy to exclude images with malicious data
-		# @todo for animated GIF to animated GIF (or PNG), sadly, result file is not optimized, the idea is to reprocess the file to not replace each frames by another one
-		# for my test image, https://github.com/kohler/gifsicle, don't do it, but https://kraken.io/web-interface do it
+		# filein = fileout = /tmp/phpA5kbkc when replacing the tmp image with a re-sampled copy to exclude images with malicious data
+		# @todo for animated GIF to animated GIF (or PNG), sadly, the resulting file is not optimized, the idea is to reprocess the file to not replace each frame by another one
+		# for my test image, https://github.com/kohler/gifsicle doesn't do it, but https://kraken.io/web-interface does it
 		if   imgext == 'GIF'  and (same or '.gif'  in fileout):
 			dest = resizeAnimatedGif(source, size, fixed)
 			saveGif(dest, fileout, quality)
@@ -322,7 +325,7 @@ try:
 				if (pixels[-1][1] > (127,127,127)):
 					dest = Image.new('RGBA', size, (255,255,255,0))
 					dest.paste(source, (offset_x, offset_y))
-					# https://stackoverflow.com/a/59082116 (replace only last lib)
+					# https://stackoverflow.com/a/59082116 (replace only the last lib)
 					# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib » /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
 					path = os.path.dirname(__file__)
 					path = ('/assets/images/apijs/player-black-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
@@ -331,7 +334,7 @@ try:
 				else:
 					dest = Image.new('RGBA', size, (0,0,0,0))
 					dest.paste(source, (offset_x, offset_y))
-					# https://stackoverflow.com/a/59082116 (replace only last lib)
+					# https://stackoverflow.com/a/59082116 (replace only the last lib)
 					# /var/lib/gems/xyz/gems/redmine_apijs-xyz/lib » /var/lib/gems/xyz/gems/redmine_apijs-xyz/assets/images/...
 					path = os.path.dirname(__file__)
 					path = ('/assets/images/apijs/player-white-' + str(size[0]) + '.png').join(path.rsplit('/lib', 1))
@@ -339,7 +342,7 @@ try:
 					dest.paste(play, (0, 0), play)
 			else:
 				# from image
-				# Auto rotate image
+				# Auto-rotate image
 				# https://github.com/python-pillow/Pillow/commit/1ba774ae7faf93355b85c7b005fbaf0b0e66d426
 				if hasattr(Image, '__version__') and versionTuple(Image.__version__) >= (6,0,0) and source.getexif().get(0x0112):
 					from PIL import ImageOps

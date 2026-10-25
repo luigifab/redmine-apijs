@@ -1,8 +1,8 @@
 # encoding: utf-8
 # Created L/13/07/2020
-# Updated V/05/08/2022
+# Updated S/24/10/2026
 #
-# Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -26,9 +26,9 @@ module RedmineApijs
       # for Redmine 5.0+ with Rails 6.0+
       ENV['redmine_apijs_gem'] = 'yes'
 
-      # Gemify redmine plugin (based on https://github.com/koppen/redmine_github_hook/commit/a82bcccfd0731503509771d3f715d8fb1e6f1bfe)
+      # Gemify Redmine plugin (based on https://github.com/koppen/redmine_github_hook/commit/a82bcccfd0731503509771d3f715d8fb1e6f1bfe)
       # Gem for Redmine 3.0+ (tested with 3.0..5.0), for Redmine 4.1+ read https://redmine.org/issues/31110#note-8
-      # run the classic redmine plugin initializer after rails boot
+      # run the classic Redmine plugin initializer after Rails boot
       require File.expand_path('../../init', __FILE__)
       ::ActionController::Base.prepend_view_path(File.expand_path('../../app/views/', __FILE__))
 

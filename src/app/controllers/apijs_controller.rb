@@ -1,8 +1,8 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated M/05/07/2022
+# Updated S/24/10/2026
 #
-# Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -20,12 +20,12 @@ class ApijsController < AttachmentsController
   if Redmine::VERSION::MAJOR >= 4
     before_action :find_project, except: [:upload, :clearcache]
     before_action :authorize_global, only: [:upload, :clearcache]
-    before_action :read_authorize, :file_readable, only: [:thumb, :show, :download, :thumbnail]
+    before_action :read_authorize, :file_readable, only: [:thumb, :srcset, :show, :download, :thumbnail]
     before_action :read_authorize, only: [:editdesc, :editname, :delete]
   else
     before_filter :find_project, except: [:upload, :clearcache]
     before_filter :authorize_global, only: [:upload, :clearcache]
-    before_filter :read_authorize, :file_readable, only: [:thumb, :show, :download, :thumbnail]
+    before_filter :read_authorize, :file_readable, only: [:thumb, :srcset, :show, :download, :thumbnail]
     before_filter :read_authorize, only: [:editdesc, :editname, :delete]
   end
 
@@ -58,7 +58,7 @@ class ApijsController < AttachmentsController
       t1 = Thread.new {
         unless File.file?(img_thumb)
           cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
-          logger.info 'APIJS::ApijsController#thumb:t1: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#thumb:t1: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
       }
       # génération des images srcset et show
@@ -66,14 +66,14 @@ class ApijsController < AttachmentsController
         img_srcset = @attachment.getImgSrcset
         unless File.file?(img_srcset)
           cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
-          logger.info 'APIJS::ApijsController#thumb:t2: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#thumb:t2: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
       }
       t3 = Thread.new {
         img_show = @attachment.getImgShow
         unless File.file?(img_show)
           cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-          logger.info 'APIJS::ApijsController#thumb:t3: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#thumb:t3: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
       }
       # attends la fin des threads
@@ -84,19 +84,19 @@ class ApijsController < AttachmentsController
       # génération de l'image thumb
       unless File.file?(img_thumb)
         cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
-        logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        logger.info 'APIJS::ApijsController#thumb: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
       end
       # génération des images srcset et show
       if @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '1'
         img_srcset = @attachment.getImgSrcset
         unless File.file?(img_srcset)
           cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
-          logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#thumb: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
         img_show = @attachment.getImgShow
         unless File.file?(img_show)
           cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-          logger.info 'APIJS::ApijsController#thumb: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#thumb: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
       end
     end
@@ -104,7 +104,7 @@ class ApijsController < AttachmentsController
     # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
       deny_access
-    # envoie de l'image avec mise en cache
+    # envoi de l'image avec mise en cache
     elsif File.file?(img_thumb) && stale?(etag: img_thumb)
       send_file(img_thumb, filename: filename_for_content_disposition(@attachment.filename),
         type: Redmine::MimeType.of(img_thumb), disposition: 'inline')
@@ -129,7 +129,7 @@ class ApijsController < AttachmentsController
       t1 = Thread.new {
         unless File.file?(img_srcset)
           cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
-          logger.info 'APIJS::ApijsController#srcset:t1: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#srcset:t1: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
       }
       # génération des images thumb et show
@@ -137,14 +137,14 @@ class ApijsController < AttachmentsController
         img_thumb = @attachment.getImgThumb
         unless File.file?(img_thumb)
           cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
-          logger.info 'APIJS::ApijsController#srcset:t2: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#srcset:t2: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
       }
       t3 = Thread.new {
         img_show = @attachment.getImgShow
         unless File.file?(img_show)
           cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-          logger.info 'APIJS::ApijsController#srcset:t3: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#srcset:t3: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
       }
       # attends la fin des threads
@@ -155,19 +155,19 @@ class ApijsController < AttachmentsController
       # génération de l'image srcset
       unless File.file?(img_srcset)
         cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
-        logger.info 'APIJS::ApijsController#srcset: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+        logger.info 'APIJS::ApijsController#srcset: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
       end
       # génération des images thumb et show
       if @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '1'
         img_thumb = @attachment.getImgThumb
         unless File.file?(img_thumb)
           cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
-          logger.info 'APIJS::ApijsController#srcset: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#srcset: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
         img_show = @attachment.getImgShow
         unless File.file?(img_show)
           cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-          logger.info 'APIJS::ApijsController#srcset: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+          logger.info 'APIJS::ApijsController#srcset: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
         end
       end
     end
@@ -175,7 +175,7 @@ class ApijsController < AttachmentsController
     # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
       deny_access
-    # envoie de l'image avec mise en cache
+    # envoi de l'image avec mise en cache
     elsif File.file?(img_srcset) && stale?(etag: img_srcset)
       send_file(img_srcset, filename: filename_for_content_disposition(@attachment.filename),
         type: Redmine::MimeType.of(img_srcset), disposition: 'inline')
@@ -196,13 +196,13 @@ class ApijsController < AttachmentsController
     # génération de l'image show
     if File.file?(source) && !File.file?(img_show)
       cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-      logger.info 'APIJS::ApijsController#show: ' + cmd + ' (' + `#{cmd}`.gsub(/^\s+|\s+$/, '') + ')'
+      logger.info 'APIJS::ApijsController#show: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
     end
 
     # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
       deny_access
-    # envoie de l'image avec mise en cache
+    # envoi de l'image avec mise en cache
     elsif File.file?(img_show) && stale?(etag: img_show)
       send_file(img_show, filename: filename_for_content_disposition(@attachment.filename),
         type: Redmine::MimeType.of(img_show), disposition: 'inline')
@@ -219,7 +219,7 @@ class ApijsController < AttachmentsController
     # acl
     if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
       deny_access
-    # télachargement d'une vidéo en 206 Partial Content (https://stackoverflow.com/a/7604330 + https://stackoverflow.com/a/16593030)
+    # téléchargement d'une vidéo en 206 Partial Content (https://stackoverflow.com/a/7604330 + https://stackoverflow.com/a/16593030)
     # ou téléchargement d'une image avec mise en cache
     # ou téléchargement d'un fichier
     elsif !params[:filename] || params[:inline] || params[:stream]
@@ -235,6 +235,12 @@ class ApijsController < AttachmentsController
           if match
             file_begin = match[1].to_i
             file_end = match[2].to_i if match[2] && !match[2].empty?
+          end
+          file_end = file_size - 1 if file_end >= file_size
+          if file_begin > file_end
+            response.header['Content-Range'] = 'bytes */' + file_size.to_s
+            head 416
+            return
           end
         end
 
@@ -334,7 +340,7 @@ class ApijsController < AttachmentsController
 
 
   ## Suppression d'un fichier
-  # Vérifie si l'utilisateur a accès au projet et à la suppresion
+  # Vérifie si l'utilisateur a accès au projet et à la suppression
   # Renvoie l'id du fichier suivi en cas de suppression réussie
   def delete
 

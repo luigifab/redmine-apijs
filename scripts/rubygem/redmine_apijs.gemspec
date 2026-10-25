@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
     'documentation_uri' => 'https://www.luigifab.fr/redmine/apijs',
     'homepage_uri'      => 'https://www.redmine.org/plugins/apijs'
   }
-  s.required_ruby_version = '>= 1.9'
+  s.required_ruby_version = '>= 1.9.2'
   s.files = %w[
     app/controllers/apijs_controller.rb
     app/views/application/_browser.html.erb

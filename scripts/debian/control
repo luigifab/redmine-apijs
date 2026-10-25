@@ -2,9 +2,9 @@ Source: redmine-plugin-apijs
 Section: web
 Priority: optional
 Maintainer: Fabrice Creuzot <code@luigifab.fr>
-Build-Depends: debhelper-compat (= 13)
+Build-Depends: debhelper-compat (= 14)
 Rules-Requires-Root: no
-Standards-Version: 4.7.2
+Standards-Version: 4.7.4
 Homepage: https://github.com/luigifab/redmine-apijs
 Vcs-Browser: https://github.com/luigifab/redmine-apijs
 Vcs-Git: https://github.com/luigifab/redmine-apijs.git
@@ -12,7 +12,7 @@ Vcs-Git: https://github.com/luigifab/redmine-apijs.git
 Package: redmine-plugin-apijs
 Architecture: all
 Pre-Depends: redmine
-Depends: redmine (>= 2.0.0), ruby (>= 1.9), python3-pil, python3-scour, libimage-exiftool-perl, ${misc:Depends}
+Depends: ${misc:Depends}, redmine (>= 2.0.0), ruby (>= 1.9.2), python3-pil, python3-scour, libimage-exiftool-perl
 Recommends: ffmpegthumbnailer
 Enhances: redmine
 Description: plugin for Redmine to display a gallery from attachments

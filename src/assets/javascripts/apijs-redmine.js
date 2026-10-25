@@ -1,8 +1,8 @@
 /**
  * Created D/15/12/2013
- * Updated L/28/07/2025
+ * Updated S/24/10/2026
  *
- * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/redmine-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -129,11 +129,11 @@ var apijsRedmine = new (function () {
 
 	this.actionEditAttachment = function (action, args) {
 
-		// vérification de la nouvelle description
+		// check the new description
 		if (typeof action == 'boolean') {
 			return true;
 		}
-		// sauvegarde de la nouvelle description
+		// save the new description
 		else if (typeof action == 'string') {
 
 			// args = [id, action, token]
@@ -148,7 +148,7 @@ var apijsRedmine = new (function () {
 					if ([0, 200].has(xhr.status)) {
 						if (xhr.responseText.indexOf('attachmentId') === 0) {
 
-							// extrait l'id et la description du fichier enregistré
+							// extract the id and the description of the saved file
 							var elem, id, text;
 							id   = xhr.responseText.slice(0, xhr.responseText.indexOf(':'));
 							text = xhr.responseText.slice(xhr.responseText.indexOf(':') + 1);
@@ -191,11 +191,11 @@ var apijsRedmine = new (function () {
 
 	this.actionRenameAttachment = function (action, args) {
 
-		// vérification du nouveau nom
+		// check the new name
 		if (typeof action == 'boolean') {
 			return true;
 		}
-		// sauvegarde du nouveau nom
+		// save the new name
 		else if (typeof action == 'string') {
 
 			// args = [id, action, token]
@@ -210,17 +210,17 @@ var apijsRedmine = new (function () {
 					if ([0, 200].has(xhr.status)) {
 						if (xhr.responseText.indexOf('attachmentId') === 0) {
 
-							// extrait l'id et le nom du fichier enregistré
+							// extract the id and the name of the saved file
 							var elem, id, name, subelem, text;
 							id   = xhr.responseText.slice(0, xhr.responseText.indexOf(':'));
 							name = xhr.responseText.slice(xhr.responseText.indexOf(':') + 1);
 
-							// nom
+							// name
 							elem = document.getElementById(id);
 							elem.querySelector('.filename').textContent = name;
 
-							// URLs sur a/href et input/value et button.download/onclick et button.show/onclick
-							// pas de maj de src et srcset sur img pour éviter un appel réseau inutile
+							// URLs on a/href and input/value and button.download/onclick and button.show/onclick
+							// no update of src and srcset on img to avoid a useless network request
 							subelem = elem.querySelector('input');
 							if (subelem) {
 								text = subelem.getAttribute('value');
@@ -278,15 +278,15 @@ var apijsRedmine = new (function () {
 				if ([0, 200].has(xhr.status)) {
 					if (xhr.responseText.indexOf('attachmentId') === 0) {
 
-						// supprime le fichier de la page grâce à son id
+						// remove the file from the page with its id
 						var attachment = document.getElementById(xhr.responseText), elems = attachment.parentNode, idx = 0;
 						attachment.remove();
 
-						// supprime la liste des fichiers
+						// remove the list of files
 						if (elems.querySelectorAll('dl, li').length < 1) {
 							elems.remove();
 						}
-						// ou réattribue les ids du diaporama (pas de réinitialisation, on remet juste les ids en place)
+						// or reassign the slideshow ids (no reset, just put the ids back in place)
 						else {
 							elems.querySelectorAll('a[id][type]').forEach(function (elem) {
 								elem.setAttribute('id', elem.getAttribute('id').slice(0, elem.getAttribute('id').lastIndexOf('.') + 1) + idx++);

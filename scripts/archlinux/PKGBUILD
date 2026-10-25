@@ -1,19 +1,19 @@
 pkgname=redmine-plugin-apijs
-pkgver=6.9.8
+pkgver=6.9.9
 pkgrel=1
-pkgdesc="Plugin for Redmine to display a gallery from attachments"
-arch=('any')
+pkgdesc='Plugin for Redmine to display a gallery from attachments'
 url='https://github.com/luigifab/redmine-apijs'
 license=('GPL2' 'MIT' 'OFL')
+arch=('any')
 depends=('redmine' 'python-pillow' 'scour' 'perl-image-exiftool')
 optdepends=('ffmpegthumbnailer: for video thumbnail support')
 source=("https://github.com/luigifab/redmine-apijs/archive/v${pkgver}/redmine-apijs-${pkgver}.tar.gz")
-sha256sums=("...")
+sha256sums=('SKIP')
 
 prepare() {
   mv "redmine-apijs-$pkgver" "$pkgname-$pkgver"
   cd "$pkgname-$pkgver"
-  sed -i "s/ version '[0-9].[0-9].[0-9]/&-zst/g" src/init.rb
+  sed -i "s/ version '[0-9.]*/&-zst/g" src/init.rb
 }
 
 package() {
@@ -27,6 +27,5 @@ package() {
   chmod +x        "$pkgdir/usr/share/webapps/redmine/lib/plugins/redmine_apijs/lib/image.py"
 
   install -Dpm 644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
-  #install -Dpm 644 MIT "$pkgdir/usr/share/licenses/$pkgname/MIT"
-  #install -Dpm 644 OFL "$pkgdir/usr/share/licenses/$pkgname/OFL"
+  #install -Dpm 644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }

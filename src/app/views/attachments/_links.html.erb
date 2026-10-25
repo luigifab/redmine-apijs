@@ -1,8 +1,8 @@
 <%
 # Created L/21/05/2012
-# Updated J/26/05/2022
+# Updated S/24/10/2026
 #
-# Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+# Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
 #
 # This program is free software, you can redistribute it or modify
@@ -121,7 +121,7 @@ end
 								<button type="button" class="attachment delete" title="<%= l(:button_delete) %>" onclick="<%= raw attachment.getDeleteButton(form_authenticity_token) %>"></button>
 							<% end %>
 						</span>
-						<strong class="filename"><%= attachment.filename %></strong>
+						<strong class="filename"><%= h(attachment.filename) %></strong>
 						<span class="description"><%= h(description) %></span>
 						<span class="size">(<%= number_to_human_size(attachment.filesize) %>)</span>
 						<span class="author"><%= h(attachment.author) %></span>

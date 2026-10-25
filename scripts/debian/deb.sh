@@ -2,11 +2,12 @@
 # Debian: sudo apt install dpkg-dev devscripts dh-make
 
 
-cd "$(dirname "$0")"
-version="6.9.8"
+cd "$(dirname "$0")" || exit 1
+export DH_QUIET=1
+version="6.9.9"
 
 
-mkdir builder
+mkdir -p builder
 rm -rf builder/*
 
 # copy to a tmp directory
@@ -17,7 +18,7 @@ if [ true ]; then
 	cd ..
 else
 	temp=redmine-apijs-$version
-	mkdir /tmp/$temp
+	mkdir /tmp/$temp || exit 1
 	cp -r ../../* /tmp/$temp/
 	rm -rf /tmp/$temp/scripts/*/builder/
 
@@ -30,10 +31,10 @@ else
 fi
 
 
-# create packages for Debian and Ubuntu
-for serie in experimental questing plucky oracular noble jammy focal bionic xenial trusty; do
+# build binary packages for Debian and source packages for Ubuntu
+for serie in experimental stonking resolute noble jammy focal bionic xenial trusty; do
 
-	printf "\n\n#################################################################### $serie ##\n\n"
+	printf "\n\n#################################################################### $serie\n\n"
 	if [ $serie = "experimental" ]; then
 		# copy for Ubuntu
 		cp -a builder/redmine-apijs-$version/ builder/redmine-apijs-$version+src/
@@ -51,68 +52,69 @@ for serie in experimental questing plucky oracular noble jammy focal bionic xeni
 
 	rm -rf debian/*/*ex debian/*ex debian/*EX debian/README* debian/*doc*
 	cp scripts/debian/* debian/
-	rm -f debian/deb.sh
+	rm -f debian/*.sh
 	mkdir debian/upstream ; mv debian/metadata debian/upstream/metadata
-	mv debian/lintian  debian/redmine-plugin-apijs.lintian-overrides
 
+
+
+	# debhelper: experimental:14 ubuntu:13 focal:12 bionic:9 xenial:9 trusty:9
+	if [ $serie = "experimental" ] || [ $serie = "unstable" ]; then
+		mv debian/control.debian debian/control
+	elif [ $serie = "focal" ]; then
+		mv debian/control.ubuntu debian/control
+		sed -i 's/debhelper-compat (= 14)/debhelper-compat (= 12)/g' debian/control
+	elif [ $serie = "bionic" ]; then
+		mv debian/control.ubuntu debian/control
+
+		sed -i 's/execute_before_dh_install:/override_dh_update_autotools_config:/g' debian/rules
+		sed -i 's/debhelper-compat (= 14)/debhelper-compat (= 9)/g' debian/control
+	elif [ $serie = "xenial" ]; then
+		mv debian/control.ubuntu debian/control
+
+		sed -i 's/execute_before_dh_install:/override_dh_update_autotools_config:/g' debian/rules
+		sed -i 's/debhelper-compat (= 14)/debhelper (>= 9)/g' debian/control
+		sed -i ':a;N;$!ba;s/Rules-Requires-Root: no\n//g' debian/control
+		echo 9 > debian/compat
+	elif [ $serie = "trusty" ]; then
+		mv debian/control.ubuntu debian/control
+		sed -i 's/dh $@/dh $@ --with autotools_dev/g' debian/rules
+		sed -i 's/execute_before_dh_install:/override_dh_autotools-dev_updateconfig:/g' debian/rules
+		sed -i 's/debhelper-compat (= 14)/debhelper (>= 9), autotools-dev/g' debian/control
+		sed -i ':a;N;$!ba;s/Rules-Requires-Root: no\n//g' debian/control
+		echo 9 > debian/compat
+	else
+		mv debian/control.ubuntu debian/control
+		sed -i 's/debhelper-compat (= 14)/debhelper-compat (= 13)/g' debian/control
+	fi
+
+	if [ $serie = "mx25" ] || [ $serie = "mx23" ]; then
+		mv debian/changelog.mx debian/changelog
+		sed -i 's/-1) /-1~'$serie'+1) /' debian/changelog
+		sed -i 's/ experimental; / mx; /' debian/changelog
+		sed -i 's/ unstable; / mx; /' debian/changelog
+	elif [ $serie = "experimental" ] || [ $serie = "unstable" ]; then
+		sed -i 's/ experimental; / '$serie'; /g' debian/changelog
+		mv debian/changelog.debian debian/changelog
+	else
+		sed -i 's/ experimental; / '$serie'; /g' debian/changelog
+		sed -i 's/-1) /-1+'$serie') /' debian/changelog
+	fi
+	rm -f debian/*.mx debian/*.debian debian/*.ubuntu
 
 	if [ $serie = "experimental" ]; then
-		mv debian/control.debian debian/control
-		mv debian/changelog.debian debian/changelog
-		rm -f debian/*.mx debian/*.debian debian/*.ubuntu
-		echo "=========================== buildpackage ($serie) =="
+		echo "===================== build package ($serie) =="
 		dpkg-buildpackage -us -uc
-	else
-		# debhelper: experimental:13 focal/mx19/mx21:12 bionic:9 xenial:9 trusty:9
-		if [ $serie = "unstable" ]; then
-			mv debian/control.debian debian/control
-
-		elif [ $serie = "mx19" ] || [ $serie = "mx21" ]; then
-			mv debian/control.mx debian/control
-			sed -i 's/debhelper-compat (= 13)/debhelper-compat (= 12)/g' debian/control
-		elif [ $serie = "focal" ]; then
-			mv debian/control.ubuntu debian/control
-			sed -i 's/debhelper-compat (= 13)/debhelper-compat (= 12)/g' debian/control
-		elif [ $serie = "bionic" ]; then
-			mv debian/control.ubuntu debian/control
-			sed -i 's/execute_before_dh_install:/override_dh_update_autotools_config:/g' debian/rules
-			sed -i 's/debhelper-compat (= 13)/debhelper-compat (= 9)/g' debian/control
-		elif [ $serie = "xenial" ]; then
-			mv debian/control.ubuntu debian/control
-			sed -i 's/execute_before_dh_install:/override_dh_update_autotools_config:/g' debian/rules
-			sed -i 's/debhelper-compat (= 13)/debhelper (>= 9)/g' debian/control
-			sed -i ':a;N;$!ba;s/Rules-Requires-Root: no\n//g' debian/control
-			echo 9 > debian/compat
-		elif [ $serie = "trusty" ]; then
-			mv debian/control.ubuntu debian/control
-			sed -i 's/execute_before_dh_install:/override_dh_update_autotools_config:/g' debian/rules
-			sed -i 's/debhelper-compat (= 13)/debhelper (>= 9)/g' debian/control
-			sed -i ':a;N;$!ba;s/Rules-Requires-Root: no\n//g' debian/control
-			echo 9 > debian/compat
-		else
-			mv debian/control.ubuntu debian/control
-		fi
-		if [ $serie = "mx23" ] || [ $serie = "mx21" ] || [ $serie = "mx19" ]; then
-			mv debian/changelog.mx debian/changelog
-			sed -i 's/-1) /-1~'$serie'+1) /' debian/changelog
-		elif [ $serie = "unstable" ]; then
-			mv debian/changelog.debian debian/changelog
-		else
-			mv debian/changelog.ubuntu debian/changelog
-			sed -i 's/experimental/'$serie'/g' debian/changelog
-			sed -i 's/-1) /-1+'$serie') /' debian/changelog
-		fi
-		rm -f debian/*.mx debian/*.debian debian/*.ubuntu
-		echo "=========================== buildpackage ($serie) =="
-		dpkg-buildpackage -us -uc -ui -d -S
+		echo "=========================== lintian ($serie) =="
+		lintian -EviIL +pedantic ../redmine-plugin-apijs_$version*.changes
+		rm ../*amd64.changes
 	fi
+
+	echo "============== build source package ($serie) =="
+	rm -f debian/*.sh
+	dpkg-buildpackage -us -uc -ui -d -S
 	cd ..
 
-	if [ $serie = "experimental" ]; then
-		echo "=========================== lintian ($serie) =="
-		lintian -EviIL +pedantic redmine-plugin-apijs_$version*.changes
-		rm *amd64.changes
-	elif [ $serie = "unstable" ]; then
+	if [ $serie = "experimental" ] || [ $serie = "unstable" ]; then
 		echo "=========================== debsign ($serie) =="
 		debsign redmine-plugin-apijs*$version-*_source.changes
 	else
@@ -124,6 +126,6 @@ done
 
 
 printf "\n\n"
-ls -dlth "$PWD/"builder/*.deb "$PWD/"builder/*.changes
+ls -dlth "$PWD"/builder/*.deb "$PWD"/builder/*.changes
 printf "\n"
 rm -rf builder/*/
