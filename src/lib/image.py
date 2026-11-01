@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf8 -*-
 # Created J/26/12/2013
-# Updated S/24/10/2026
+# Updated D/01/11/2026
 #
 # Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # Copyright 2020-2023 | Fabrice Creuzot <fabrice~cellublue~com>
-# https://github.com/luigifab/redmine-apijs https://github.com/luigifab/openmage-apijs
+# https://github.com/luigifab/redmine-apijs
 #
 # This program is free software, you can redistribute it or modify
 # it under the terms of the GNU General Public License (GPL) as published
@@ -41,12 +41,46 @@ same    = filein == fileout
 fileout = fileout + '.save'
 if os.path.isfile(fileout):
 	exit(0)
-os.close(os.open(fileout, os.O_CREAT))
+os.close(os.open(fileout, os.O_CREAT, 0o644))
 
 
 # Tools
 def versionTuple(v):
 	return tuple(map(int, (v.split('.'))))
+
+def isValidMimeType(filein):
+
+	# made by Claude Opus 5.5
+	ext = os.path.splitext(filein)[1].lower()
+	with open(filein, 'rb') as fp:
+		head = fp.read(16)
+
+	if ext in ('.jpg', '.jpeg'):
+		return head.startswith(b'\xff\xd8\xff')
+	if ext == '.png':
+		return head.startswith(b'\x89PNG\r\n\x1a\n')
+	if ext == '.gif':
+		return head.startswith((b'GIF87a', b'GIF89a'))
+	if ext == '.webp':
+		return head.startswith(b'RIFF') and head[8:12] == b'WEBP'
+	if ext in ('.tif', '.tiff'):
+		return head.startswith((b'MM\x00\x2a', b'II\x2a\x00', b'MM\x00\x2b', b'II\x2b\x00'))
+	if ext == '.bmp':
+		return head.startswith(b'BM')
+	if ext == '.psd':
+		return head.startswith(b'8BPS')
+	if ext == '.eps':
+		return head.startswith((b'%!PS', b'\xc5\xd0\xd3\xc6'))
+	if ext == '.ogv':
+		return head.startswith(b'OggS')
+	if ext == '.webm':
+		return head.startswith(b'\x1a\x45\xdf\xa3')
+	if ext == '.mp4':
+		return head[4:8] == b'ftyp'
+	if ext == '.svg':
+		return head.lstrip(b'\xef\xbb\xbf \t\r\n').startswith(b'<')
+
+	return not head.startswith((b'%!PS', b'\xc5\xd0\xd3\xc6'))
 
 def calcSize(source, size):
 
@@ -266,6 +300,9 @@ def saveJpg(dest, fileout, quality):
 # action
 # drop fileout on error (and filein if same)
 try:
+	if not isValidMimeType(filein):
+		raise Exception('Invalid mime type for ' + filein)
+
 	# python-scour
 	if '.svg' in fileout:
 		from scour.scour import sanitizeOptions, start
@@ -278,10 +315,10 @@ try:
 		start(options, open(filein, 'rb'), open(fileout, 'wb'))
 	# python-pil
 	else:
-		from PIL import Image, ImageSequence
+		from PIL import Image
 
 		# from video or image
-		if '.ogv' in filein or '.webm' in filein or '.mp4' in filein:
+		if filein.lower().endswith(('.ogv', '.webm', '.mp4')):
 			source = videoToImage(filein, fileout, size)
 			imgext = 'VIDEO'
 		else:
@@ -290,7 +327,8 @@ try:
 			size   = calcSize(source, size)
 
 		# filein = fileout = /tmp/phpA5kbkc when replacing the tmp image with a re-sampled copy to exclude images with malicious data
-		# @todo for animated GIF to animated GIF (or PNG), sadly, the resulting file is not optimized, the idea is to reprocess the file to not replace each frame by another one
+		# @todo for animated GIF to animated GIF (or PNG), sadly, the resulting file is not optimized
+		#       the idea is to reprocess the file to not replace each frame by another one
 		# for my test image, https://github.com/kohler/gifsicle doesn't do it, but https://kraken.io/web-interface does it
 		if   imgext == 'GIF'  and (same or '.gif'  in fileout):
 			dest = resizeAnimatedGif(source, size, fixed)

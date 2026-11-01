@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated S/24/10/2026
+ * Updated D/01/11/2026
  *
  * Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/redmine-apijs
@@ -23,7 +23,6 @@ var apijsRedmine = new (function () {
 	this.init = function () {
 
 		var d = apijs.i18n.data;
-		if (!d.frca) d.frca = {};
 		// @see https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
 		// auto start
 		d.cs[250] = "Smazat soubor";
@@ -115,19 +114,18 @@ var apijsRedmine = new (function () {
 		}
 	};
 
-	this.editAttachment = function (elem, id, action, token) {
+	this.descAttachment = function (elem, id, action, token) {
 
-		var desc, text, title = apijs.i18n.translate(255);
-
-		desc = elem.parentNode.parentNode.querySelector('.description').textContent.trim();
-		text = '[p][label for="apijsinput"]' + apijs.i18n.translate(256) + '[/label][/p]' +
+		var desc = elem.parentNode.parentNode.querySelector('.description').textContent.trim(),
+		    text = '[p][label for="apijsinput"]' + apijs.i18n.translate(256) + '[/label][/p]' +
 				'[input type="text" name="description" value="' + desc + '" spellcheck="true" id="apijsinput"]';
 
-		apijs.dialog.dialogFormOptions(title, text, action, apijsRedmine.actionEditAttachment, [id, action, token], 'editattach');
+		apijs.dialog.dialogFormOptions(apijs.i18n.translate(255), text, action,
+			apijsRedmine.actionDescAttachment, [id, action, token], 'editattach');
 		apijs.dialog.t1.querySelector('input').select();
 	};
 
-	this.actionEditAttachment = function (action, args) {
+	this.actionDescAttachment = function (action, args) {
 
 		// check the new description
 		if (typeof action == 'boolean') {
@@ -178,18 +176,17 @@ var apijsRedmine = new (function () {
 		}
 	};
 
-	this.renameAttachment = function (elem, id, action, token) {
+	this.nameAttachment = function (elem, id, action, token) {
 
-		var name, text, title = apijs.i18n.translate(257);
-
-		name = elem.parentNode.parentNode.querySelector('.filename').textContent.trim();
-		text = '[p][label for="apijsinput"]' + apijs.i18n.translate(258) + '[/label][/p]' +
+		var name = elem.parentNode.parentNode.querySelector('.filename').textContent.trim(),
+		    text = '[p][label for="apijsinput"]' + apijs.i18n.translate(258) + '[/label][/p]' +
 				'[input type="text" name="name" value="' + name + '" spellcheck="false" id="apijsinput"]';
 
-		apijs.dialog.dialogFormOptions(title, text, action, apijsRedmine.actionRenameAttachment, [id, action, token], 'editattach');
+		apijs.dialog.dialogFormOptions(apijs.i18n.translate(257), text, action,
+			apijsRedmine.actionNameAttachment, [id, action, token], 'editattach');
 	};
 
-	this.actionRenameAttachment = function (action, args) {
+	this.actionNameAttachment = function (action, args) {
 
 		// check the new name
 		if (typeof action == 'boolean') {
@@ -261,11 +258,13 @@ var apijsRedmine = new (function () {
 		}
 	};
 
-	this.removeAttachment = function (elem, id, action, token) {
-		apijs.dialog.dialogConfirmation(apijs.i18n.translate(250), apijs.i18n.translate(251), apijsRedmine.actionRemoveAttachment, [id, action, token]);
+	this.deleteAttachment = function (elem, id, action, token) {
+
+		apijs.dialog.dialogConfirmation(apijs.i18n.translate(250), apijs.i18n.translate(251),
+			apijsRedmine.actionDeleteAttachment, [id, action, token]);
 	};
 
-	this.actionRemoveAttachment = function (args) {
+	this.actionDeleteAttachment = function (args) {
 
 		// args = [id, action, token]
 		var xhr = new XMLHttpRequest();
@@ -308,13 +307,27 @@ var apijsRedmine = new (function () {
 		xhr.send();
 	};
 
-	this.clearCache = function (action) {
-		apijs.dialog.dialogConfirmation(apijs.i18n.translate(259), apijs.i18n.translate(260), apijsRedmine.actionClearCache, action);
+	this.clearCache = function (action, token) {
+
+		apijs.dialog.dialogConfirmation(apijs.i18n.translate(259), apijs.i18n.translate(260),
+			apijsRedmine.actionClearCache, [action, token]);
 	};
 
 	this.actionClearCache = function (args) {
+
+		// args = [action, token]
+		// POST with the CSRF token, then Redmine redirects to the settings page
+		var form = document.createElement('form'), input = document.createElement('input');
+		form.setAttribute('method', 'post');
+		form.setAttribute('action', args[0]);
+		input.setAttribute('type', 'hidden');
+		input.setAttribute('name', 'authenticity_token');
+		input.setAttribute('value', args[1]);
+		form.appendChild(input);
+		document.body.appendChild(form);
+
 		apijs.dialog.remove('waiting', 'lock');
-		self.location.href = args;
+		form.submit();
 	};
 
 })();

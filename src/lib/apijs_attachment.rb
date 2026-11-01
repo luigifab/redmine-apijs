@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated S/24/10/2026
+# Updated D/01/11/2026
 #
 # Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
@@ -39,14 +39,33 @@ module ApijsAttachment
   module InstanceMethods
 
     # https://www.redmine.org/issues/19024
-    def getUrl(action, all=false)
+    # Examples for the attachment 42 named photo.jpg:
+    #  getUrl('redmineshow') → /attachments/42/photo.jpg
+    #  getUrl('thumb')       → /apijs/preview/thumb/42/photo.jpg
+    #  getUrl('srcset')      → /apijs/preview/srcset/42/photo.jpg
+    #  getUrl('show')        → /apijs/preview/show/42/photo.jpg
+    #  getUrl('download')    → /apijs/download/42/photo.jpg
+    #  getUrl('desc')        → /apijs/edit/desc
+    #  getUrl('name')        → /apijs/edit/name
+    #  getUrl('delete')      → /apijs/delete
+    # For a svg file, thumb, srcset and show give the same url: /apijs/preview/show/42/drawing.svg
+    # The file name is encoded: /apijs/download/42/my%20photo%20(1).jpg
+    # When Redmine is in a sub directory (relative_url_root), the url starts with it
+    def getUrl(action)
       if action == 'redmineshow'
         return self.getSuburi(url_for({only_path: true, controller: 'attachments', action: 'show', id: self.id, filename: self.filename}))
-      elsif all
-        return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: action, id: self.id, filename: self.filename}))
-      else
-        return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: action}))
       end
+      if ['thumb', 'srcset', 'show'].include?(action)
+        type = (self.filename =~ /\.svg$/i) ? 'show' : action
+        return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: 'preview', id: self.id, filename: self.filename, type: type}))
+      end
+      if ['desc', 'name'].include?(action)
+        return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: 'edit', type: action}))
+      end
+      if action == 'download'
+        return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: 'download', id: self.id, filename: self.filename}))
+      end
+      return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: action}))
     end
 
     def getSuburi(url)
@@ -60,64 +79,30 @@ module ApijsAttachment
     end
 
     # links
-    def getShowUrl
-      return self.getUrl('show', true)
-    end
-
-    def getThumbUrl
-      return self.filename =~ /\.svg$/i ? self.getShowUrl : self.getUrl('thumb', true)
-    end
-
-    def getSrcsetUrl
-      return self.filename =~ /\.svg$/i ? self.getShowUrl : self.getUrl('srcset', true)
-    end
-
-    def getDownloadUrl
-      return self.getUrl('download', true)
-    end
-
-    def getDownloadButton
-      return "self.location.href = '" + self.getUrl('download', true) + "';"
-    end
-
-    def getEditButton(token)
-      return "apijsRedmine.editAttachment(this, " + self.id.to_s + ", '" + self.getUrl('editdesc') + "', '" + token + "');"
-    end
-
-    def getRenameButton(token)
-      return "apijsRedmine.renameAttachment(this, " + self.id.to_s + ", '" + self.getUrl('editname') + "', '" + token + "');"
-    end
-
-    def getDeleteButton(token)
-      return "apijsRedmine.removeAttachment(this, " + self.id.to_s + ", '" + self.getUrl('delete') + "', '" + token + "');"
-    end
-
-    def getShowButton(setting_show_filename, setting_show_exifdate, description)
-      if self.isImage?
-        return "apijs.dialog.dialogPhoto('" + self.getShowUrl + "', '" + (setting_show_filename ? self.filename : 'false') + "', '" + (setting_show_exifdate ? format_time(self.created_on) : 'false') + "', '" + description + "');"
-      elsif self.isVideo?
-        return "apijs.dialog.dialogVideo('" + self.getDownloadUrl + "', '" + (setting_show_filename ? self.filename : 'false') + "', '" + (setting_show_exifdate ? format_time(self.created_on) : 'false') + "', '" + description + "');"
-      elsif self.is_text?
-        return "self.location.href = '" + self.getUrl('redmineshow', false) + "';"
-      end
+    def getOnclick(type, token)
+      return "apijsRedmine." + type + "Attachment(this, " + self.id.to_s + ", '" + self.getUrl(type) + "', '" + token + "');"
     end
 
     # paths
-    def getImgThumb
-        return File.join(APIJS_ROOT, 'thumb', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + self.getExt)
+    def getPreviewPath(type)
+      return File.join(APIJS_ROOT, type, self.created_on.strftime('%Y-%m').to_s, self.id.to_s + self.getPreviewExt)
     end
 
-    def getImgSrcset
-      return File.join(APIJS_ROOT, 'srcset', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + self.getExt)
-    end
-
-    def getImgShow
-      return File.join(APIJS_ROOT, 'show', self.created_on.strftime('%Y-%m').to_s, self.id.to_s + self.getExt)
-    end
-
-    # image, photo, video
-    def isImage?
-      return self.filename =~ /\.(jpg|jpeg|gif|png|webp|svg)$/i
+    # photo or video
+    def getMimeType(name=nil)
+      types = {
+        'jpg'  => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'gif'  => 'image/gif',
+        'png'  => 'image/png',
+        'webp' => 'image/webp',
+        'svg'  => 'image/svg+xml',
+        'ogv'  => 'video/ogg',
+        'webm' => 'video/webm',
+        'mp4'  => 'video/mp4',
+        'pdf'  => 'application/pdf'
+      }
+      return types[File.extname(name || self.filename).downcase.delete('.')] || 'application/octet-stream'
     end
 
     def isPhoto?
@@ -133,6 +118,7 @@ module ApijsAttachment
       types.push('eps')  if Setting.plugin_redmine_apijs['album_mimetype_eps']  == '1'
       types.push('psd')  if Setting.plugin_redmine_apijs['album_mimetype_psd']  == '1'
       types.push('svg')  if Setting.plugin_redmine_apijs['album_mimetype_svg']  == '1'
+      return false       if types.empty?
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
@@ -141,11 +127,16 @@ module ApijsAttachment
       types.push('ogv')  if Setting.plugin_redmine_apijs['album_mimetype_ogv']  == '1'
       types.push('webm') if Setting.plugin_redmine_apijs['album_mimetype_webm'] == '1'
       types.push('mp4')  if Setting.plugin_redmine_apijs['album_mimetype_mp4']  == '1'
+      return false       if types.empty?
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
+    def isPdf?
+      return self.filename =~ /\.pdf$/i
+    end
+
     # extension of the generated images
-    def getExt
+    def getPreviewExt
         ext = File.extname(self.filename).downcase
         return ext if ext == '.gif'
         return ext if ext == '.png'
@@ -200,38 +191,35 @@ module ApijsAttachment
       return e.message
     end
 
+    def createPreview(type)
+      sizes  = {'thumb' => [200, 150, true], 'srcset' => [400, 300, true], 'show' => [1200, 900, false]}
+      target = self.getPreviewPath(type)
+      unless File.file?(target)
+        cmd = self.getCmd(self.diskfile, target, *sizes[type])
+        logger.info 'APIJS::ApijsAttachment#createPreview: ' + cmd.join(' ') + ' (' + self.runCmd(cmd) + ')'
+      end
+    end
+
     # exclusion
     def isExcluded?
 
-      names = Setting.plugin_redmine_apijs['album_exclude_name'].split(',')
-      descs = Setting.plugin_redmine_apijs['album_exclude_desc'].split(',')
+      Setting.plugin_redmine_apijs['album_exclude_name'].split(',').each { |token|
+        return true if (!self.filename.blank? && self.filename.index(token) == 0)
+      }
 
-      unless names.empty?
-        names.each { |token|
-          return true if (!self.filename.blank? && self.filename.index(token) == 0)
-        }
-      end
-
-      unless descs.empty?
-        descs.each { |token|
-          return true if (!self.description.blank? && self.description.index(token) == 0)
-        }
-      end
+      Setting.plugin_redmine_apijs['album_exclude_desc'].split(',').each { |token|
+        return true if (!self.description.blank? && self.description.index(token) == 0)
+      }
 
       return false
     end
 
     # remove the cached images
     def delete_cache
-
-      img_thumb = self.getImgThumb
-      File.delete(img_thumb) if File.file?(img_thumb)
-
-      img_srcset = self.getImgSrcset
-      File.delete(img_srcset) if File.file?(img_srcset)
-
-      img_show = self.getImgShow
-      File.delete(img_show) if File.file?(img_show)
+      ['thumb', 'srcset', 'show'].each { |type|
+        img = self.getPreviewPath(type)
+        File.delete(img) if File.file?(img)
+      }
     end
 
     # read the exif date and update the creation date with exiftool (libimage-exiftool)
@@ -260,7 +248,7 @@ module ApijsAttachment
     # move the new file if it is not in the right directory
     def update_filedir!
 
-      return unless defined? self.disk_directory
+      return self.disk_directory unless defined?
 
       src  = self.diskfile
       time = self.created_on || DateTime.now
@@ -296,23 +284,18 @@ module ApijsAttachment
         pyt = `#{cmd} --version 2>&1`.gsub('Python', '').strip!
         pyt = pyt.split(/\D/).slice(0, 3).join('.')
 
-        pil = `#{cmd} -c "from PIL import Image; print(Image.__version__)" 2>&1`.strip!
-        if pil.include? "o module named"
-          pil = 'not available'
-        elsif pil.include? "__version__"
-          pil = 'available'
-        else
-          pil = pil.split(/\D/).slice(0, 3).join('.')
-        end
+        version = lambda { |out|
+          if out.include? "o module named"
+            'not available'
+          elsif out.include? "__version__"
+            'available'
+          else
+            out.split(/\D/).slice(0, 3).join('.')
+          end
+        }
 
-        sco = `#{cmd} -c "import scour; print(scour.__version__)" 2>&1`.strip!
-        if sco.include? "o module named"
-          sco = 'not available'
-        elsif sco.include? "__version__"
-          sco = 'available'
-        else
-          sco = sco.split(/\D/).slice(0, 3).join('.')
-        end
+        pil = version.call(`#{cmd} -c "from PIL import Image; print(Image.__version__)" 2>&1`.strip!)
+        sco = version.call(`#{cmd} -c "import scour; print(scour.__version__)" 2>&1`.strip!)
       end
 
       return sprintf('%s / %s %s / %s %s', pyt, pil, helpPil, sco, helpSco)

@@ -7,7 +7,7 @@
 # https://gist.github.com/luigifab/19a68d9aa98fa80f2961809d7cec59c0 (1.12.0-fork1)
 #
 # Parses a user agent string into its important parts
-# Fork compared/updated by Claude from the original
+# Fork checked by Claude from the original
 # Licensed under the MIT License
 #
 

@@ -124,7 +124,7 @@ end
 		<br /><%= APIJS_ROOT %>/srcset/ <b><%= size_srcset %></b> (400x300)
 		<br /><%= APIJS_ROOT %>/show/ <b><%= size_show %></b> (1200x900)
 		<% if settings['enabled'] == '1' %>
-			<br /><button type="button" onclick="apijsRedmine.clearCache('<%= url_for({controller: 'apijs', action: 'clearcache'}) %>');"><%= raw l(:apijs_config_clearcache) %></button>
+			<br /><button type="button" onclick="apijsRedmine.clearCache('<%= url_for({controller: 'apijs', action: 'clearcache'}) %>', '<%= form_authenticity_token %>');"><%= raw l(:apijs_config_clearcache) %></button>
 		<% end %>
 	</p>
 </fieldset>

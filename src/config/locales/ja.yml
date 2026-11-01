@@ -1,7 +1,7 @@
 ja:
   apijs_check_extension: "The file extension can not be changed."
   apijs_clearcache_done: "画像キャッシュをクリアしました。"
-  apijs_browser_warning: "<strong>Warning:</strong> your browser <strong>%{n} %{v}</strong> is outdated, please <a %{l}>upgrade your browser</a>."
+  apijs_browser_warning: "<strong>警告：</strong>お使いのブラウザー（<strong>%{n} %{v}</strong>）は古いバージョンです。<a %{l}>ブラウザーを更新してください</a>。"
   apijs_title_album: "Photo gallery"
   apijs_title_download: "ダウンロード（%{v}）"
   apijs_title_files: "Files list"

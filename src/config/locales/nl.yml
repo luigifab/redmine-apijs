@@ -1,7 +1,7 @@
 nl:
   apijs_check_extension: "The file extension can not be changed."
   apijs_clearcache_done: "Het afbeeldingen cachegeheugen werd opgeschoond."
-  apijs_browser_warning: "<strong>Warning:</strong> your browser <strong>%{n} %{v}</strong> is outdated, please <a %{l}>upgrade your browser</a>."
+  apijs_browser_warning: "<strong>Waarschuwing:</strong> uw browser <strong>%{n} %{v}</strong> is verouderd, <a %{l}>werk uw browser bij</a>."
   apijs_title_album: "Photo gallery"
   apijs_title_download: "Download (%{v})"
   apijs_title_files: "Files list"

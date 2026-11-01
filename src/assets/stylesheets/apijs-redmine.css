@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated V/17/10/2023
+ * Updated D/01/11/2026
  *
  * Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/redmine-apijs
@@ -53,8 +53,12 @@ body ul.attachments li span.date { color:#808080; }
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& buttons &&& */
 body button.attachment, body ul.attachments a[id^="slideshow"] {
 	display:inline-block; margin:0; padding:0; width:16px; height:16px; vertical-align:middle;
-	text-decoration:none !important; border:0; background-color:transparent; cursor:pointer; opacity:0.75;
+	text-decoration:none !important; border:0; background-color:transparent; cursor:pointer; opacity:0.7;
 }
+
+body button.attachment:hover, body ul.attachments a[id^="slideshow"]:hover,
+body button.attachment:active, body ul.attachments a[id^="slideshow"]:active,
+body button.attachment:focus, body ul.attachments a[id^="slideshow"]:focus { background-color:white; opacity:1; }
 
 body button.attachment.show, body ul.attachments a[id^="slideshow"] { background-image:url("../../../images/magnifier.png"); }
 body button.attachment.download { background-image:url("../../../images/attachment.png"); }

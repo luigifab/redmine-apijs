@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated S/16/01/2021
+# Updated D/01/11/2026
 #
 # Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
@@ -18,76 +18,35 @@
 if Redmine::VERSION::MAJOR >= 2
   RedmineApp::Application.routes.draw do
 
-    match 'apijs/thumb/:id/:filename', to: 'apijs#thumb',
-      id: /\d+/, filename: /.*/, via: :get
-
-    match 'apijs/srcset/:id/:filename', to: 'apijs#srcset',
-      id: /\d+/, filename: /.*/, via: :get
-
-    match 'apijs/show/:id/:filename', to: 'apijs#show',
-      id: /\d+/, filename: /.*/, via: :get
+    match 'apijs/preview/:type/:id/:filename', to: 'apijs#preview',
+      via: :get, type: /thumb|srcset|show/, id: /\d+/, filename: /.*/
 
     match 'apijs/download/:id/:filename', to: 'apijs#download',
-      id: /\d+/, filename: /.*/, via: :get
+      via: :get, id: /\d+/, filename: /.*/
 
-    match 'apijs/download/:inline/:id/:filename', to: 'apijs#download',
-      inline: 'inline', id: /\d+/, filename: /.*/, via: :get
-
-    match 'attachments/download/:id', to: 'apijs#download',
-      id: /\d+/, via: :get
-
-    match 'apijs/editdesc', to: 'apijs#editdesc',
-      via: :post
-
-    match 'apijs/editname', to: 'apijs#editname',
-      via: :post
+    match 'apijs/edit/:type', to: 'apijs#edit',
+      via: :post, type: /desc|name/
 
     match 'apijs/delete', to: 'apijs#delete',
       via: :post
 
     match 'apijs/clearcache', to: 'apijs#clearcache',
-      via: :get
+      via: :post
   end
 else
   ActionController::Routing::Routes.draw do |map|
 
-    map.connect 'apijs/thumb/:id/:filename',
-      controller: 'apijs', action: 'thumb',
-      id: /\d+/, filename: /.*/,
-      conditions: {method: :get}
-
-    map.connect 'apijs/srcset/:id/:filename',
-      controller: 'apijs', action: 'srcset',
-      id: /\d+/, filename: /.*/,
-      conditions: {method: :get}
-
-    map.connect 'apijs/show/:id/:filename',
-      controller: 'apijs', action: 'show',
-      id: /\d+/, filename: /.*/,
-      conditions: {method: :get}
+    map.connect 'apijs/preview/:type/:id/:filename',
+      controller: 'apijs', action: 'preview',
+      conditions: {method: :get}, type: /thumb|srcset|show/, id: /\d+/, filename: /.*/
 
     map.connect 'apijs/download/:id/:filename',
       controller: 'apijs', action: 'download',
-      id: /\d+/, filename: /.*/,
-      conditions: {method: :get}
+      conditions: {method: :get}, id: /\d+/, filename: /.*/
 
-    map.connect 'apijs/download/:inline/:id/:filename',
-      controller: 'apijs', action: 'download',
-      inline: 'inline', id: /\d+/, filename: /.*/,
-      conditions: {method: :get}
-
-    map.connect 'attachments/download/:id',
-      controller: 'apijs', action: 'download',
-      id: /\d+/,
-      conditions: {method: :get}
-
-    map.connect 'apijs/editdesc',
-      controller: 'apijs', action: 'editdesc',
-      conditions: {method: :post}
-
-    map.connect 'apijs/editname',
-      controller: 'apijs', action: 'editname',
-      conditions: {method: :post}
+    map.connect 'apijs/edit/:type',
+      controller: 'apijs', action: 'edit',
+      conditions: {method: :post}, type: /desc|name/
 
     map.connect 'apijs/delete',
       controller: 'apijs', action: 'delete',
@@ -95,6 +54,6 @@ else
 
     map.connect 'apijs/clearcache',
       controller: 'apijs', action: 'clearcache',
-      conditions: {method: :get}
+      conditions: {method: :post}
   end
 end

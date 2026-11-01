@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated S/24/10/2026
+# Updated D/01/11/2026
 #
 # Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
@@ -17,19 +17,25 @@
 
 class ApijsController < AttachmentsController
 
+  # before the actions and in this order:
+  #      find_project: loads the attachment and its project (404 if not found or if the filename is wrong)
+  #  authorize_global: checks the permission without project (upload, clearcache)
+  #    read_authorize: the user can see the attachment (403 or login if not)
+  #     file_readable: the file exists on the disk (404 if not)
+  # before_action with Redmine 4+ (Rails 5.2+), because before_filter was removed in Rails 5.1
   if Redmine::VERSION::MAJOR >= 4
     before_action :find_project, except: [:upload, :clearcache]
     before_action :authorize_global, only: [:upload, :clearcache]
-    before_action :read_authorize, :file_readable, only: [:thumb, :srcset, :show, :download, :thumbnail]
-    before_action :read_authorize, only: [:editdesc, :editname, :delete]
+    before_action :read_authorize, :file_readable, only: [:preview, :download, :thumbnail]
+    before_action :read_authorize, only: [:edit, :delete]
   else
     before_filter :find_project, except: [:upload, :clearcache]
     before_filter :authorize_global, only: [:upload, :clearcache]
-    before_filter :read_authorize, :file_readable, only: [:thumb, :srcset, :show, :download, :thumbnail]
-    before_filter :read_authorize, only: [:editdesc, :editname, :delete]
+    before_filter :read_authorize, :file_readable, only: [:preview, :download, :thumbnail]
+    before_filter :read_authorize, only: [:edit, :delete]
   end
 
-  # n'existe plus avec Redmine 3+ (copie de 2.6.10)
+  # removed in Redmine 3+ (copy of 2.6.10)
   if Redmine::VERSION::MAJOR >= 3
     def find_project
       @attachment = Attachment.find(params[:id])
@@ -40,344 +46,242 @@ class ApijsController < AttachmentsController
     end
   end
 
+  # Preview image (photo or video)
+  # Sends the image with cache (inline/stale)
+  #  getUrl('thumb')  → /apijs/preview/thumb/42/photo.jpg
+  #  getUrl('srcset') → /apijs/preview/srcset/42/photo.jpg
+  #  getUrl('show')   → /apijs/preview/show/42/photo.jpg
+  # for svg files only show
+  def preview
 
-  ## Gestion de l'image miniature (photo ou vidéo)
-  # Vérifie si l'utilisateur a accès au projet avant l'envoi de la miniature
-  # Utilise un script python pour générer l'image thumb (taille 200x150)
-  # Utilise un script python pour générer l'image srcset (taille 400x300)
-  # Utilise un script python pour générer l'image show (taille 1200x900)
-  # Enregistre les commandes et leurs résultats dans le log
-  # Téléchargement d'une image avec mise en cache (inline/stale)
-  def thumb
+    type = params[:type]
+    path = @attachment.diskfile
 
-    source    = @attachment.diskfile
-    img_thumb = @attachment.getImgThumb
-
-    if File.file?(source) && @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '2'
-      # génération de l'image thumb
-      t1 = Thread.new {
-        unless File.file?(img_thumb)
-          cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
-          logger.info 'APIJS::ApijsController#thumb:t1: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-      }
-      # génération des images srcset et show
-      t2 = Thread.new {
-        img_srcset = @attachment.getImgSrcset
-        unless File.file?(img_srcset)
-          cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
-          logger.info 'APIJS::ApijsController#thumb:t2: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-      }
-      t3 = Thread.new {
-        img_show = @attachment.getImgShow
-        unless File.file?(img_show)
-          cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-          logger.info 'APIJS::ApijsController#thumb:t3: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-      }
-      # attends la fin des threads
-      t1.join
-      t2.join
-      t3.join
-    elsif File.file?(source)
-      # génération de l'image thumb
-      unless File.file?(img_thumb)
-        cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
-        logger.info 'APIJS::ApijsController#thumb: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-      end
-      # génération des images srcset et show
-      if @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '1'
-        img_srcset = @attachment.getImgSrcset
-        unless File.file?(img_srcset)
-          cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
-          logger.info 'APIJS::ApijsController#thumb: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-        img_show = @attachment.getImgShow
-        unless File.file?(img_show)
-          cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-          logger.info 'APIJS::ApijsController#thumb: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-      end
-    end
-
-    # acl
-    if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
+    # the user can see the project (403 or login if not)
+    unless User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
       deny_access
-    # envoi de l'image avec mise en cache
-    elsif File.file?(img_thumb) && stale?(etag: img_thumb)
-      send_file(img_thumb, filename: filename_for_content_disposition(@attachment.filename),
-        type: Redmine::MimeType.of(img_thumb), disposition: 'inline')
-    end
-  end
-
-
-  ## Gestion de l'image miniature 2x (photo ou vidéo)
-  # Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
-  # Utilise un script python pour générer l'image srcset (taille 400x300)
-  # Utilise un script python pour générer l'image thumb (taille 200x150)
-  # Utilise un script python pour générer l'image show (taille 1200x900)
-  # Enregistre les commandes et leurs résultats dans le log
-  # Téléchargement d'une image avec mise en cache (inline/stale)
-  def srcset
-
-    source     = @attachment.diskfile
-    img_srcset = @attachment.getImgSrcset
-
-    if File.file?(source) && @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '2'
-      # génération de l'image srcset
-      t1 = Thread.new {
-        unless File.file?(img_srcset)
-          cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
-          logger.info 'APIJS::ApijsController#srcset:t1: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-      }
-      # génération des images thumb et show
-      t2 = Thread.new {
-        img_thumb = @attachment.getImgThumb
-        unless File.file?(img_thumb)
-          cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
-          logger.info 'APIJS::ApijsController#srcset:t2: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-      }
-      t3 = Thread.new {
-        img_show = @attachment.getImgShow
-        unless File.file?(img_show)
-          cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-          logger.info 'APIJS::ApijsController#srcset:t3: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-      }
-      # attends la fin des threads
-      t1.join
-      t2.join
-      t3.join
-    elsif File.file?(source)
-      # génération de l'image srcset
-      unless File.file?(img_srcset)
-        cmd = @attachment.getCmd(source, img_srcset, 400, 300, true)
-        logger.info 'APIJS::ApijsController#srcset: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-      end
-      # génération des images thumb et show
-      if @attachment.isPhoto? && Setting.plugin_redmine_apijs['create_all'] == '1'
-        img_thumb = @attachment.getImgThumb
-        unless File.file?(img_thumb)
-          cmd = @attachment.getCmd(source, img_thumb, 200, 150, true)
-          logger.info 'APIJS::ApijsController#srcset: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-        img_show = @attachment.getImgShow
-        unless File.file?(img_show)
-          cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-          logger.info 'APIJS::ApijsController#srcset: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-        end
-      end
-    end
-
-    # acl
-    if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
-      deny_access
-    # envoi de l'image avec mise en cache
-    elsif File.file?(img_srcset) && stale?(etag: img_srcset)
-      send_file(img_srcset, filename: filename_for_content_disposition(@attachment.filename),
-        type: Redmine::MimeType.of(img_srcset), disposition: 'inline')
-    end
-  end
-
-
-  ## Gestion de l'image aperçu (photo)
-  # Vérifie si l'utilisateur a accès au projet avant l'envoi de l'aperçu
-  # Utilise un script python pour générer l'image show (taille 1200x900)
-  # Enregistre les commandes et leurs résultats dans le log
-  # Téléchargement d'une image avec mise en cache (inline/stale)
-  def show
-
-    source   = @attachment.diskfile
-    img_show = @attachment.getImgShow
-
-    # génération de l'image show
-    if File.file?(source) && !File.file?(img_show)
-      cmd = @attachment.getCmd(source, img_show, 1200, 900, false)
-      logger.info 'APIJS::ApijsController#show: ' + cmd.join(' ') + ' (' + @attachment.runCmd(cmd) + ')'
-    end
-
-    # acl
-    if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
-      deny_access
-    # envoi de l'image avec mise en cache
-    elsif File.file?(img_show) && stale?(etag: img_show)
-      send_file(img_show, filename: filename_for_content_disposition(@attachment.filename),
-        type: Redmine::MimeType.of(img_show), disposition: 'inline')
-    end
-  end
-
-
-  ## Gestion du téléchargement des fichiers
-  # Vérifie si l'utilisateur a accès au projet avant
-  # Téléchargement d'une vidéo en 206 Partial Content (inline)
-  # Téléchargement d'une image avec mise en cache (inline/stale) ou téléchargement d'un fichier (attachment)
-  def download
-
-    # acl
-    if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
-      deny_access
-    # téléchargement d'une vidéo en 206 Partial Content (https://stackoverflow.com/a/7604330 + https://stackoverflow.com/a/16593030)
-    # ou téléchargement d'une image avec mise en cache
-    # ou téléchargement d'un fichier
-    elsif !params[:filename] || params[:inline] || params[:stream]
-      @attachment.increment_download if @attachment.container.is_a?(Version) || @attachment.container.is_a?(Project)
-      # vidéo
-      if @attachment.isVideo?
-        file_begin = 0
-        file_size = @attachment.filesize
-        file_end = file_size - 1
-
-        if request.headers['Range']
-          match = request.headers['Range'].match(/bytes=(\d+)-(\d*)/)
-          if match
-            file_begin = match[1].to_i
-            file_end = match[2].to_i if match[2] && !match[2].empty?
-          end
-          file_end = file_size - 1 if file_end >= file_size
-          if file_begin > file_end
-            response.header['Content-Range'] = 'bytes */' + file_size.to_s
-            head 416
-            return
-          end
-        end
-
-        response.header['Accept-Ranges']  = 'bytes'
-        response.header['Content-Range']  = 'bytes ' + file_begin.to_s + '-' + file_end.to_s + '/' + file_size.to_s
-        response.header['Content-Length'] = (file_end - file_begin + 1).to_s
-        response.header['Last-Modified']  = @attachment.created_on.strftime('%a, %d %b %Y %H:%M:%S %z').to_s
-
-        if !request.headers['Range']
-          send_file(@attachment.diskfile,
-            filename: filename_for_content_disposition(@attachment.filename),
-            type: detect_content_type(@attachment), disposition: 'inline')
-        else
-          send_data(File.binread(@attachment.diskfile, file_end - file_begin + 1, file_begin),
-            filename: filename_for_content_disposition(@attachment.filename),
-            type: detect_content_type(@attachment), disposition: 'inline', status: '206 Partial Content')
-        end
-
-        response.close
-      # image
-      elsif @attachment.isImage?
-        if stale?(etag: @attachment.diskfile)
-          send_file(@attachment.diskfile, filename: filename_for_content_disposition(@attachment.filename),
-            type: detect_content_type(@attachment), disposition: 'inline')
-        end
-      # fichier
-      else
-        send_file(@attachment.diskfile, filename: filename_for_content_disposition(@attachment.filename),
-          type: detect_content_type(@attachment), disposition: 'attachment')
-      end
-    # téléchargement d'un fichier
-    else
-      @attachment.increment_download if @attachment.container.is_a?(Version) || @attachment.container.is_a?(Project)
-      send_file(@attachment.diskfile, filename: filename_for_content_disposition(@attachment.filename),
-        type: detect_content_type(@attachment), disposition: 'attachment')
-    end
-  end
-
-
-  ## Modification d'une description ou du nom du fichier
-  # Vérifie si l'utilisateur a accès au projet et à la modification
-  # Renvoie l'id du fichier suivi de la description en cas de modification réussie
-  # Supprime certains caractères de la description avant son enregistrement
-  def editdesc
-
-    @attachment.description = params[:desc].gsub(/["\\\x0]/, '')
-    @attachment.description.strip!
-
-    # acl
-    if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project) || !User.current.allowed_to?(:edit_attachments, @project)
-      deny_access
-    # modification
-    elsif @attachment.save
-      if Rails::VERSION::MAJOR >= 5
-        render(plain: 'attachmentId' + @attachment.id.to_s + ':' + @attachment.description)
-      else
-        render(text: 'attachmentId' + @attachment.id.to_s + ':' + @attachment.description)
-      end
-    # en cas d'erreur
-    else
-      render_validation_errors(@attachment)
-    end
-  end
-
-  def editname
-
-    name = params[:name].gsub(/["\\\x0]/, '')
-    name = File.basename(name)
-
-    if File.extname(name).downcase != File.extname(@attachment.filename).downcase
-      if Rails::VERSION::MAJOR >= 5
-        render(plain: l(:apijs_check_extension))
-      else
-        render(text: l(:apijs_check_extension))
-      end
       return
     end
 
-    @attachment.filename = name
-    @attachment.filename.strip!
+    # only for photos and videos (404 if not)
+    unless @attachment.isPhoto? || @attachment.isVideo?
+      render_404
+      return
+    end
 
-    # acl
-    if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project) || !User.current.allowed_to?(:rename_attachments, @project)
-      deny_access
-    # modification
-    elsif @attachment.save
-      if Rails::VERSION::MAJOR >= 5
-        render(plain: 'attachmentId' + @attachment.id.to_s + ':' + @attachment.filename)
-      else
-        render(text: 'attachmentId' + @attachment.id.to_s + ':' + @attachment.filename)
-      end
-    # en cas d'erreur
+    # the file exists on the disk (404 if not)
+    unless File.file?(path)
+      render_404
+      return
+    end
+
+    # the images of the file (404 if the requested image is not one of them)
+    #    svg: only show, because the svg file is not resized
+    #  video: thumb and srcset, because the video is played with download
+    #  photo: thumb, srcset and show
+    if @attachment.getPreviewExt == '.svg'
+      types = ['show']
+    elsif @attachment.isVideo?
+      types = ['thumb', 'srcset']
     else
-      render_validation_errors(@attachment)
+      types = ['thumb', 'srcset', 'show']
+    end
+    unless types.include?(type)
+      render_404
+      return
+    end
+
+    final = @attachment.getPreviewPath(type)
+    if !File.file?(final)
+      mode = Setting.plugin_redmine_apijs['create_all']
+      # all the images at the same time (multi thread)
+      if mode == '2'
+        threads = types.map { |type| Thread.new { @attachment.createPreview(type) } }
+        threads.each { |thread| thread.join }
+      # all the images one after the other (single thread)
+      elsif mode == '1'
+        types.each { |type| @attachment.createPreview(type) }
+      # only the requested image
+      else
+        @attachment.createPreview(type)
+      end
+    end
+
+    # 404 File Not Found
+    if !File.file?(final)
+      render_404
+    # 200 OK, with the image
+    # 304 Not Modified, sent by stale?
+    elsif stale?(etag: final)
+      send_file(final, filename: filename_for_content_disposition(@attachment.filename), type: @attachment.getMimeType(final), disposition: 'inline')
     end
   end
 
+  # File download
+  # Sends a part of the file with 206 Partial Content (https://stackoverflow.com/a/7604330 + https://stackoverflow.com/a/16593030)
+  # Sends the file with cache (stale), inline for pdf like Redmine, attachment for other files
+  #  getUrl('download') → /apijs/download/42/photo.jpg
+  def download
 
-  ## Suppression d'un fichier
-  # Vérifie si l'utilisateur a accès au projet et à la suppression
-  # Renvoie l'id du fichier suivi en cas de suppression réussie
+    path = @attachment.diskfile
+    type = @attachment.getMimeType
+
+    # the user can see the project (403 or login if not)
+    unless User.current.allowed_to?({controller: 'projects', action: 'show'}, @project)
+      deny_access
+      return
+    end
+
+    # the file exists on the disk (404 if not)
+    unless File.file?(path)
+      render_404
+      return
+    end
+
+    file_begin = 0
+    file_size  = @attachment.filesize
+    file_end   = file_size - 1
+
+    # Range header, to send only a part of the file (videos, pdf, resumed downloads)
+    #  bytes=100-199 → from 100 to 199
+    #  bytes=100-    → from 100 to the end of the file
+    #  bytes=-500    → the last 500 bytes
+    #  bytes=0-99,200-299 → only the first range (0-99)
+    #  no header or invalid header (bytes=-, bytes=abc) → all the file (200 OK)
+    match = request.headers['Range'].to_s.match(/bytes=(\d*)-(\d*)/)
+    match = nil if match && match[1].empty? && match[2].empty?
+
+    if match
+      # with a start (bytes=100-199 or bytes=100-)
+      unless match[1].empty?
+        file_begin = match[1].to_i
+        file_end = match[2].to_i unless match[2].empty?
+      # without a start, the end of the file (bytes=-500)
+      else
+        file_begin = file_size - match[2].to_i
+        file_begin = 0 if file_begin < 0
+      end
+      # not after the end of the file
+      file_end = file_size - 1 if file_end >= file_size
+      # 416 Range Not Satisfiable, the start is after the end
+      if file_begin > file_end
+        response.header['Content-Range'] = 'bytes */' + file_size.to_s
+        head 416
+        return
+      end
+    end
+
+    response.header['Accept-Ranges']  = 'bytes'
+    response.header['Content-Length'] = (file_end - file_begin + 1).to_s
+    response.header['Last-Modified']  = @attachment.created_on.httpdate
+    disposition = @attachment.isPdf? ? 'inline' : 'attachment'
+
+    # 206 Partial Content, with a part of the file
+    if match
+      left = file_end - file_begin + 1
+      response.status = 206
+      response.header['Content-Type']            = type
+      response.header['Content-Range']           = 'bytes ' + file_begin.to_s + '-' + file_end.to_s + '/' + file_size.to_s
+      response.header['Content-Disposition']     = disposition
+      response.header['content-security-policy'] = "default-src 'none'; media-src 'self'; style-src 'unsafe-inline'; sandbox"
+      self.response_body = Enumerator.new { |out|
+        File.open(path, 'rb') { |f|
+          f.seek(file_begin)
+          while left > 0 && (chunk = f.read([left, 65536].min))
+            left -= chunk.bytesize
+            out << chunk
+          end
+        }
+      }
+    # 200 OK, with the file
+    # 304 Not Modified, sent by stale?
+    elsif stale?(etag: path)
+      @attachment.increment_download if @attachment.container.is_a?(Version) || @attachment.container.is_a?(Project)
+      send_file(path, filename: filename_for_content_disposition(@attachment.filename), type: type, disposition: disposition)
+    end
+  end
+
+  # Edit the description or the name of the file
+  # Returns the file id followed by the new value when it is saved
+  # Removes some characters from the new value before saving
+  #  getUrl('name') → /apijs/edit/name, POST ?id=42 with name=...
+  #  getUrl('desc') → /apijs/edit/desc, POST ?id=42 with desc=...
+  def edit
+
+    type = params[:type]
+    permission = (type == 'name') ? :rename_attachments : :edit_attachments
+
+    # the user can see the project and can edit (desc) or rename (name) the attachments (403 or login if not)
+    unless User.current.allowed_to?({controller: 'projects', action: 'show'}, @project) && User.current.allowed_to?(permission, @project)
+      deny_access
+      return
+    end
+
+    if type == 'name'
+      name = File.basename(params[:name].to_s.gsub(/["\\\x0]/, '')).strip
+      if File.extname(name).downcase != File.extname(@attachment.filename).downcase
+        text = l(:apijs_check_extension)
+        render_mytext(text)
+        return
+      end
+      @attachment.filename = name
+    else
+      desc = params[:desc].to_s.gsub(/["\\\x0]/, '').strip
+      @attachment.description = desc
+    end
+
+    if @attachment.save
+      value = (type == 'name') ? @attachment.filename : @attachment.description
+      render_mytext('attachmentId' + @attachment.id.to_s + ':' + value)
+    else
+      render_mytext(@attachment.errors.full_messages.join(', '))
+    end
+  end
+
+  # Delete a file
+  # Returns the file id when the file is deleted
+  #  getUrl('delete') → /apijs/delete, POST ?id=42
   def delete
 
-    # acl
-    if !User.current.allowed_to?({controller: 'projects', action: 'show'}, @project) || !User.current.allowed_to?(:delete_attachments, @project)
+    # the user can see the project and can delete the attachments (403 or login if not)
+    unless User.current.allowed_to?({controller: 'projects', action: 'show'}, @project) && User.current.allowed_to?(:delete_attachments, @project)
       deny_access
-    # suppression
-    elsif @attachment.delete
-      @attachment.container.init_journal(User.current) if @attachment.container.respond_to?(:init_journal)
-      @attachment.container.attachments.delete(@attachment)
-
-      if Rails::VERSION::MAJOR >= 5
-        render(plain: 'attachmentId' + @attachment.id.to_s)
-      else
-        render(text: 'attachmentId' + @attachment.id.to_s)
-      end
-    # en cas d'erreur
-    else
-      render_validation_errors(@attachment)
+      return
     end
+
+    @attachment.container.init_journal(User.current) if @attachment.container.respond_to?(:init_journal)
+    @attachment.container.attachments.delete(@attachment)
+
+    render_mytext('attachmentId' + @attachment.id.to_s)
   end
 
-
-  ## Vide le cache
-  # Si l'utilisateur est admin
+  # Clear the cache
   def clearcache
 
-    # acl
-    if !User.current.admin?
+    # only for administrators (403 or login if not)
+    unless User.current.admin?
       deny_access
-    # suppression
     else
       if APIJS_ROOT.length > 5 && File.directory?(APIJS_ROOT)
         FileUtils.rm_rf(APIJS_ROOT)
         flash[:notice] = l(:apijs_clearcache_done)
       end
       redirect_to controller: 'settings', action: 'plugin', id: 'redmine_apijs'
+    end
+  end
+
+  private
+
+  def send_file(path, options={})
+    super
+    headers['content-security-policy'] = "default-src 'none'; media-src 'self'; style-src 'unsafe-inline'; sandbox"
+  end
+
+  def render_mytext(text)
+    if Rails::VERSION::MAJOR >= 5
+      render(plain: text)
+    else
+      render(text: text)
     end
   end
 
