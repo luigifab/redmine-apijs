@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created L/21/05/2012
-# Updated D/01/11/2026
+# Updated S/07/11/2026
 #
 # Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
@@ -50,8 +50,8 @@ Redmine::Plugin.register :redmine_apijs do
   url 'https://www.luigifab.fr/redmine/apijs'
   author_url 'https://www.luigifab.fr/'
 
-  permission :edit_attachments,   {apijs: :edit},   {require: :loggedin}
-  permission :rename_attachments, {apijs: :edit},   {require: :loggedin}
+  permission :edit_attachments,   {apijs: :modify}, {require: :loggedin}
+  permission :rename_attachments, {apijs: :modify}, {require: :loggedin}
   permission :delete_attachments, {apijs: :delete}, {require: :loggedin}
   requires_redmine version_or_higher: '1.4.0'
 

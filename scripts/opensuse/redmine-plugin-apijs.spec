@@ -20,11 +20,11 @@ Requires:      redmine
 Recommends:    ffmpegthumbnailer
 
 %description %{expand:
-This plugin integrates apijs JavaScript library into Redmine.
+This plugin integrates the apijs JavaScript library into Redmine.
 For more information about the library, go to luigifab.fr/apijs.
 
 This plugin allows:
-  * to sort out attachments in alphabetical order
+  * to sort attachments in alphabetical order
   * to display a photo/video gallery from attachments
   * to display videos in streaming (HTTP 206 Partial Content)
   * to keep the animation of GIF/PNG/WEBP images thanks to Pillow
@@ -33,7 +33,7 @@ This plugin allows:
   * to rename and remove attachments}
 
 %description -l fr %{expand:
-Cette extension intègre la bibliothèque JavaScript apijs sur Redmine.
+Cette extension intègre la bibliothèque JavaScript apijs dans Redmine.
 Pour plus d'information sur la bibliothèque, voir luigifab.fr/apijs.
 
 Cette extension permet :

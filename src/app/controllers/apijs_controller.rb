@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated D/01/11/2026
+# Updated S/07/11/2026
 #
 # Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
@@ -27,12 +27,12 @@ class ApijsController < AttachmentsController
     before_action :find_project, except: [:upload, :clearcache]
     before_action :authorize_global, only: [:upload, :clearcache]
     before_action :read_authorize, :file_readable, only: [:preview, :download, :thumbnail]
-    before_action :read_authorize, only: [:edit, :delete]
+    before_action :read_authorize, only: [:modify, :delete]
   else
     before_filter :find_project, except: [:upload, :clearcache]
     before_filter :authorize_global, only: [:upload, :clearcache]
     before_filter :read_authorize, :file_readable, only: [:preview, :download, :thumbnail]
-    before_filter :read_authorize, only: [:edit, :delete]
+    before_filter :read_authorize, only: [:modify, :delete]
   end
 
   # removed in Redmine 3+ (copy of 2.6.10)
@@ -204,9 +204,9 @@ class ApijsController < AttachmentsController
   # Edit the description or the name of the file
   # Returns the file id followed by the new value when it is saved
   # Removes some characters from the new value before saving
-  #  getUrl('name') → /apijs/edit/name, POST ?id=42 with name=...
-  #  getUrl('desc') → /apijs/edit/desc, POST ?id=42 with desc=...
-  def edit
+  #  getUrl('name') → /apijs/modify/name, POST ?id=42 with name=...
+  #  getUrl('desc') → /apijs/modify/desc, POST ?id=42 with desc=...
+  def modify
 
     type = params[:type]
     permission = (type == 'name') ? :rename_attachments : :edit_attachments

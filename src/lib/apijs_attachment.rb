@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created V/27/12/2013
-# Updated D/01/11/2026
+# Updated S/07/11/2026
 #
 # Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
@@ -45,12 +45,12 @@ module ApijsAttachment
     #  getUrl('srcset')      → /apijs/preview/srcset/42/photo.jpg
     #  getUrl('show')        → /apijs/preview/show/42/photo.jpg
     #  getUrl('download')    → /apijs/download/42/photo.jpg
-    #  getUrl('desc')        → /apijs/edit/desc
-    #  getUrl('name')        → /apijs/edit/name
+    #  getUrl('desc')        → /apijs/modify/desc
+    #  getUrl('name')        → /apijs/modify/name
     #  getUrl('delete')      → /apijs/delete
-    # For a svg file, thumb, srcset and show give the same url: /apijs/preview/show/42/drawing.svg
+    # For an SVG file, thumb, srcset and show give the same url: /apijs/preview/show/42/drawing.svg
     # The file name is encoded: /apijs/download/42/my%20photo%20(1).jpg
-    # When Redmine is in a sub directory (relative_url_root), the url starts with it
+    # When Redmine is in a subdirectory (relative_url_root), the url starts with it
     def getUrl(action)
       if action == 'redmineshow'
         return self.getSuburi(url_for({only_path: true, controller: 'attachments', action: 'show', id: self.id, filename: self.filename}))
@@ -60,7 +60,7 @@ module ApijsAttachment
         return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: 'preview', id: self.id, filename: self.filename, type: type}))
       end
       if ['desc', 'name'].include?(action)
-        return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: 'edit', type: action}))
+        return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: 'modify', type: action}))
       end
       if action == 'download'
         return self.getSuburi(url_for({only_path: true, controller: 'apijs', action: 'download', id: self.id, filename: self.filename}))
@@ -106,28 +106,14 @@ module ApijsAttachment
     end
 
     def isPhoto?
-      types = []
-      types.push('jpg')  if Setting.plugin_redmine_apijs['album_mimetype_jpg']  == '1'
-      types.push('jpeg') if Setting.plugin_redmine_apijs['album_mimetype_jpeg'] == '1'
-      types.push('gif')  if Setting.plugin_redmine_apijs['album_mimetype_gif']  == '1'
-      types.push('png')  if Setting.plugin_redmine_apijs['album_mimetype_png']  == '1'
-      types.push('tif')  if Setting.plugin_redmine_apijs['album_mimetype_tif']  == '1'
-      types.push('tiff') if Setting.plugin_redmine_apijs['album_mimetype_tiff'] == '1'
-      types.push('webp') if Setting.plugin_redmine_apijs['album_mimetype_webp'] == '1'
-      types.push('bmp')  if Setting.plugin_redmine_apijs['album_mimetype_bmp']  == '1'
-      types.push('eps')  if Setting.plugin_redmine_apijs['album_mimetype_eps']  == '1'
-      types.push('psd')  if Setting.plugin_redmine_apijs['album_mimetype_psd']  == '1'
-      types.push('svg')  if Setting.plugin_redmine_apijs['album_mimetype_svg']  == '1'
-      return false       if types.empty?
+      types = %w(jpg jpeg gif png tif tiff webp bmp eps psd svg).select { |type| Setting.plugin_redmine_apijs["album_mimetype_#{type}"] == '1' }
+      return false if types.empty?
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 
     def isVideo?
-      types = []
-      types.push('ogv')  if Setting.plugin_redmine_apijs['album_mimetype_ogv']  == '1'
-      types.push('webm') if Setting.plugin_redmine_apijs['album_mimetype_webm'] == '1'
-      types.push('mp4')  if Setting.plugin_redmine_apijs['album_mimetype_mp4']  == '1'
-      return false       if types.empty?
+      types = %w(ogv webm mp4).select { |type| Setting.plugin_redmine_apijs["album_mimetype_#{type}"] == '1' }
+      return false if types.empty?
       return self.filename =~ /\.(#{types.join('|')})$/i
     end
 

@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated D/01/11/2026
+ * Updated S/07/11/2026
  *
  * Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/redmine-apijs
@@ -29,7 +29,7 @@ var apijsRedmine = new (function () {
 		d.cs[251] = "Opravdu chcete tento soubor smazat?[br]Pozor, tuto operaci nelze vrátit zpět.";
 		d.cs[252] = "Chyba";
 		d.de[250] = "Eine Datei löschen";
-		d.de[251] = "Sind Sie sicher, dass Sie diese Datei löschen möchten?[br]Achtung, diese Aktion ist unrückgängig.";
+		d.de[251] = "Sind Sie sicher, dass Sie diese Datei löschen möchten?[br]Achtung, diese Aktion kann nicht rückgängig gemacht werden.";
 		d.de[252] = "Fehler";
 		d.de[253] = "Sie verfügen nicht über die notwendigen Rechte um diese Operation durchzuführen, bitte [a §]aktualisieren Sie die Seite[/a].";
 		d.de[254] = "Es tut uns leid, diese Datei existiert nicht mehr, bitte [a §]aktualisieren Sie die Seite[/a].";
@@ -114,6 +114,36 @@ var apijsRedmine = new (function () {
 		}
 	};
 
+	this.sendRequest = function (args, data, callback) {
+
+		// args = [id, action, token]
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', args[1] + '?id=' + args[0] + '&isAjax=true', true);
+		xhr.setRequestHeader('X-CSRF-Token', args[2]);
+		if (data)
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+		xhr.onreadystatechange = function () {
+
+			if (xhr.readyState === 4) {
+				if ([0, 200].has(xhr.status)) {
+					if (xhr.responseText.indexOf('attachmentId') === 0) {
+						callback(xhr.responseText);
+						apijs.dialog.actionClose();
+					}
+					else {
+						apijsRedmine.error(xhr.responseText);
+					}
+				}
+				else {
+					apijsRedmine.error(xhr.status);
+				}
+			}
+		};
+
+		xhr.send(data);
+	};
+
 	this.descAttachment = function (elem, id, action, token) {
 
 		var desc = elem.parentNode.parentNode.querySelector('.description').textContent.trim(),
@@ -134,45 +164,23 @@ var apijsRedmine = new (function () {
 		// save the new description
 		else if (typeof action == 'string') {
 
-			// args = [id, action, token]
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', args[1] + '?id=' + args[0] + '&isAjax=true', true);
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.setRequestHeader('X-CSRF-Token', args[2]);
+			var data = 'desc=' + encodeURIComponent(document.getElementById('apijsinput').value);
+			apijsRedmine.sendRequest(args, data, function (response) {
 
-			xhr.onreadystatechange = function () {
+				// extract the id and the description of the saved file
+				var elem, id, text;
+				id   = response.slice(0, response.indexOf(':'));
+				text = response.slice(response.indexOf(':') + 1);
 
-				if (xhr.readyState === 4) {
-					if ([0, 200].has(xhr.status)) {
-						if (xhr.responseText.indexOf('attachmentId') === 0) {
+				// description
+				elem = document.getElementById(id);
+				elem.querySelector('.description').textContent = text;
 
-							// extract the id and the description of the saved file
-							var elem, id, text;
-							id   = xhr.responseText.slice(0, xhr.responseText.indexOf(':'));
-							text = xhr.responseText.slice(xhr.responseText.indexOf(':') + 1);
-
-							// description
-							elem = document.getElementById(id);
-							elem.querySelector('.description').textContent = text;
-
-							// input type hidden
-							elem = elem.querySelector('input');
-							if (elem)
-								elem.value = elem.value.slice(0, elem.value.lastIndexOf('|') + 1) + text;
-
-							apijs.dialog.actionClose();
-						}
-						else {
-							apijsRedmine.error(xhr.responseText);
-						}
-					}
-					else {
-						apijsRedmine.error(xhr.status);
-					}
-				}
-			};
-
-			xhr.send('desc=' + encodeURIComponent(document.getElementById('apijsinput').value));
+				// input type hidden
+				elem = elem.querySelector('input');
+				if (elem)
+					elem.value = elem.value.slice(0, elem.value.lastIndexOf('|') + 1) + text;
+			});
 		}
 	};
 
@@ -195,66 +203,40 @@ var apijsRedmine = new (function () {
 		// save the new name
 		else if (typeof action == 'string') {
 
-			// args = [id, action, token]
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', args[1] + '?id=' + args[0] + '&isAjax=true', true);
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.setRequestHeader('X-CSRF-Token', args[2]);
+			var data = 'name=' + encodeURIComponent(document.getElementById('apijsinput').value);
+			apijsRedmine.sendRequest(args, data, function (response) {
 
-			xhr.onreadystatechange = function () {
+				// extract the id and the name of the saved file
+				var elem, id, name, subelem, text;
+				id   = response.slice(0, response.indexOf(':'));
+				name = response.slice(response.indexOf(':') + 1);
 
-				if (xhr.readyState === 4) {
-					if ([0, 200].has(xhr.status)) {
-						if (xhr.responseText.indexOf('attachmentId') === 0) {
+				// name
+				elem = document.getElementById(id);
+				elem.querySelector('.filename').textContent = name;
 
-							// extract the id and the name of the saved file
-							var elem, id, name, subelem, text;
-							id   = xhr.responseText.slice(0, xhr.responseText.indexOf(':'));
-							name = xhr.responseText.slice(xhr.responseText.indexOf(':') + 1);
-
-							// name
-							elem = document.getElementById(id);
-							elem.querySelector('.filename').textContent = name;
-
-							// URLs on a/href and input/value and button.download/onclick and button.show/onclick
-							// no update of src and srcset on img to avoid a useless network request
-							subelem = elem.querySelector('input');
-							if (subelem) {
-								text = subelem.getAttribute('value');
-								subelem.setAttribute('value', name + text.substring(text.indexOf('|')));
-							}
-
-							subelem = elem.querySelector('a');
-							if (subelem) {
-								text = subelem.getAttribute('href');
-								subelem.setAttribute('href', text.substring(0, text.lastIndexOf('/') + 1) + name);
-							}
-
-							subelem = elem.querySelector('button.download');
-							if (subelem) {
-								text = subelem.getAttribute('onclick');
-								subelem.setAttribute('onclick', text.substring(0, text.lastIndexOf('/') + 1) + name + "';");
-							}
-
-							subelem = elem.querySelector('button.show');
-							if (subelem) {
-								text = subelem.getAttribute('onclick');
-								subelem.setAttribute('onclick', text.substring(0, text.lastIndexOf('/') + 1) + name + "';");
-							}
-
-							apijs.dialog.actionClose();
-						}
-						else {
-							apijsRedmine.error(xhr.responseText);
-						}
-					}
-					else {
-						apijsRedmine.error(xhr.status);
-					}
+				// URLs on a/href and input/value and button.download/onclick and button.show/onclick
+				// no update of src and srcset on img to avoid a useless network request
+				subelem = elem.querySelector('input');
+				if (subelem) {
+					text = subelem.getAttribute('value');
+					subelem.setAttribute('value', name + text.substring(text.indexOf('|')));
 				}
-			};
 
-			xhr.send('name=' + encodeURIComponent(document.getElementById('apijsinput').value));
+				subelem = elem.querySelector('a');
+				if (subelem) {
+					text = subelem.getAttribute('href');
+					subelem.setAttribute('href', text.substring(0, text.lastIndexOf('/') + 1) + name);
+				}
+
+				['button.download', 'button.show'].forEach(function (selector) {
+					subelem = elem.querySelector(selector);
+					if (subelem) {
+						text = subelem.getAttribute('onclick');
+						subelem.setAttribute('onclick', text.substring(0, text.lastIndexOf('/') + 1) + name + "';");
+					}
+				});
+			});
 		}
 	};
 
@@ -266,45 +248,23 @@ var apijsRedmine = new (function () {
 
 	this.actionDeleteAttachment = function (args) {
 
-		// args = [id, action, token]
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', args[1] + '?id=' + args[0] + '&isAjax=true', true);
-		xhr.setRequestHeader('X-CSRF-Token', args[2]);
+		apijsRedmine.sendRequest(args, null, function (response) {
 
-		xhr.onreadystatechange = function () {
+			// remove the file from the page with its id
+			var attachment = document.getElementById(response), elems = attachment.parentNode, idx = 0;
+			attachment.remove();
 
-			if (xhr.readyState === 4) {
-				if ([0, 200].has(xhr.status)) {
-					if (xhr.responseText.indexOf('attachmentId') === 0) {
-
-						// remove the file from the page with its id
-						var attachment = document.getElementById(xhr.responseText), elems = attachment.parentNode, idx = 0;
-						attachment.remove();
-
-						// remove the list of files
-						if (elems.querySelectorAll('dl, li').length < 1) {
-							elems.remove();
-						}
-						// or reassign the slideshow ids (no reset, just put the ids back in place)
-						else {
-							elems.querySelectorAll('a[id][type]').forEach(function (elem) {
-								elem.setAttribute('id', elem.getAttribute('id').slice(0, elem.getAttribute('id').lastIndexOf('.') + 1) + idx++);
-							});
-						}
-
-						apijs.dialog.actionClose();
-					}
-					else {
-						apijsRedmine.error(xhr.responseText);
-					}
-				}
-				else {
-					apijsRedmine.error(xhr.status);
-				}
+			// remove the list of files
+			if (elems.querySelectorAll('dl, li').length < 1) {
+				elems.remove();
 			}
-		};
-
-		xhr.send();
+			// or reassign the slideshow ids (no reset, just put the ids back in place)
+			else {
+				elems.querySelectorAll('a[id][type]').forEach(function (elem) {
+					elem.setAttribute('id', elem.getAttribute('id').slice(0, elem.getAttribute('id').lastIndexOf('.') + 1) + idx++);
+				});
+			}
+		});
 	};
 
 	this.clearCache = function (action, token) {

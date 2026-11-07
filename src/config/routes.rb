@@ -1,6 +1,6 @@
 # encoding: utf-8
 # Created J/12/12/2013
-# Updated D/01/11/2026
+# Updated S/07/11/2026
 #
 # Copyright 2008-2027 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
 # https://github.com/luigifab/redmine-apijs
@@ -24,7 +24,7 @@ if Redmine::VERSION::MAJOR >= 2
     match 'apijs/download/:id/:filename', to: 'apijs#download',
       via: :get, id: /\d+/, filename: /.*/
 
-    match 'apijs/edit/:type', to: 'apijs#edit',
+    match 'apijs/modify/:type', to: 'apijs#modify',
       via: :post, type: /desc|name/
 
     match 'apijs/delete', to: 'apijs#delete',
@@ -44,8 +44,8 @@ else
       controller: 'apijs', action: 'download',
       conditions: {method: :get}, id: /\d+/, filename: /.*/
 
-    map.connect 'apijs/edit/:type',
-      controller: 'apijs', action: 'edit',
+    map.connect 'apijs/modify/:type',
+      controller: 'apijs', action: 'modify',
       conditions: {method: :post}, type: /desc|name/
 
     map.connect 'apijs/delete',

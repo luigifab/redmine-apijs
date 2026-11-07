@@ -16,11 +16,11 @@ Depends: ${misc:Depends}, redmine (>= 2.0.0), ruby (>= 1.9.2), python3-pil, pyth
 Recommends: ffmpegthumbnailer
 Enhances: redmine
 Description: plugin for Redmine to display a gallery from attachments
- This plugin integrates apijs JavaScript library into Redmine.
+ This plugin integrates the apijs JavaScript library into Redmine.
  For more information about the library, go to luigifab.fr/apijs.
  .
  This plugin allows:
-   * to sort out attachments in alphabetical order
+   * to sort attachments in alphabetical order
    * to display a photo/video gallery from attachments
    * to display videos in streaming (HTTP 206 Partial Content)
    * to keep the animation of GIF/PNG/WEBP images thanks to Pillow

@@ -244,7 +244,7 @@ def saveGif(dest, fileout, quality):
 
 def savePng(dest, fileout, quality):
 
-	# The image quality, on a scale from 0 (best-speed) to 9 (best-compression), the default is 6
+	# The compression level, on a scale from 0 (best-speed) to 9 (best-compression), the default is 6
 	# but when the optimize option is True, compress_level has no effect
 	if quality < 1:
 		quality = 6
